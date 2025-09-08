@@ -1,13 +1,18 @@
-import { createRouter as createTanstackRouter } from "@tanstack/react-router";
+import {
+  createRouter as createTanstackRouter,
+  createHashHistory,
+} from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
-import { BASE_URL } from "#config";
+//import { BASE_URL } from "#config";
 
+const hashHistory = createHashHistory();
 export const createRouter = () => {
   return createTanstackRouter({
     routeTree,
-    basepath: BASE_URL,
+    //basepath: BASE_URL,
     defaultStaleTime: 0,
     defaultGcTime: 0,
+    history: hashHistory,
     context: {
       loadSprites: undefined!,
       loadProjects: undefined!,
