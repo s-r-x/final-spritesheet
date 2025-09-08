@@ -63,6 +63,13 @@ export class DbMutations implements tDbMutations {
     const doc = await this.db.projects.findOne(id).exec();
     if (doc) {
       await doc.remove();
+      await this.db.sprites
+        .find({
+          selector: {
+            projectId: id,
+          },
+        })
+        .remove();
     }
   }
 
