@@ -35,9 +35,9 @@ export const SUPPORTED_OUTPUT_IMAGE_FORMATS = ["png", "jpeg", "webp"];
 export const OUTPUT_DEFAULT_PNG_COMPRESSION = 0;
 export const OUTPUT_DEFAULT_IMAGE_QUALITY = 100;
 export const OUTPUT_DEFAULT_TEXTURE_FORMAT = "png";
-export const OUTPUT_DEFAULT_TEXTURE_FILE_NAME = "spritesheet";
+export const OUTPUT_DEFAULT_TEXTURE_FILE_NAME = "texture";
 export const OUTPUT_DEFAULT_FRAMEWORK = SUPPORTED_FRAMEWORKS[0].value;
-export const OUTPUT_DEFAULT_DATA_FILE_NAME = "atlas";
+export const OUTPUT_DEFAULT_DATA_FILE_NAME = "data";
 export const OUTPUT_MAX_DATA_FILE_NAME_LENGTH = 256;
 export const OUTPUT_MAX_TEXTURE_FILE_NAME_LENGTH = 256;
 
