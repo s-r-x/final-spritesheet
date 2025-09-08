@@ -1,0 +1,68 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  --separator-color: var(--mantine-color-gray-1);
+  --separator-size: 1px;
+  --content-height: 100dvh;
+  --header-height: 50px;
+  @media (max-width: $mantine-breakpoint-md) {
+    --content-height: calc(100dvh - var(--header-height));
+  }
+  height: 100dvh;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: stretch;
+  height: var(--header-height);
+  border-bottom: var(--separator-size) solid var(--separator-color);
+  padding: var(--mantine-spacing-xs);
+  > * {
+    width: 100%;
+  }
+}
+.main {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
+.content {
+  display: flex;
+  height: var(--content-height);
+}
+.leftPanel {
+  height: var(--content-height);
+}
+.leftPanelContent {
+  flex: 1;
+  overflow-y: auto;
+}
+.rightPanel {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  height: var(--content-height);
+  border-left: var(--separator-size) solid var(--separator-color);
+  padding: var(--mantine-spacing-xs);
+  overflow-y: auto;
+}
+.separator {
+  width: var(--separator-size);
+  background-color: var(--separator-color);
+}
+.toolbar {
+  position: absolute;
+  top: 10px;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  z-index: 2;
+}

@@ -1,0 +1,7 @@
+.root {
+  color: var(--mantine-color-text);
+  background: var(--mantine-color-body);
+  border-radius: var(--mantine-radius-default);
+  border: 1px solid var(--mantine-color-default-border);
+  padding: 0.4rem;
+}

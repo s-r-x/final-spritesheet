@@ -1,0 +1,59 @@
+{
+  "translation": {
+    "close": "Close",
+    "update": "Update",
+    "focus": "Focus",
+    "rename": "Rename",
+    "remove": "Remove",
+    "add_sprites": "Add sprites",
+    "sprites_list": "List of sprites",
+    "settings": "Settings",
+    "export": "Export",
+    "submit": "Submit",
+    "oversized_sprites": "Oversized",
+    "open_menu": "Open menu",
+    "packer_opts": {
+      "form_name": "Packer",
+      "max_size": "Max sheet size",
+      "sprite_padding": "Sprite padding",
+      "edge_spacing": "Edge spacing",
+      "pot": "POT",
+      "allow_rot": "Allow rotation"
+    },
+    "output_opts": {
+      "form_name": "Output",
+      "framework": "Framework",
+      "texture_format": "Texture format",
+      "image_quality": "Image quality",
+      "png_compression": "PNG compression",
+      "data_file": "Data file",
+      "texture_file": "Texture file"
+    },
+    "sprite_editor": {
+      "editor_title": "Edit sprite",
+      "name": "Name",
+      "name_placeholder": "Enter the name"
+    },
+    "project_editor": {
+      "editor_title": "Edit project",
+      "name": "Name",
+      "name_placeholder": "Enter the name"
+    },
+    "sprites_drop_zone": {
+      "head": "Drop your sprites here",
+      "desc": "Supported formats: {{supportedFormats}}"
+    },
+    "app_menu": {
+      "theme": "Theme",
+      "theme_dark": "Dark",
+      "theme_light": "Light",
+      "theme_system": "System",
+      "show_projects_list": "Projects",
+      "prefs": "Preferences",
+      "lang": "Language",
+      "edit_project": "Edit project",
+      "new_project": "New project",
+      "remove_project": "Remove project"
+    }
+  }
+}

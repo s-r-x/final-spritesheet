@@ -1,0 +1,59 @@
+{
+  "translation": {
+    "close": "Закрыть",
+    "update": "Изменить",
+    "focus": "Фокус",
+    "rename": "Переименовать",
+    "remove": "Удалить",
+    "add_sprites": "Добавить спрайты",
+    "sprites_list": "Список спрайтов",
+    "settings": "Настройки",
+    "export": "Экспорт",
+    "submit": "Отправить",
+    "oversized_sprites": "Слишком большой размер",
+    "open_menu": "Открыть меню",
+    "packer_opts": {
+      "form_name": "Упаковщик",
+      "max_size": "Макс размер",
+      "sprite_padding": "Отступы спрайтов",
+      "edge_spacing": "Отступы от краев",
+      "pot": "POT",
+      "allow_rot": "Разрешить поворот"
+    },
+    "output_opts": {
+      "form_name": "Вывод",
+      "framework": "Фреймворк",
+      "texture_format": "Формат текстуры",
+      "image_quality": "Качество текстуры",
+      "png_compression": "Сжатие PNG",
+      "data_file": "Файл с данными",
+      "texture_file": "Файл с текстурой"
+    },
+    "sprite_editor": {
+      "editor_title": "Редактирование спрайта",
+      "name": "Имя",
+      "name_placeholder": "Введите имя"
+    },
+    "project_editor": {
+      "editor_title": "Редактирование проекта",
+      "name": "Имя",
+      "name_placeholder": "Введите имя"
+    },
+    "sprites_drop_zone": {
+      "head": "Перетащите свои спрайты сюда",
+      "desc": "Поддерживаемые форматы: {{supportedFormats}}"
+    },
+    "app_menu": {
+      "theme": "Тема",
+      "theme_dark": "Темная",
+      "theme_light": "Светлая",
+      "theme_system": "Системная",
+      "show_projects_list": "Проекты",
+      "prefs": "Предпочтения",
+      "lang": "Язык",
+      "edit_project": "Редактировать проект",
+      "new_project": "Новый проект",
+      "remove_project": "Удалить проект"
+    }
+  }
+}
