@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/final-spritesheet/sw.js', { scope: '/final-spritesheet/' })})}
