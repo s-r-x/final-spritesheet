@@ -84,11 +84,11 @@ export const Route = createFileRoute("/projects/{-$projectId}")({
         },
       });
     }
-    const { sprites } = await ctx.context.loadSprites(projectId);
     const project = loadedProjects.find((p) => p.id === projectId);
     if (!project) {
       throw notFound();
     }
+    const { sprites } = await ctx.context.loadSprites(projectId);
     atomsStore.set(activeProjectIdAtom, projectId);
     atomsStore.set(
       setSpritesAtom,
