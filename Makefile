@@ -5,9 +5,9 @@ build:
 	npm run build
 lint:
 	npm run lint
-make check-types:
+check-types:
 	npm run check-types
-make format.check:
+format.check:
 	npm run format:check
-make format.fix:
+format.fix:
 	npm run format:fix
