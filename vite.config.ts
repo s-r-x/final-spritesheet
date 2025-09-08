@@ -16,7 +16,7 @@ export default defineConfig({
     VitePWA({
       manifest: {
         name: "Final spritesheet",
-        short_name: "A spritesheet generator",
+        short_name: "FS",
         description: "A spritesheet generator",
         theme_color: "#f2e9e4ff",
         icons: [
