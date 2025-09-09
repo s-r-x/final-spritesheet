@@ -33,15 +33,19 @@ export const exportSpritesheet = async (opts: tOptions) => {
       if (!textureAtlas) return archive;
       const filePostfix = isMultipleBins ? `-${idx}` : "";
       const imageFilename = `${opts.textureFileName}${filePostfix}.${opts.textureFormat}`;
-      const atlasFile = generateAtlasFile({
+      const { entries: atlasFileEntries } = generateAtlasFile({
+        baseFileName: opts.dataFileName,
+        fileNamePostfix: filePostfix,
         sprites: packedBin.sprites,
         textureWidth: packedBin.width,
         textureHeight: packedBin.height,
         textureAtlasFilename: imageFilename,
         framework: opts.framework,
       });
+      for (const entry of atlasFileEntries) {
+        archive.file(entry.fileName, entry.content);
+      }
       archive.file(imageFilename, textureAtlas);
-      archive.file(`${opts.dataFileName}${filePostfix}.json`, atlasFile);
       return archive;
     },
     new jsZip(),

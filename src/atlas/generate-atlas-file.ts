@@ -1,29 +1,15 @@
 import { generatePixiAtlasFile } from "./generate-pixi-atlas-file";
 import { generatePhaserAtlasFile } from "./generate-phaser-atlas-file";
-import type { tGenerateAtlasFileArgs } from "./types";
+import type { tGenerateAtlasFileArgs, tGenerateAtlasFileOutput } from "./types";
 
-export const generateAtlasFile = ({
-  sprites,
-  textureWidth,
-  textureHeight,
-  textureAtlasFilename,
-  framework,
-}: tGenerateAtlasFileArgs & { framework: string }): string => {
-  switch (framework) {
+export const generateAtlasFile = (
+  data: tGenerateAtlasFileArgs & { framework: string },
+): tGenerateAtlasFileOutput => {
+  switch (data.framework) {
     case "pixi":
-      return generatePixiAtlasFile({
-        sprites,
-        textureWidth,
-        textureHeight,
-        textureAtlasFilename,
-      });
+      return generatePixiAtlasFile(data);
     case "phaser":
-      return generatePhaserAtlasFile({
-        sprites,
-        textureWidth,
-        textureHeight,
-        textureAtlasFilename,
-      });
+      return generatePhaserAtlasFile(data);
   }
   throw new Error("unknown framework");
 };

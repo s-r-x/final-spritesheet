@@ -1,11 +1,13 @@
-import type { tGenerateAtlasFileArgs } from "./types";
+import type { tGenerateAtlasFileArgs, tGenerateAtlasFileOutput } from "./types";
 
 export const generatePhaserAtlasFile = ({
+  baseFileName,
+  fileNamePostfix,
   sprites,
   textureWidth,
   textureHeight,
   textureAtlasFilename,
-}: tGenerateAtlasFileArgs): string => {
+}: tGenerateAtlasFileArgs): tGenerateAtlasFileOutput => {
   const atlas = {
     frames: sprites.reduce(
       (acc, sprite) => {
@@ -35,5 +37,12 @@ export const generatePhaserAtlasFile = ({
       },
     },
   };
-  return JSON.stringify(atlas, null, 2);
+  return {
+    entries: [
+      {
+        fileName: `${baseFileName}${fileNamePostfix}.json`,
+        content: JSON.stringify(atlas, null, 2),
+      },
+    ],
+  };
 };
