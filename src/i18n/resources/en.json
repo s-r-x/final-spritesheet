@@ -27,7 +27,8 @@
       "image_quality": "Image quality",
       "png_compression": "PNG compression",
       "data_file": "Data file",
-      "texture_file": "Texture file"
+      "texture_file": "Texture file",
+      "godot_import_tip": "TexturePacker Importer plugin compatible"
     },
     "sprite_editor": {
       "editor_title": "Edit sprite",

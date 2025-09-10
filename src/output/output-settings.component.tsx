@@ -14,6 +14,7 @@ import { useDebouncedCallback } from "@mantine/hooks";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { useGetOutputSettings } from "./use-output-settings";
 import { useEffect } from "react";
+import CloseableMessage from "#components/ClosableMessage";
 
 const i18nNs = "output_opts.";
 
@@ -58,6 +59,20 @@ const OutputSettings = ({ initialValues }: { initialValues: tForm }) => {
     });
   }, []);
   const isPng = form.values.textureFormat === "png";
+  const framework = form.values.framework;
+  const renderFrameworkInfo = () => {
+    switch (framework) {
+      case "godot":
+        return (
+          <CloseableMessage
+            content={t(i18nNs + "godot_import_tip")}
+            id="godot_import_tip"
+          />
+        );
+      default:
+        return null;
+    }
+  };
   const { t } = useTranslation();
   return (
     <form>
@@ -68,6 +83,7 @@ const OutputSettings = ({ initialValues }: { initialValues: tForm }) => {
           data={SUPPORTED_FRAMEWORKS}
           {...form.getInputProps("framework")}
         />
+        {renderFrameworkInfo()}
         <Select
           allowDeselect={false}
           label={t(i18nNs + "texture_format")}

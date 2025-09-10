@@ -27,7 +27,8 @@
       "image_quality": "Качество текстуры",
       "png_compression": "Сжатие PNG",
       "data_file": "Файл с данными",
-      "texture_file": "Файл с текстурой"
+      "texture_file": "Файл с текстурой",
+      "godot_import_tip": "Совместимо с TexturePacker Importer плагином для Godot"
     },
     "sprite_editor": {
       "editor_title": "Редактирование спрайта",

@@ -20,7 +20,9 @@ export const SUPPORTED_LANGUAGES: { value: string; label: string }[] = [
 export const SUPPORTED_FRAMEWORKS: { value: string; label: string }[] = [
   { value: "pixi", label: "PixiJS" },
   { value: "phaser", label: "Phaser" },
+  { value: "godot", label: "Godot" },
 ];
+export const PACKER_ROTATION_SUPPORTED_FRAMEWORKS = new Set(["pixi", "phaser"]);
 
 export const PACKER_SUPPORTED_SHEET_SIZES = [256, 128, 512, 1024, 2048, 4096];
 export const PACKER_MAX_SPRITE_PADDING = 100;

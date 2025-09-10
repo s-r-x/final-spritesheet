@@ -1,5 +1,6 @@
 import { generatePixiAtlasFile } from "./pixi";
 import { generatePhaserAtlasFile } from "./phaser";
+import { generateGodotAtlasFile } from "./godot";
 import type { tGenerateAtlasFileArgs, tGenerateAtlasFileOutput } from "./types";
 
 export const generateAtlasFile = (
@@ -10,6 +11,8 @@ export const generateAtlasFile = (
       return generatePixiAtlasFile(data);
     case "phaser":
       return generatePhaserAtlasFile(data);
+    case "godot":
+      return generateGodotAtlasFile(data);
   }
   throw new Error("unknown framework");
 };

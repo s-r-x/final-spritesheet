@@ -11,7 +11,10 @@ import {
 import { useActiveProjectId } from "@/projects/use-active-project-id";
 import { useDebouncedCallback } from "@mantine/hooks";
 import { useUpdatePackerSettings } from "./use-update-packer-settings";
-import { useGetPackerSettings } from "./use-packer-settings";
+import {
+  useGetPackerSettings,
+  useIsRotationSupported,
+} from "./use-packer-settings";
 
 const ATOMS_UPDATE_DELAY_MS = 200;
 const schema = z.object({
@@ -24,6 +27,7 @@ const schema = z.object({
 type tForm = z.input<typeof schema>;
 
 const PackerSettings = ({ initialValues }: { initialValues: tForm }) => {
+  const isRotationSupported = useIsRotationSupported();
   const updateSettings = useUpdatePackerSettings();
   const onValuesChange = useDebouncedCallback((values: tForm) => {
     const result = schema.safeParse(values);
@@ -89,6 +93,7 @@ const PackerSettings = ({ initialValues }: { initialValues: tForm }) => {
           {...form.getInputProps("pot", { type: "checkbox" })}
         />
         <Switch
+          disabled={!isRotationSupported}
           label={t("packer_opts.allow_rot")}
           key={form.key("allowRotation")}
           {...form.getInputProps("allowRotation", { type: "checkbox" })}

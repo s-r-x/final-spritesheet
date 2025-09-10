@@ -6,8 +6,10 @@ import {
   PACKER_DEFAULT_POT,
   PACKER_DEFAULT_SHEET_SIZE,
   PACKER_DEFAULT_SPRITE_PADDING,
+  PACKER_ROTATION_SUPPORTED_FRAMEWORKS,
 } from "#config";
 import { activeProjectAtom, updateProjectAtom } from "@/projects/projects.atom";
+import { outputSettingsAtom } from "@/output/output-settings.atom";
 
 const defaultSettings: tPackerSettings = {
   packerAlgorithm: "grid",
@@ -35,6 +37,10 @@ export const packerSettingsAtom = atom<
   },
 );
 
+export const rotationSupportabilityAtom = atom((get) => {
+  const framework = get(outputSettingsAtom).framework;
+  return PACKER_ROTATION_SUPPORTED_FRAMEWORKS.has(framework);
+});
 export const packerAlgorithmSettingAtom = atom(
   (get) => get(packerSettingsAtom).packerAlgorithm,
   (_get, set, packerAlgorithm: tPackerAlgorithm) => {
@@ -67,7 +73,11 @@ export const potSettingAtom = atom(
   },
 );
 export const allowRotationSettingAtom = atom(
-  (get) => get(packerSettingsAtom).allowRotation,
+  (get) => {
+    const isSupported = get(rotationSupportabilityAtom);
+    if (!isSupported) return false;
+    return get(packerSettingsAtom).allowRotation;
+  },
   (_get, set, allowRotation: boolean) => {
     set(packerSettingsAtom, { allowRotation });
   },
