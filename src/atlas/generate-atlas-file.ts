@@ -1,5 +1,5 @@
-import { generatePixiAtlasFile } from "./generate-pixi-atlas-file";
-import { generatePhaserAtlasFile } from "./generate-phaser-atlas-file";
+import { generatePixiAtlasFile } from "./pixi";
+import { generatePhaserAtlasFile } from "./phaser";
 import type { tGenerateAtlasFileArgs, tGenerateAtlasFileOutput } from "./types";
 
 export const generateAtlasFile = (
