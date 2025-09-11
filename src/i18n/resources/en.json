@@ -28,7 +28,7 @@
       "png_compression": "PNG compression",
       "data_file": "Data file",
       "texture_file": "Texture file",
-      "godot_import_tip": "TexturePacker Importer plugin compatible"
+      "godot_import_tip": "Compatible with TexturePacker Importer plugin"
     },
     "sprite_editor": {
       "editor_title": "Edit sprite",
@@ -55,6 +55,11 @@
       "edit_project": "Edit project",
       "new_project": "New project",
       "remove_project": "Remove project"
+    },
+    "project_not_found_screen": {
+      "message": "Project <1>{{project}}</1> not found",
+      "projects_list": "Projects",
+      "new_project": "New project"
     }
   }
 }
