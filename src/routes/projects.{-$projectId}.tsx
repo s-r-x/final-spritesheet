@@ -164,7 +164,6 @@ function Project() {
         rightPanelLabel={t("settings")}
         appBarSlot={<PackerAppBar />}
         leftPanelSlot={<SpritesList />}
-        //headerSlot={<Header />}
         mainSlot={
           <>
             <Canvas />
