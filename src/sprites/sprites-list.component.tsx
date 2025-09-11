@@ -100,7 +100,9 @@ const SpritesList = () => {
           {sprites.map((sprite) => (
             <SpriteItem
               key={sprite.id}
-              sprite={sprite}
+              name={sprite.name}
+              id={sprite.id}
+              imageUrl={sprite.url}
               openEditor={openSpriteEditor}
               focusSprite={focusSprite}
               removeSprite={removeSprite}
@@ -133,40 +135,42 @@ const SpritesList = () => {
 };
 
 type tProps = {
-  sprite: tSprite;
+  id: string;
+  name: string;
+  imageUrl: string;
   openEditor: (id: string) => void;
   focusSprite: (id: string) => void;
   removeSprite: (id: string) => void;
 };
 const SpriteItem = memo(
-  ({ sprite, openEditor, focusSprite, removeSprite }: tProps) => {
+  ({ id, name, imageUrl, openEditor, focusSprite, removeSprite }: tProps) => {
     const { t } = useTranslation();
     const { showContextMenu } = useContextMenu();
     return (
       <li
         tabIndex={0}
         className={styles.listItem}
-        onDoubleClick={() => focusSprite(sprite.id)}
+        onDoubleClick={() => focusSprite(id)}
         onContextMenu={showContextMenu([
           {
             key: "focus",
             title: t("focus"),
-            onClick: () => focusSprite(sprite.id),
+            onClick: () => focusSprite(id),
           },
           {
             key: "remove",
             title: t("remove"),
-            onClick: () => removeSprite(sprite.id),
+            onClick: () => removeSprite(id),
           },
           {
             key: "rename",
             title: t("rename"),
-            onClick: () => openEditor(sprite.id),
+            onClick: () => openEditor(id),
           },
         ])}
       >
-        <Avatar src={sprite.url} radius="sm" size="sm" />
-        <span>{sprite.name}</span>
+        <Avatar src={imageUrl} radius="sm" size="sm" />
+        <span>{name}</span>
       </li>
     );
   },
