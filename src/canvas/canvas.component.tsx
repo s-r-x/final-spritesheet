@@ -7,6 +7,9 @@ import type { tPackedBin } from "@/packer/types";
 import { useComputedColorScheme, useMantineTheme } from "@mantine/core";
 import { usePackedSprites } from "@/packer/use-packed-sprites";
 import { debounce } from "#utils/debounce";
+import { useActiveProjectId } from "@/projects/use-active-project-id";
+import { useFocusProject } from "./use-focus-project";
+import { isEmpty } from "#utils/is-empty";
 
 extend({
   Container,
@@ -75,9 +78,18 @@ const useHandleCanvasContainerResize = (isRendered: boolean) => {
 const BIN_GAP = 10;
 const Bins = () => {
   const { bins: packedBins } = usePackedSprites();
+  const projectId = useActiveProjectId();
+  const focusProject = useFocusProject();
+  const hasBins = !isEmpty(packedBins);
+  useEffect(() => {
+    if (hasBins) {
+      focusProject();
+    }
+  }, [projectId, hasBins]);
   let offsetX = 0;
+  if (!hasBins) return null;
   return (
-    <pixiContainer>
+    <pixiContainer label="bins-root">
       {packedBins.map((bin, i) => {
         const jsx = (
           <pixiContainer key={i} x={offsetX}>
