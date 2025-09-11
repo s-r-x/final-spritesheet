@@ -24,6 +24,7 @@ const Canvas = () => {
     <Application
       autoStart
       resolution={window.devicePixelRatio}
+      resizeTo={getRootDomElement()!}
       backgroundAlpha={0}
       autoDensity
       onInit={(app) => {
@@ -61,7 +62,7 @@ const useHandleCanvasContainerResize = (isRendered: boolean) => {
           }
         },
       );
-      const $el = document.getElementById("canvas-root");
+      const $el = getRootDomElement();
       if ($el) {
         const resizeObserver = new ResizeObserver(onResize);
         resizeObserver.observe($el);
@@ -167,5 +168,7 @@ const BinName = ({ name }: { name: string }) => {
     />
   );
 };
+
+const getRootDomElement = () => document.getElementById("canvas-root");
 
 export default Canvas;
