@@ -90,11 +90,9 @@ export const Route = createFileRoute("/projects/{-$projectId}")({
       throw notFound();
     }
     const { sprites } = await ctx.context.loadSprites(projectId);
+    const normalizedSprites = await Promise.all(sprites.map(persistedToSprite));
     atomsStore.set(activeProjectIdAtom, projectId);
-    atomsStore.set(
-      setSpritesAtom,
-      await Promise.all(sprites.map(persistedToSprite)),
-    );
+    atomsStore.set(setSpritesAtom, normalizedSprites);
   },
   notFoundComponent: ProjectNotFound,
 });
