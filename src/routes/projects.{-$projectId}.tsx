@@ -43,6 +43,7 @@ import { useCreateProject } from "@/projects/use-create-project";
 import { useTranslation } from "@/i18n/use-translation";
 import { useDocumentTitle } from "@mantine/hooks";
 import { useActiveProjectName } from "@/projects/use-active-project-name";
+import { Translation } from "@/i18n/translation.component";
 
 export const Route = createFileRoute("/projects/{-$projectId}")({
   component: Project,
@@ -99,6 +100,8 @@ export const Route = createFileRoute("/projects/{-$projectId}")({
 });
 
 function ProjectNotFound() {
+  const i18nNs = "project_not_found_screen.";
+  const { t } = useTranslation();
   const { projectId } = Route.useParams();
   const projects = useProjectsList();
   const hasProjects = isEmpty(projects);
@@ -108,12 +111,16 @@ function ProjectNotFound() {
     <Center mih={"100dvh"} miw={"100dvw"}>
       <Stack gap="lg" align="flex-start">
         <Title order={1} size={"h2"}>
-          Project <Mark color="red">{projectId}</Mark> not found
+          <Translation
+            i18nKey={i18nNs + "message"}
+            values={{ project: projectId }}
+            components={{ 1: <Mark color="red" /> }}
+          />
         </Title>
         {!hasProjects && (
           <Stack gap="xs">
             <Title order={2} size="h4">
-              Available projects:
+              {t(i18nNs + "projects_list")}
             </Title>
             <List spacing="xs" size="md" center>
               {projects.map((project) => (
@@ -141,7 +148,7 @@ function ProjectNotFound() {
             });
           }}
         >
-          New project
+          {t(i18nNs + "new_project")}
         </Button>
       </Stack>
     </Center>
