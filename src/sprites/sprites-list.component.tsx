@@ -20,6 +20,7 @@ import {
   Ellipsis as EllipsisIcon,
 } from "lucide-react";
 import { useFocusBin } from "@/canvas/use-focus-bin";
+import { isDefined } from "#utils/is-defined";
 
 const SpritesList = () => {
   const { t } = useTranslation();
@@ -56,12 +57,14 @@ const SpritesList = () => {
     sprites,
     icon,
     index,
+    disableFocus,
   }: {
     index: number;
     title: string;
     color?: string;
     sprites: tSprite[];
     icon: JSX.Element;
+    disableFocus?: boolean;
   }) => {
     return (
       <Stack gap="xs" key={index}>
@@ -85,9 +88,11 @@ const SpritesList = () => {
               </ActionIcon>
             </Menu.Target>
             <Menu.Dropdown>
-              <Menu.Item onClick={() => focusBin(index)}>
-                {t("focus")}
-              </Menu.Item>
+              {!disableFocus && (
+                <Menu.Item onClick={() => focusBin(index)}>
+                  {t("focus")}
+                </Menu.Item>
+              )}
               <Menu.Item
                 onClick={() => removeSprite(sprites.map((sprite) => sprite.id))}
               >
@@ -104,7 +109,7 @@ const SpritesList = () => {
               id={sprite.id}
               imageUrl={sprite.url}
               openEditor={openSpriteEditor}
-              focusSprite={focusSprite}
+              focusSprite={disableFocus ? undefined : focusSprite}
               removeSprite={removeSprite}
             />
           ))}
@@ -121,6 +126,7 @@ const SpritesList = () => {
           icon: <PackageFailIcon />,
           title: t("oversized_sprites"),
           sprites: oversizedSprites,
+          disableFocus: true,
         })}
       {bins.map((bin, index) =>
         renderBin({
@@ -139,7 +145,7 @@ type tProps = {
   name: string;
   imageUrl: string;
   openEditor: (id: string) => void;
-  focusSprite: (id: string) => void;
+  focusSprite?: (id: string) => void;
   removeSprite: (id: string) => void;
 };
 const SpriteItem = memo(
@@ -150,24 +156,26 @@ const SpriteItem = memo(
       <li
         tabIndex={0}
         className={styles.listItem}
-        onDoubleClick={() => focusSprite(id)}
-        onContextMenu={showContextMenu([
-          {
-            key: "focus",
-            title: t("focus"),
-            onClick: () => focusSprite(id),
-          },
-          {
-            key: "remove",
-            title: t("remove"),
-            onClick: () => removeSprite(id),
-          },
-          {
-            key: "rename",
-            title: t("rename"),
-            onClick: () => openEditor(id),
-          },
-        ])}
+        onDoubleClick={() => focusSprite?.(id)}
+        onContextMenu={showContextMenu(
+          [
+            focusSprite && {
+              key: "focus",
+              title: t("focus"),
+              onClick: () => focusSprite(id),
+            },
+            {
+              key: "remove",
+              title: t("remove"),
+              onClick: () => removeSprite(id),
+            },
+            {
+              key: "rename",
+              title: t("rename"),
+              onClick: () => openEditor(id),
+            },
+          ].filter(isDefined),
+        )}
       >
         <Avatar src={imageUrl} radius="sm" size="sm" />
         <span>{name}</span>
