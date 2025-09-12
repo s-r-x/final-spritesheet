@@ -109,6 +109,7 @@ const PackerSettingsRoot = () => {
   const settings = getPackerSettings();
   return (
     <PackerSettings
+      key={projectId}
       initialValues={{
         sheetMaxSize: String(settings.sheetMaxSize),
         spritePadding: settings.spritePadding,
