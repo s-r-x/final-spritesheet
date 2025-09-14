@@ -2,7 +2,7 @@ import { useAtomValue } from "jotai";
 import { hasAnySpritesAtom } from "./sprites.atom";
 import styles from "./sprites-list.module.css";
 import { useFocusSprite } from "@/canvas/use-focus-sprite";
-import { type JSX, memo } from "react";
+import { type JSX, memo, useCallback } from "react";
 import { useContextMenu } from "mantine-contextmenu";
 import { Avatar, Text, Group, Stack, Badge, Menu } from "@mantine/core";
 import type { tSprite } from "./types";
@@ -21,15 +21,37 @@ import {
 } from "lucide-react";
 import { useFocusBin } from "@/canvas/use-focus-bin";
 import { isDefined } from "#utils/is-defined";
+import { useIsMobileLayout } from "@/layout/use-is-mobile-layout";
+import { useCloseLeftPanelModal } from "@/layout/use-left-panel-modal";
 
 const SpritesList = () => {
   const { t } = useTranslation();
+  const isMobile = useIsMobileLayout();
+  const closeLeftPanel = useCloseLeftPanelModal();
   const openSpriteEditor = useOpenSpriteEditor();
   const { bins, oversizedSprites } = usePackedSprites();
   const addSpritesFromFiles = useAddSpritesFromFiles();
   const removeSprite = useRemoveSprites();
-  const focusSprite = useFocusSprite();
-  const focusBin = useFocusBin();
+  const focusSprite_ = useFocusSprite();
+  const focusSprite = useCallback(
+    (id: string) => {
+      focusSprite_(id);
+      if (isMobile) {
+        closeLeftPanel();
+      }
+    },
+    [focusSprite_, isMobile, closeLeftPanel],
+  );
+  const focusBin_ = useFocusBin();
+  const focusBin = useCallback(
+    (idx: number) => {
+      focusBin_(idx);
+      if (isMobile) {
+        closeLeftPanel();
+      }
+    },
+    [focusBin_, isMobile, closeLeftPanel],
+  );
   const hasAnySprites = useAtomValue(hasAnySpritesAtom);
   const errorColor = "var(--mantine-color-error)";
   if (!hasAnySprites) {
