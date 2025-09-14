@@ -9,6 +9,7 @@ import {
 } from "./settings.atom";
 import { spritesAtom } from "@/sprites/sprites.atom";
 import { packMaxRects } from "./packer-max-rects";
+import { isEmpty } from "#utils/is-empty";
 
 export const packedSpritesAtom = atom((get) => {
   //const algorithm = get(packerAlgorithmSettingAtom);
@@ -26,4 +27,7 @@ export const packedSpritesAtom = atom((get) => {
     pot,
     allowRotation,
   });
+});
+export const hasAnyPackedSpritesAtom = atom((get) => {
+  return !isEmpty(get(packedSpritesAtom).bins);
 });

@@ -8,7 +8,10 @@ import {
 } from "lucide-react";
 import { SUPPORTED_SPRITE_MIME_TYPES } from "#config";
 import { useAddSpritesFromFiles } from "@/sprites/use-add-sprites-from-files";
-import { useExportSpritesheet } from "@/output/use-export-spritesheet";
+import {
+  useExportSpritesheet,
+  useIsExportSpritesheetDisabled,
+} from "@/output/use-export-spritesheet";
 import { useTranslation } from "@/i18n/use-translation";
 import { useIsMobileLayout } from "@/layout/use-is-mobile-layout";
 import { useRightPanelModal } from "@/layout/use-right-panel-modal";
@@ -18,6 +21,7 @@ const Toolbar = () => {
   const { t } = useTranslation();
   const addSprites = useAddSpritesFromFiles();
   const exportSpritesheet = useExportSpritesheet();
+  const isExportDisabled = useIsExportSpritesheetDisabled();
   const isMobile = useIsMobileLayout();
   const openLeftPanel = useLeftPanelModal();
   const openRightPanel = useRightPanelModal();
@@ -74,6 +78,7 @@ const Toolbar = () => {
           leftSection={<DownloadIcon size={20} />}
           size="sm"
           onClick={exportSpritesheet}
+          disabled={isExportDisabled}
           aria-label={exportLabel}
         >
           {exportLabel}

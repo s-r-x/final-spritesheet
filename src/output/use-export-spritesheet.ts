@@ -1,8 +1,16 @@
-import { useGetPackedSprites } from "@/packer/use-packed-sprites";
+import {
+  useGetPackedSprites,
+  useHasAnyPackerSprites,
+} from "@/packer/use-packed-sprites";
 import { useGetOutputSettings } from "./use-output-settings";
 import { exportSpritesheet } from "./export-spritesheet";
 import { useCallback } from "react";
 import { useGetActiveProjectName } from "@/projects/use-active-project-name";
+
+export const useIsExportSpritesheetDisabled = () => {
+  const hasAnySprites = useHasAnyPackerSprites();
+  return !hasAnySprites;
+};
 
 export const useExportSpritesheet = () => {
   const getPackedSprites = useGetPackedSprites();

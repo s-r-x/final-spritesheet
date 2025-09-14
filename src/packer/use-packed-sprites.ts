@@ -1,5 +1,8 @@
 import { useAtomValue, useStore } from "jotai";
-import { packedSpritesAtom } from "./packed-sprites.atom";
+import {
+  hasAnyPackedSpritesAtom,
+  packedSpritesAtom,
+} from "./packed-sprites.atom";
 import { useCallback } from "react";
 
 export const usePackedSprites = () => {
@@ -11,4 +14,8 @@ export const useGetPackedSprites = () => {
   return useCallback(() => {
     return atomsStore.get(packedSpritesAtom);
   }, []);
+};
+
+export const useHasAnyPackerSprites = () => {
+  return useAtomValue(hasAnyPackedSpritesAtom);
 };
