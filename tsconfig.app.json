@@ -22,7 +22,7 @@
     "paths": {
       "#config": ["./src/config"],
       "#utils/*": ["./src/common/utils/*"],
-			"#components/*": ["./src/common/components/*"],
+      "#components/*": ["./src/common/components/*"],
       "@/*": ["./src/*"]
     }
   },
