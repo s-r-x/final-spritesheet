@@ -173,20 +173,20 @@ function Project() {
         rightPanelSlot={
           <>
             <Accordion multiple defaultValue={["output", "packer"]}>
-              <Accordion.Item value="output">
-                <Accordion.Control>
-                  {t("output_opts.form_name")}
-                </Accordion.Control>
-                <Accordion.Panel>
-                  <OutputSettings />
-                </Accordion.Panel>
-              </Accordion.Item>
               <Accordion.Item value="packer">
                 <Accordion.Control>
                   {t("packer_opts.form_name")}
                 </Accordion.Control>
                 <Accordion.Panel>
                   <PackerSettings />
+                </Accordion.Panel>
+              </Accordion.Item>
+              <Accordion.Item value="output">
+                <Accordion.Control>
+                  {t("output_opts.form_name")}
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <OutputSettings />
                 </Accordion.Panel>
               </Accordion.Item>
             </Accordion>
