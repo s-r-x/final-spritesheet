@@ -15,7 +15,7 @@ import { useDebouncedCallback } from "@mantine/hooks";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { useGetOutputSettings } from "./use-output-settings";
 import { useEffect } from "react";
-import CloseableMessage from "#components/ClosableMessage";
+import CloseableMessage from "#components/closeable-message.component";
 
 const i18nNs = "output_opts.";
 
