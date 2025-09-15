@@ -31,7 +31,7 @@ export const PACKER_DEFAULT_SHEET_SIZE = 4096;
 export const PACKER_DEFAULT_SPRITE_PADDING = 0;
 export const PACKER_DEFAULT_EDGE_SPACING = 0;
 export const PACKER_DEFAULT_ALLOW_ROTATION = false;
-export const PACKER_DEFAULT_POT = false;
+export const PACKER_DEFAULT_POT = true;
 
 export const SUPPORTED_OUTPUT_IMAGE_FORMATS = ["png", "jpeg", "webp"];
 export const OUTPUT_DEFAULT_PNG_COMPRESSION = 0;
