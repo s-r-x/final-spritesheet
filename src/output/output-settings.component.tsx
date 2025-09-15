@@ -1,6 +1,7 @@
 import { useTranslation } from "@/i18n/use-translation";
 import { NumberInput, Select, Stack, TextInput } from "@mantine/core";
 import {
+  OUTPUT_ENABLE_PNG_COMPRESSION,
   OUTPUT_MAX_DATA_FILE_NAME_LENGTH,
   OUTPUT_MAX_TEXTURE_FILE_NAME_LENGTH,
   SUPPORTED_FRAMEWORKS,
@@ -74,6 +75,53 @@ const OutputSettings = ({ initialValues }: { initialValues: tForm }) => {
     }
   };
   const { t } = useTranslation();
+  const renderPngCompressionInput = () => {
+    if (!OUTPUT_ENABLE_PNG_COMPRESSION) return null;
+    return (
+      <Select
+        label={t(i18nNs + "png_compression")}
+        data={[
+          {
+            label: "0 - No compression",
+            value: "0",
+          },
+          {
+            label: "1 - Lossy",
+            value: "1",
+          },
+          {
+            label: "2",
+            value: "2",
+          },
+          {
+            label: "3",
+            value: "3",
+          },
+          {
+            label: "4",
+            value: "4",
+          },
+          {
+            label: "5",
+            value: "5",
+          },
+          {
+            label: "6",
+            value: "6",
+          },
+          {
+            label: "7",
+            value: "7",
+          },
+          {
+            label: "8 - 2 colors",
+            value: "8",
+          },
+        ]}
+        {...form.getInputProps("pngCompression")}
+      />
+    );
+  };
   return (
     <form>
       <Stack gap="xs">
@@ -91,48 +139,7 @@ const OutputSettings = ({ initialValues }: { initialValues: tForm }) => {
           {...form.getInputProps("textureFormat")}
         />
         {isPng ? (
-          <Select
-            label={t(i18nNs + "png_compression")}
-            data={[
-              {
-                label: "0 - No compression",
-                value: "0",
-              },
-              {
-                label: "1 - Lossy",
-                value: "1",
-              },
-              {
-                label: "2",
-                value: "2",
-              },
-              {
-                label: "3",
-                value: "3",
-              },
-              {
-                label: "4",
-                value: "4",
-              },
-              {
-                label: "5",
-                value: "5",
-              },
-              {
-                label: "6",
-                value: "6",
-              },
-              {
-                label: "7",
-                value: "7",
-              },
-              {
-                label: "8 - 2 colors",
-                value: "8",
-              },
-            ]}
-            {...form.getInputProps("pngCompression")}
-          />
+          renderPngCompressionInput()
         ) : (
           <NumberInput
             allowNegative={false}

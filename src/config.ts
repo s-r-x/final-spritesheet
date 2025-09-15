@@ -42,6 +42,7 @@ export const OUTPUT_DEFAULT_FRAMEWORK = SUPPORTED_FRAMEWORKS[0].value;
 export const OUTPUT_DEFAULT_DATA_FILE_NAME = "data";
 export const OUTPUT_MAX_DATA_FILE_NAME_LENGTH = 256;
 export const OUTPUT_MAX_TEXTURE_FILE_NAME_LENGTH = 256;
+export const OUTPUT_ENABLE_PNG_COMPRESSION = false;
 
 export const DEV = import.meta.env.DEV;
 export const PROD = import.meta.env.PROD;

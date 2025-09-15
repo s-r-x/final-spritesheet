@@ -1,3 +1,4 @@
+import { OUTPUT_ENABLE_PNG_COMPRESSION } from "#config";
 import { canvasRefs } from "./canvas-refs";
 
 export const convertBinToBlob = async ({
@@ -17,7 +18,7 @@ export const convertBinToBlob = async ({
   const canvasBin = canvasApp.stage.getChildByLabel(`bin-${binIndex}`, true);
   if (!canvasBin) return null;
   let blob: Blob;
-  if (mimeType === "image/png") {
+  if (mimeType === "image/png" && OUTPUT_ENABLE_PNG_COMPRESSION) {
     const pixels = canvasApp.renderer.extract.pixels({
       target: canvasBin,
       resolution: 1,
