@@ -1,12 +1,15 @@
 import type { tOutputSettings } from "@/output/types";
 import type { tPackerSettings } from "@/packer/types";
 import type { tProject } from "@/projects/types";
-import type { tSprite } from "@/sprites/types";
+import type { tSprite, tUpdateSpriteData } from "@/sprites/types";
 
 export type tEventMap = {
   spritesAdded: { sprites: tSprite[] };
   spritesRemoved: { ids: string[] };
-  spriteUpdated: { id: string; updates: Partial<Pick<tSprite, "name">> };
+  spriteUpdated: {
+    id: string;
+    updates: tUpdateSpriteData;
+  };
   projectCreated: { project: tProject };
   projectUpdated: { id: string; updates: Partial<Pick<tProject, "name">> };
   projectRemoved: { id: string };

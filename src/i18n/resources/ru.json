@@ -33,7 +33,8 @@
     "sprite_editor": {
       "editor_title": "Редактирование спрайта",
       "name": "Имя",
-      "name_placeholder": "Введите имя"
+      "name_placeholder": "Введите имя",
+      "scale": "Масштаб"
     },
     "project_editor": {
       "editor_title": "Редактирование проекта",

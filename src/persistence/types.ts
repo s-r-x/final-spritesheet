@@ -27,6 +27,7 @@ export type tPersistedSprite = {
   mime: string;
   width: number;
   height: number;
+  scale: number;
   projectId: string;
 };
 export type tNormalizedPersistedSprite = Omit<tPersistedSprite, "blobId"> & {
@@ -77,7 +78,7 @@ export type tDbMutations = {
   removeProject: (id: string) => Promise<void>;
   updateSprite: (
     id: string,
-    data: Partial<Pick<tPersistedSprite, "name">>,
+    data: Partial<Pick<tPersistedSprite, "name" | "scale">>,
   ) => Promise<void>;
   removeSprite: (id: string) => Promise<void>;
 };

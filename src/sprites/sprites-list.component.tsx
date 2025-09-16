@@ -181,6 +181,11 @@ const SpriteItem = memo(
         onDoubleClick={() => focusSprite?.(id)}
         onContextMenu={showContextMenu(
           [
+            {
+              key: "update",
+              title: t("update"),
+              onClick: () => openEditor(id),
+            },
             focusSprite && {
               key: "focus",
               title: t("focus"),
@@ -190,11 +195,6 @@ const SpriteItem = memo(
               key: "remove",
               title: t("remove"),
               onClick: () => removeSprite(id),
-            },
-            {
-              key: "rename",
-              title: t("rename"),
-              onClick: () => openEditor(id),
             },
           ].filter(isDefined),
         )}

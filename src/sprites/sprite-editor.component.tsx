@@ -1,6 +1,6 @@
-import { Button, Group, Modal, TextInput } from "@mantine/core";
+import { Button, Group, Modal, TextInput, NumberInput } from "@mantine/core";
 import { useTranslation } from "@/i18n/use-translation";
-import { tSprite } from "./types";
+import type { tSprite } from "./types";
 import { useForm } from "@mantine/form";
 import * as z from "zod";
 import { zod4Resolver } from "mantine-form-zod-resolver";
@@ -30,7 +30,9 @@ const SpriteEditorModal = () => {
 
 const schema = z.object({
   name: z.string().trim().min(1),
+  scale: z.coerce.number().min(0.0001).max(1),
 });
+
 type tForm = z.infer<typeof schema>;
 const SpriteEditor = ({
   sprite,
@@ -45,6 +47,7 @@ const SpriteEditor = ({
     mode: "uncontrolled",
     initialValues: {
       name: sprite.name,
+      scale: sprite.scale,
     },
     validate: zod4Resolver(schema),
   });
@@ -62,6 +65,16 @@ const SpriteEditor = ({
         placeholder={t(i18nNs + "name_placeholder")}
         key={form.key("name")}
         {...form.getInputProps("name")}
+      />
+      <NumberInput
+        allowDecimal
+        allowNegative={false}
+        allowLeadingZeros={false}
+        decimalScale={4}
+        clampBehavior="strict"
+        label={t(i18nNs + "scale")}
+        key={form.key("scale")}
+        {...form.getInputProps("scale")}
       />
       <Group justify="flex-end" mt="md">
         <Button type="submit" disabled={form.submitting}>

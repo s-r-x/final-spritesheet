@@ -1,9 +1,9 @@
 import { RxJsonSchema } from "rxdb";
-import { tPersistedSprite } from "./types";
+import type { tPersistedSprite } from "./types";
 
 export const spriteSchema: RxJsonSchema<tPersistedSprite> = {
   title: "sprite schema",
-  version: 0,
+  version: 1,
   keyCompression: false,
   primaryKey: "id",
   type: "object",
@@ -22,6 +22,9 @@ export const spriteSchema: RxJsonSchema<tPersistedSprite> = {
       type: "number",
     },
     height: {
+      type: "number",
+    },
+    scale: {
       type: "number",
     },
     projectId: {

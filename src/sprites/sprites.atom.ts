@@ -1,6 +1,7 @@
 import { atom } from "jotai";
-import type { tSprite } from "./types";
+import type { tSprite, tUpdateSpriteData } from "./types";
 import { isEmpty } from "#utils/is-empty";
+import { calcSpriteDimensions } from "./calc-sprite-dimensions";
 
 export const spritesAtom = atom<tSprite[]>([]);
 
@@ -47,17 +48,26 @@ export const removeSpritesAtom = atom(
 
 export const updateSpriteAtom = atom(
   null,
-  (get, set, id: string, updates: Partial<Pick<tSprite, "name">>) => {
+  (get, set, id: string, updates: tUpdateSpriteData) => {
     set(
       spritesAtom,
-      get(spritesAtom).map((sprite) =>
-        sprite.id === id
-          ? {
-              ...sprite,
-              ...updates,
-            }
-          : sprite,
-      ),
+      get(spritesAtom).map((sprite) => {
+        if (sprite.id !== id) return sprite;
+        const finalUpdates: Partial<tSprite> = { ...updates };
+        if (updates.scale) {
+          const updatedDimensions = calcSpriteDimensions({
+            width: sprite.originalWidth,
+            height: sprite.originalHeight,
+            scale: updates.scale,
+          });
+          finalUpdates.width = updatedDimensions.width;
+          finalUpdates.height = updatedDimensions.height;
+        }
+        return {
+          ...sprite,
+          ...finalUpdates,
+        };
+      }),
     );
   },
 );

@@ -6,8 +6,13 @@ export type tSprite = {
   name: string;
   mime: string;
   width: number;
+  originalWidth: number;
   height: number;
+  originalHeight: number;
   blob: Blob;
   texture: Texture;
   url: string;
+  scale: number;
 };
+
+export type tUpdateSpriteData = Partial<Pick<tSprite, "name" | "scale">>;

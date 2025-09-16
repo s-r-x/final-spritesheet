@@ -141,8 +141,9 @@ const Bin = ({ bin, index }: tBinProps) => {
       <BinName name={`Bin ${index + 1}`} />
       <pixiContainer label={`bin-${index}`}>
         <pixiGraphics alpha={0} draw={drawDimensions} />
-        {bin.sprites.map(({ texture, id, x, y, rotated }) => (
+        {bin.sprites.map(({ texture, id, x, y, rotated, scale }) => (
           <pixiSprite
+            scale={scale}
             label={"sprite-" + id}
             key={id}
             texture={texture}
