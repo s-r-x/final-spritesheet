@@ -1,4 +1,4 @@
-import { addRxPlugin, createRxDatabase, RxDocument } from "rxdb/plugins/core";
+import { addRxPlugin, createRxDatabase } from "rxdb/plugins/core";
 import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode";
 import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
 import { RxDBAttachmentsPlugin } from "rxdb/plugins/attachments";
@@ -31,7 +31,8 @@ export const createDb = async (): Promise<tDb> => {
     sprites: {
       schema: spriteSchema,
       migrationStrategies: {
-        1(doc: RxDocument<tPersistedSprite>) {
+        1(oldDoc: tPersistedSprite) {
+          const doc = { ...oldDoc };
           if (!isNumber(doc.scale)) {
             doc.scale = 1;
           }
