@@ -2,9 +2,14 @@ import { useAtomValue, useStore } from "jotai";
 import { useCallback } from "react";
 import {
   packerSettingsAtom,
+  packerSettingsFormVersionAtom,
   rotationSupportabilityAtom,
 } from "./settings.atom";
 import type { tPackerSettings } from "./types";
+
+export const usePackerSettingsFormVersion = () => {
+  return useAtomValue(packerSettingsFormVersionAtom);
+};
 
 export const usePackerSettings = () => {
   return useAtomValue(packerSettingsAtom);

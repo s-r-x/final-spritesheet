@@ -6,12 +6,13 @@ import { initPersistenceLayer } from "./persistence/init-persistence-layer";
 import App from "./App";
 
 const createApp = async () => {
-  const { queries } = await initPersistenceLayer();
+  const { queries, mutations } = await initPersistenceLayer();
   createRoot(document.getElementById("root")!).render(
     createElement(
       App,
       {
         dbQueries: queries,
+        dbMutations: mutations,
       },
       null,
     ),

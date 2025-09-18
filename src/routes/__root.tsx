@@ -7,7 +7,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 export const Route = createRootRouteWithContext<{
   loadSprites: tDbQueries["getSpritesByProjectId"];
   loadProjects: tDbQueries["getProjectsList"];
-  createNewProject: () => { project: tProject };
+  createNewProject: () => Promise<{ project: tProject }>;
 }>()({
   component: () => (
     <>

@@ -1,18 +1,30 @@
-import { useSetAtom } from "jotai";
-import { removeSpritesAtom } from "./sprites.atom";
+import { useStore } from "jotai";
+import { spritesAtom } from "./sprites.atom";
 import { useCallback } from "react";
-import { isEmpty } from "#utils/is-empty";
-import { useEventBus } from "@/event-bus/use-event-bus";
+import type { tSprite } from "./types";
+import { RemoveSpritesCommand } from "./remove-sprites.command";
+import { useHistoryManager } from "@/history/use-history-manager";
 
 export const useRemoveSprites = () => {
-  const removeSprites = useSetAtom(removeSpritesAtom);
-  const eventBus = useEventBus();
-  return useCallback((ids: string | string[]) => {
-    const removedSprites = removeSprites(ids);
-    if (!isEmpty(removedSprites)) {
-      eventBus.emit("spritesRemoved", {
-        ids: removedSprites.map(({ id }) => id),
-      });
-    }
-  }, []);
+  const atomsStore = useStore();
+  const historyManager = useHistoryManager();
+  return useCallback(
+    (id: string | string[]) => {
+      const spritesToRemove = atomsStore
+        .get(spritesAtom)
+        .reduce((acc, sprite) => {
+          const matched = Array.isArray(id)
+            ? id.includes(sprite.id)
+            : sprite.id === id;
+          if (matched) {
+            acc.push(sprite);
+          }
+
+          return acc;
+        }, [] as tSprite[]);
+      const command = new RemoveSpritesCommand({ sprites: spritesToRemove });
+      historyManager.execCommand(command);
+    },
+    [historyManager],
+  );
 };

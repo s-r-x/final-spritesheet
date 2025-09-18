@@ -3,6 +3,7 @@ import {
   Link,
   notFound,
   redirect,
+  useBlocker,
   useNavigate,
 } from "@tanstack/react-router";
 import Layout from "@/layout/layout.component";
@@ -44,6 +45,13 @@ import { useTranslation } from "@/i18n/use-translation";
 import { useDocumentTitle } from "@mantine/hooks";
 import { useActiveProjectName } from "@/projects/use-active-project-name";
 import { Translation } from "@/i18n/translation.component";
+import { resetHistoryStackAtom } from "@/history/history.atom";
+import { useListenShortcuts } from "@/shortcuts/use-listen-shortcuts";
+import { clearPersistenceCommandsAtom } from "@/persistence/persistence.atom";
+import {
+  useHasUnsavedChanges,
+  useIsPersisting,
+} from "@/persistence/use-persistence";
 
 export const Route = createFileRoute("/projects/{-$projectId}")({
   component: Project,
@@ -73,7 +81,7 @@ export const Route = createFileRoute("/projects/{-$projectId}")({
     if (!projectId) {
       let projectIdToRedirect: Maybe<string> = null;
       if (isEmpty(loadedProjects)) {
-        const { project: newProject } = ctx.context.createNewProject();
+        const { project: newProject } = await ctx.context.createNewProject();
         projectIdToRedirect = newProject.id;
       } else {
         projectIdToRedirect = loadedProjects[0].id;
@@ -93,6 +101,8 @@ export const Route = createFileRoute("/projects/{-$projectId}")({
     const normalizedSprites = await Promise.all(sprites.map(persistedToSprite));
     atomsStore.set(activeProjectIdAtom, projectId);
     atomsStore.set(setSpritesAtom, normalizedSprites);
+    atomsStore.set(resetHistoryStackAtom);
+    atomsStore.set(clearPersistenceCommandsAtom);
   },
   notFoundComponent: ProjectNotFound,
 });
@@ -136,8 +146,8 @@ function ProjectNotFound() {
         )}
         <Button
           leftSection={<PlusIcon />}
-          onClick={() => {
-            const { project } = createProject();
+          onClick={async () => {
+            const { project } = await createProject();
             navigate({
               to: "/projects/{-$projectId}",
               params: {
@@ -158,6 +168,18 @@ function Project() {
   const { t } = useTranslation();
   const projectName = useActiveProjectName();
   useDocumentTitle(projectName || "Final spritesheet");
+  useListenShortcuts();
+  const hasUnsavedChanges = useHasUnsavedChanges();
+  const isPersisting = useIsPersisting();
+  const shouldBlockRouteChange = hasUnsavedChanges || isPersisting;
+  useBlocker({
+    shouldBlockFn() {
+      if (!shouldBlockRouteChange) return false;
+      const yes = window.confirm(t("unsaved_changes_warn"));
+      return !yes;
+    },
+    enableBeforeUnload: shouldBlockRouteChange,
+  });
   return (
     <CanvasRefsProvider>
       <Layout

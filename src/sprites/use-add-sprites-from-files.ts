@@ -1,15 +1,13 @@
-import { useSetAtom } from "jotai";
-import { addSpritesAtom } from "./sprites.atom";
 import { useCallback } from "react";
-import { useEventBus } from "@/event-bus/use-event-bus";
 import { useActiveProjectId } from "@/projects/use-active-project-id";
-import { tSprite } from "./types";
+import type { tSprite } from "./types";
 import { fileToSprite } from "./sprites.mapper";
+import { useHistoryManager } from "@/history/use-history-manager";
+import { AddSpritesCommand } from "./add-sprites.command";
 
 export const useAddSpritesFromFiles = () => {
-  const addSprites = useSetAtom(addSpritesAtom);
   const projectId = useActiveProjectId();
-  const eventBus = useEventBus();
+  const historyManager = useHistoryManager();
   return useCallback(
     async (files: File[]) => {
       if (!projectId) {
@@ -18,9 +16,9 @@ export const useAddSpritesFromFiles = () => {
       const sprites: tSprite[] = await Promise.all(
         files.map((file) => fileToSprite({ file, projectId })),
       );
-      addSprites(sprites);
-      eventBus.emit("spritesAdded", { sprites });
+      const command = new AddSpritesCommand({ sprites });
+      historyManager.execCommand(command);
     },
-    [projectId],
+    [projectId, historyManager],
   );
 };

@@ -13,7 +13,10 @@ import { useActiveProjectId } from "@/projects/use-active-project-id";
 import { useUpdateOutputSettings } from "./use-update-output-settings";
 import { useDebouncedCallback } from "@mantine/hooks";
 import { zod4Resolver } from "mantine-form-zod-resolver";
-import { useGetOutputSettings } from "./use-output-settings";
+import {
+  useGetOutputSettings,
+  useOutputSettingsFormVersion,
+} from "./use-output-settings";
 import { useEffect } from "react";
 import CloseableMessage from "#components/closeable-message.component";
 
@@ -165,12 +168,13 @@ const OutputSettings = ({ initialValues }: { initialValues: tForm }) => {
 };
 const OutputSettingsRoot = () => {
   const projectId = useActiveProjectId();
+  const formVersion = useOutputSettingsFormVersion();
   const getOutputSettings = useGetOutputSettings();
   if (!projectId) return null;
   const settings = getOutputSettings();
   return (
     <OutputSettings
-      key={projectId}
+      key={projectId + formVersion}
       initialValues={{
         pngCompression: String(settings.pngCompression),
         imageQuality: settings.imageQuality,

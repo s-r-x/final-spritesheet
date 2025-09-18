@@ -1,22 +1,24 @@
-import { useEventBus } from "@/event-bus/use-event-bus";
 import { useActiveProjectId } from "@/projects/use-active-project-id";
-import { useStore } from "jotai";
 import { useCallback } from "react";
-import { tOutputSettings } from "./types";
-import { outputSettingsAtom } from "./output-settings.atom";
+import type { tOutputSettings } from "./types";
+import { useGetOutputSettings } from "./use-output-settings";
+import { useHistoryManager } from "@/history/use-history-manager";
+import { UpdateOutputSettingsCommand } from "./update-output-settings.command";
 
 export const useUpdateOutputSettings = () => {
   const projectId = useActiveProjectId()!;
-  const atomsStore = useStore();
-  const eventBus = useEventBus();
+  const getOutputSettings = useGetOutputSettings();
+  const historyManager = useHistoryManager();
   return useCallback(
     (settings: Partial<tOutputSettings>) => {
-      atomsStore.set(outputSettingsAtom, settings);
-      eventBus.emit("outputSettingsUpdated", {
-        projectId,
+      const originalSettings = getOutputSettings();
+      const command = new UpdateOutputSettingsCommand({
+        originalSettings,
         settings,
+        projectId,
       });
+      historyManager.execCommand(command);
     },
-    [projectId],
+    [projectId, historyManager],
   );
 };

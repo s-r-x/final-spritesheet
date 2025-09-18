@@ -35,3 +35,9 @@ export const outputSettingsAtom = atom<
     });
   },
 );
+
+// the only usage of this one is to force rerender the output settings form
+export const outputSettingsFormVersionAtom = atom(0);
+export const incOutputSettingsFormVersionAtom = atom(null, (get, set) => {
+  set(outputSettingsFormVersionAtom, get(outputSettingsFormVersionAtom) + 1);
+});

@@ -14,6 +14,7 @@ import { useUpdatePackerSettings } from "./use-update-packer-settings";
 import {
   useGetPackerSettings,
   useIsRotationSupported,
+  usePackerSettingsFormVersion,
 } from "./use-packer-settings";
 
 const ATOMS_UPDATE_DELAY_MS = 200;
@@ -105,11 +106,12 @@ const PackerSettings = ({ initialValues }: { initialValues: tForm }) => {
 const PackerSettingsRoot = () => {
   const projectId = useActiveProjectId();
   const getPackerSettings = useGetPackerSettings();
+  const formVersion = usePackerSettingsFormVersion();
   if (!projectId) return null;
   const settings = getPackerSettings();
   return (
     <PackerSettings
-      key={projectId}
+      key={projectId + formVersion}
       initialValues={{
         sheetMaxSize: String(settings.sheetMaxSize),
         spritePadding: settings.spritePadding,

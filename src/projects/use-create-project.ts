@@ -4,18 +4,18 @@ import { addProjectAtom } from "./projects.atom";
 import { generateUniqueName } from "#utils/generate-unique-name";
 import type { tProject } from "./types";
 import { generateId } from "#utils/generate-id";
-import { useEventBus } from "@/event-bus/use-event-bus";
+import { useDbMutations } from "@/persistence/use-db";
 
 export const useCreateProject = () => {
   const addProjectToAtom = useSetAtom(addProjectAtom);
-  const eventBus = useEventBus();
-  const createProject = useCallback(() => {
+  const dbMutations = useDbMutations();
+  const createProject = useCallback(async () => {
     const project: tProject = {
       id: generateId(),
       name: generateUniqueName(),
       createdAt: new Date().toISOString(),
     };
-    eventBus.emit("projectCreated", { project });
+    await dbMutations.createNewProject(project);
     addProjectToAtom(project);
     return { project };
   }, []);

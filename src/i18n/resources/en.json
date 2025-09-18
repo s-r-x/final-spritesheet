@@ -12,6 +12,10 @@
     "submit": "Submit",
     "oversized_sprites": "Oversized",
     "open_menu": "Open menu",
+    "redo": "Redo",
+    "undo": "Undo",
+    "save": "Save",
+    "unsaved_changes_warn": "There are some unsaved changes. You might want to save them before leaving.",
     "packer_opts": {
       "form_name": "Packer",
       "max_size": "Max sheet size",

@@ -1,14 +1,18 @@
-import { useSetAtom } from "jotai";
-import { updateSpriteAtom } from "./sprites.atom";
 import { useCallback } from "react";
-import type { tUpdateSpriteData } from "./types";
-import { useEventBus } from "@/event-bus/use-event-bus";
+import type { tSprite, tUpdateSpriteData } from "./types";
+import { UpdateSpriteCommand } from "./update-sprite.command";
+import { useHistoryManager } from "@/history/use-history-manager";
 
 export const useUpdateSprite = () => {
-  const updateSprite = useSetAtom(updateSpriteAtom);
-  const eventBus = useEventBus();
-  return useCallback((id: string, updates: tUpdateSpriteData) => {
-    updateSprite(id, updates);
-    eventBus.emit("spriteUpdated", { id, updates });
-  }, []);
+  const historyManager = useHistoryManager();
+  return useCallback(
+    (sprite: tSprite, updates: tUpdateSpriteData) => {
+      const command = new UpdateSpriteCommand({
+        originalSprite: sprite,
+        updates,
+      });
+      historyManager.execCommand(command);
+    },
+    [historyManager],
+  );
 };

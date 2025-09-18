@@ -82,3 +82,9 @@ export const allowRotationSettingAtom = atom(
     set(packerSettingsAtom, { allowRotation });
   },
 );
+
+// the only usage of this one is to force rerender the packer settings form
+export const packerSettingsFormVersionAtom = atom(0);
+export const incPackerSettingsFormVersionAtom = atom(null, (get, set) => {
+  set(packerSettingsFormVersionAtom, get(packerSettingsFormVersionAtom) + 1);
+});

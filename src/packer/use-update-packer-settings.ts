@@ -1,22 +1,24 @@
 import { useActiveProjectId } from "@/projects/use-active-project-id";
 import { useCallback } from "react";
 import type { tPackerSettings } from "./types";
-import { useStore } from "jotai";
-import { packerSettingsAtom } from "./settings.atom";
-import { useEventBus } from "@/event-bus/use-event-bus";
+import { useGetPackerSettings } from "./use-packer-settings";
+import { useHistoryManager } from "@/history/use-history-manager";
+import { UpdatePackerSettingsCommand } from "./update-packer-settings.command";
 
 export const useUpdatePackerSettings = () => {
   const projectId = useActiveProjectId()!;
-  const atomsStore = useStore();
-  const eventBus = useEventBus();
+  const getPackerSettings = useGetPackerSettings();
+  const historyManager = useHistoryManager();
   return useCallback(
     (settings: Partial<tPackerSettings>) => {
-      atomsStore.set(packerSettingsAtom, settings);
-      eventBus.emit("packerSettingsUpdated", {
-        projectId,
+      const originalSettings = getPackerSettings();
+      const command = new UpdatePackerSettingsCommand({
+        originalSettings,
         settings,
+        projectId,
       });
+      historyManager.execCommand(command);
     },
-    [projectId],
+    [projectId, historyManager],
   );
 };

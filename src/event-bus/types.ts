@@ -5,9 +5,10 @@ import type { tSprite, tUpdateSpriteData } from "@/sprites/types";
 
 export type tEventMap = {
   spritesAdded: { sprites: tSprite[] };
-  spritesRemoved: { ids: string[] };
+  spritesRemoved: { sprites: tSprite[]; ids: string[] };
   spriteUpdated: {
     id: string;
+    originalSprite: tSprite;
     updates: tUpdateSpriteData;
   };
   projectCreated: { project: tProject };
@@ -15,10 +16,12 @@ export type tEventMap = {
   projectRemoved: { id: string };
   outputSettingsUpdated: {
     projectId: string;
+    originalSettings: tOutputSettings;
     settings: Partial<tOutputSettings>;
   };
   packerSettingsUpdated: {
     projectId: string;
+    originalSettings: tPackerSettings;
     settings: Partial<tPackerSettings>;
   };
 };

@@ -52,8 +52,8 @@ const PackerAppBar = () => {
             </Menu.Sub.Dropdown>
           </Menu.Sub>
           <Menu.Item
-            onClick={() => {
-              const { project } = createProject();
+            onClick={async () => {
+              const { project } = await createProject();
               navigate({
                 to: "/projects/{-$projectId}",
                 params: {

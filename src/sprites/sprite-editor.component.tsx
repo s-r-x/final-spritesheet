@@ -55,7 +55,7 @@ const SpriteEditor = ({
   return (
     <form
       onSubmit={form.onSubmit((values) => {
-        updateSprite(sprite.id, values);
+        updateSprite(sprite, values);
         onClose();
       })}
     >

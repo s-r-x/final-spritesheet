@@ -70,6 +70,20 @@ export const persistedToSprite = async (
     scale,
   };
 };
+
+export const historyEntryToSprite = async (
+  sprite: tSprite,
+): Promise<tSprite> => {
+  const url = URL.createObjectURL(sprite.blob);
+  const img = await loadImage(url);
+  const texture = Texture.from(img);
+  return {
+    ...sprite,
+    url,
+    texture,
+  };
+};
+
 export const spriteToPersisted = (
   sprite: tSprite,
 ): tNormalizedPersistedSprite => {
