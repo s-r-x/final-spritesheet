@@ -17,7 +17,6 @@ import {
   useGetOutputSettings,
   useOutputSettingsFormVersion,
 } from "./use-output-settings";
-import { useEffect } from "react";
 import CloseableMessage from "#components/closeable-message.component";
 
 const i18nNs = "output_opts.";
@@ -36,7 +35,6 @@ const schema = z.object({
 });
 type tForm = z.input<typeof schema>;
 const OutputSettings = ({ initialValues }: { initialValues: tForm }) => {
-  const getOutputSettings = useGetOutputSettings();
   const onValuesChange = useDebouncedCallback((values: tForm) => {
     const result = schema.safeParse(values);
     if (result.success) {
@@ -51,17 +49,6 @@ const OutputSettings = ({ initialValues }: { initialValues: tForm }) => {
     onValuesChange,
   });
   const updateSettings = useUpdateOutputSettings();
-  useEffect(() => {
-    const settings = getOutputSettings();
-    form.initialize({
-      pngCompression: String(settings.pngCompression),
-      imageQuality: settings.imageQuality,
-      textureFormat: settings.textureFormat,
-      framework: settings.framework,
-      textureFileName: settings.textureFileName,
-      dataFileName: settings.dataFileName,
-    });
-  }, []);
   const isPng = form.values.textureFormat === "png";
   const framework = form.values.framework;
   const renderFrameworkInfo = () => {
