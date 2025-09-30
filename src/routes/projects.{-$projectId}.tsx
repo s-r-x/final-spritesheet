@@ -173,8 +173,15 @@ function Project() {
   const isPersisting = useIsPersisting();
   const shouldBlockRouteChange = hasUnsavedChanges || isPersisting;
   useBlocker({
-    shouldBlockFn() {
-      if (!shouldBlockRouteChange) return false;
+    shouldBlockFn({ current, next }) {
+      // this thing is also triggered when changing the search params
+      // which we don't care about in this context
+      if (current.pathname === next.pathname) {
+        return false;
+      }
+      if (!shouldBlockRouteChange) {
+        return false;
+      }
       const yes = window.confirm(t("unsaved_changes_warn"));
       return !yes;
     },
