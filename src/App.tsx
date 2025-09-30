@@ -15,11 +15,11 @@ type tProps = {
 
 const router = createRouter();
 const App = ({ dbQueries, dbMutations }: tProps) => {
-  const createProject = useCreateProject();
   useHydrateAtoms([
     [dbMutationsAtom, dbMutations],
     [dbQueriesAtom, dbQueries],
   ] as const);
+  const createProject = useCreateProject();
   return (
     <RouterProvider
       router={router}

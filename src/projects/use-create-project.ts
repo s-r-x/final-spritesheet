@@ -18,6 +18,6 @@ export const useCreateProject = () => {
     await dbMutations.createNewProject(project);
     addProjectToAtom(project);
     return { project };
-  }, []);
+  }, [dbMutations]);
   return createProject;
 };
