@@ -11,3 +11,5 @@ format.check:
 	npm run format:check
 format.fix:
 	npm run format:fix
+preview:
+	npm run preview
