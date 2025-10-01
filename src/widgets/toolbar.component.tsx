@@ -131,9 +131,8 @@ const Toolbar = () => {
           leftSection={<DownloadIcon size={20} />}
           size="sm"
           onClick={() => exportSpritesheetMut.mutate()}
-          disabled={
-            isExportDisabled || isPersisting || exportSpritesheetMut.isLoading
-          }
+          loading={exportSpritesheetMut.isLoading}
+          disabled={isExportDisabled || isPersisting}
           aria-label={exportLabel}
         >
           {exportLabel}
