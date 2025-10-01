@@ -26,11 +26,15 @@ import {
   useIsPersisting,
   usePersistChanges,
 } from "@/persistence/use-persistence";
+import { useMutation } from "@/common/hooks/use-mutation";
 
 const Toolbar = () => {
   const { t } = useTranslation();
   const addSprites = useAddSpritesFromFiles();
   const exportSpritesheet = useExportSpritesheet();
+  const exportSpritesheetMut = useMutation(exportSpritesheet, {
+    showLoadingBar: true,
+  });
   const isMobile = useIsMobileLayout();
   const openLeftPanel = useLeftPanelModal();
   const openRightPanel = useRightPanelModal();
@@ -38,11 +42,16 @@ const Toolbar = () => {
   const exportLabel = t("export");
   const canUndo = useCanUndo();
   const undo = useUndo();
+  const undoMut = useMutation(undo);
   const canRedo = useCanRedo();
   const redo = useRedo();
+  const redoMut = useMutation(redo);
   const canPersist = useHasUnsavedChanges();
   const isPersisting = useIsPersisting();
   const persistChanges = usePersistChanges();
+  const persistChangesMut = useMutation(persistChanges, {
+    showLoadingBar: true,
+  });
   const isExportDisabled = useIsExportSpritesheetDisabled();
   return (
     <div className={styles.root}>
@@ -74,7 +83,7 @@ const Toolbar = () => {
           }
         </FileButton>
         <ActionIcon
-          onClick={undo}
+          onClick={() => undoMut.mutate()}
           disabled={!canUndo || isPersisting}
           size="lg"
           aria-label={t("undo")}
@@ -82,7 +91,7 @@ const Toolbar = () => {
           <UndoIcon />
         </ActionIcon>
         <ActionIcon
-          onClick={redo}
+          onClick={() => redoMut.mutate()}
           disabled={!canRedo || isPersisting}
           size="lg"
           aria-label={t("redo")}
@@ -110,7 +119,7 @@ const Toolbar = () => {
         <ActionIcon
           disabled={!canPersist}
           aria-label={t("save")}
-          onClick={persistChanges}
+          onClick={() => persistChangesMut.mutate()}
           loading={isPersisting}
           variant="light"
           size="lg"
@@ -121,8 +130,10 @@ const Toolbar = () => {
           variant="light"
           leftSection={<DownloadIcon size={20} />}
           size="sm"
-          onClick={exportSpritesheet}
-          disabled={isExportDisabled || isPersisting}
+          onClick={() => exportSpritesheetMut.mutate()}
+          disabled={
+            isExportDisabled || isPersisting || exportSpritesheetMut.isLoading
+          }
           aria-label={exportLabel}
         >
           {exportLabel}

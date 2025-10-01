@@ -52,6 +52,7 @@ import {
   useHasUnsavedChanges,
   useIsPersisting,
 } from "@/persistence/use-persistence";
+import { useMutation } from "@/common/hooks/use-mutation";
 
 export const Route = createFileRoute("/projects/{-$projectId}")({
   component: Project,
@@ -115,6 +116,17 @@ function ProjectNotFound() {
   const hasProjects = isEmpty(projects);
   const navigate = useNavigate();
   const createProject = useCreateProject();
+  const createProjectMut = useMutation(createProject, {
+    showLoadingBar: true,
+    onSuccess({ project }) {
+      navigate({
+        to: "/projects/{-$projectId}",
+        params: {
+          projectId: project.id,
+        },
+      });
+    },
+  });
   return (
     <Center mih={"100dvh"} miw={"100dvw"}>
       <Stack gap="lg" align="flex-start">
@@ -146,15 +158,8 @@ function ProjectNotFound() {
         )}
         <Button
           leftSection={<PlusIcon />}
-          onClick={async () => {
-            const { project } = await createProject();
-            navigate({
-              to: "/projects/{-$projectId}",
-              params: {
-                projectId: project.id,
-              },
-            });
-          }}
+          disabled={createProjectMut.isLoading}
+          onClick={() => createProjectMut.mutate()}
         >
           {t(i18nNs + "new_project")}
         </Button>

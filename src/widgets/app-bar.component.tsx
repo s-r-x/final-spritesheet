@@ -10,6 +10,7 @@ import { useProjectsList } from "@/projects/use-projects-list";
 import { useRemoveProject } from "@/projects/use-remove-project";
 import { useLanguage } from "@/i18n/use-language";
 import { SUPPORTED_LANGUAGES } from "#config";
+import { useMutation } from "@/common/hooks/use-mutation";
 
 const i18nNs = "app_menu.";
 const PackerAppBar = () => {
@@ -17,8 +18,23 @@ const PackerAppBar = () => {
   const navigate = useNavigate();
   const openProjectEditor = useOpenProjectEditor();
   const createProject = useCreateProject();
+  const createProjectMut = useMutation(createProject, {
+    showLoadingBar: true,
+    onSuccess({ project }) {
+      navigate({
+        to: "/projects/{-$projectId}",
+        params: {
+          projectId: project.id,
+        },
+      });
+    },
+  });
   const projectsList = useProjectsList();
   const removeProject = useRemoveProject();
+  const removeProjectMut = useMutation(removeProject, {
+    showLoadingBar: true,
+    confirm: true,
+  });
   const [, setLang] = useLanguage();
   const { setColorScheme } = useMantineColorScheme();
   const { t } = useTranslation();
@@ -52,15 +68,8 @@ const PackerAppBar = () => {
             </Menu.Sub.Dropdown>
           </Menu.Sub>
           <Menu.Item
-            onClick={async () => {
-              const { project } = await createProject();
-              navigate({
-                to: "/projects/{-$projectId}",
-                params: {
-                  projectId: project.id,
-                },
-              });
-            }}
+            disabled={createProjectMut.isLoading}
+            onClick={() => createProjectMut.mutate()}
           >
             {t(i18nNs + "new_project")}
           </Menu.Item>
@@ -70,8 +79,9 @@ const PackerAppBar = () => {
                 {t(i18nNs + "edit_project")}
               </Menu.Item>
               <Menu.Item
+                disabled={removeProjectMut.isLoading}
                 onClick={() => {
-                  removeProject(activeProject.id);
+                  removeProjectMut.mutate(activeProject.id);
                 }}
               >
                 {t(i18nNs + "remove_project")}

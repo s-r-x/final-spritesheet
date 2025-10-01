@@ -18,6 +18,7 @@ import {
   useOutputSettingsFormVersion,
 } from "./use-output-settings";
 import CloseableMessage from "#components/closeable-message.component";
+import { useMutation } from "@/common/hooks/use-mutation";
 
 const i18nNs = "output_opts.";
 
@@ -35,10 +36,12 @@ const schema = z.object({
 });
 type tForm = z.input<typeof schema>;
 const OutputSettings = ({ initialValues }: { initialValues: tForm }) => {
+  const updateSettings = useUpdateOutputSettings();
+  const updateSettingsMut = useMutation(updateSettings);
   const onValuesChange = useDebouncedCallback((values: tForm) => {
     const result = schema.safeParse(values);
     if (result.success) {
-      updateSettings(result.data);
+      updateSettingsMut.mutate(result.data);
     }
   }, 200);
   const form = useForm<tForm>({
@@ -48,7 +51,6 @@ const OutputSettings = ({ initialValues }: { initialValues: tForm }) => {
     validateInputOnChange: true,
     onValuesChange,
   });
-  const updateSettings = useUpdateOutputSettings();
   const isPng = form.values.textureFormat === "png";
   const framework = form.values.framework;
   const renderFrameworkInfo = () => {

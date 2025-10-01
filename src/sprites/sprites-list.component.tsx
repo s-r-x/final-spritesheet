@@ -23,6 +23,7 @@ import { useFocusBin } from "@/canvas/use-focus-bin";
 import { isDefined } from "#utils/is-defined";
 import { useIsMobileLayout } from "@/layout/use-is-mobile-layout";
 import { useCloseLeftPanelModal } from "@/layout/use-left-panel-modal";
+import { useMutation } from "@/common/hooks/use-mutation";
 
 const SpritesList = () => {
   const { t } = useTranslation();
@@ -32,6 +33,7 @@ const SpritesList = () => {
   const { bins, oversizedSprites } = usePackedSprites();
   const addSpritesFromFiles = useAddSpritesFromFiles();
   const removeSprite = useRemoveSprites();
+  const removeSpriteMut = useMutation(removeSprite);
   const focusSprite_ = useFocusSprite();
   const focusSprite = useCallback(
     (id: string) => {
@@ -116,7 +118,9 @@ const SpritesList = () => {
                 </Menu.Item>
               )}
               <Menu.Item
-                onClick={() => removeSprite(sprites.map((sprite) => sprite.id))}
+                onClick={() =>
+                  removeSpriteMut.mutate(sprites.map((sprite) => sprite.id))
+                }
               >
                 {t("remove")}
               </Menu.Item>
@@ -132,7 +136,7 @@ const SpritesList = () => {
               imageUrl={sprite.url}
               openEditor={openSpriteEditor}
               focusSprite={disableFocus ? undefined : focusSprite}
-              removeSprite={removeSprite}
+              removeSprite={removeSpriteMut.mutate}
             />
           ))}
         </ul>

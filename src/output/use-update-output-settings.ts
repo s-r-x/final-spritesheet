@@ -10,14 +10,14 @@ export const useUpdateOutputSettings = () => {
   const getOutputSettings = useGetOutputSettings();
   const historyManager = useHistoryManager();
   return useCallback(
-    (settings: Partial<tOutputSettings>) => {
+    async (settings: Partial<tOutputSettings>) => {
       const originalSettings = getOutputSettings();
       const command = new UpdateOutputSettingsCommand({
         originalSettings,
         settings,
         projectId,
       });
-      historyManager.execCommand(command);
+      await historyManager.execCommand(command);
     },
     [projectId, historyManager],
   );

@@ -10,14 +10,14 @@ export const useUpdatePackerSettings = () => {
   const getPackerSettings = useGetPackerSettings();
   const historyManager = useHistoryManager();
   return useCallback(
-    (settings: Partial<tPackerSettings>) => {
+    async (settings: Partial<tPackerSettings>) => {
       const originalSettings = getPackerSettings();
       const command = new UpdatePackerSettingsCommand({
         originalSettings,
         settings,
         projectId,
       });
-      historyManager.execCommand(command);
+      await historyManager.execCommand(command);
     },
     [projectId, historyManager],
   );

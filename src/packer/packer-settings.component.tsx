@@ -16,6 +16,7 @@ import {
   useIsRotationSupported,
   usePackerSettingsFormVersion,
 } from "./use-packer-settings";
+import { useMutation } from "@/common/hooks/use-mutation";
 
 const ATOMS_UPDATE_DELAY_MS = 200;
 const schema = z.object({
@@ -30,10 +31,11 @@ type tForm = z.input<typeof schema>;
 const PackerSettings = ({ initialValues }: { initialValues: tForm }) => {
   const isRotationSupported = useIsRotationSupported();
   const updateSettings = useUpdatePackerSettings();
+  const updateSettingsMut = useMutation(updateSettings);
   const onValuesChange = useDebouncedCallback((values: tForm) => {
     const result = schema.safeParse(values);
     if (result.success) {
-      updateSettings(result.data);
+      updateSettingsMut.mutate(result.data);
     }
   }, ATOMS_UPDATE_DELAY_MS);
   const form = useForm<tForm>({

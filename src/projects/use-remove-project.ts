@@ -19,6 +19,6 @@ export const useRemoveProject = () => {
         router.invalidate();
       }
     },
-    [, dbMutations],
+    [dbMutations],
   );
 };

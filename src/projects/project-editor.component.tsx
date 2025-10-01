@@ -9,6 +9,7 @@ import {
   useCloseProjectEditor,
 } from "./use-project-editor";
 import { useUpdateProject } from "./use-update-project";
+import { useMutation } from "@/common/hooks/use-mutation";
 
 const i18nNs = "project_editor.";
 const ProjectEditorModal = () => {
@@ -45,6 +46,12 @@ const ProjectEditor = ({
   onClose: () => void;
 }) => {
   const updateProject = useUpdateProject();
+  const updateProjectMut = useMutation(
+    (form: tForm) => updateProject(project.id, form),
+    {
+      onSuccess: onClose,
+    },
+  );
   const { t } = useTranslation();
   const form = useForm<tForm>({
     mode: "uncontrolled",
@@ -57,8 +64,7 @@ const ProjectEditor = ({
   return (
     <form
       onSubmit={form.onSubmit((values) => {
-        updateProject(project.id, values);
-        onClose();
+        updateProjectMut.mutate(values);
       })}
     >
       <TextInput
@@ -69,7 +75,7 @@ const ProjectEditor = ({
         {...form.getInputProps("name")}
       />
       <Group justify="flex-end" mt="md">
-        <Button type="submit" disabled={form.submitting}>
+        <Button type="submit" disabled={updateProjectMut.isLoading}>
           Submit
         </Button>
       </Group>

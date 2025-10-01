@@ -1,6 +1,7 @@
-import { ContextMenuProvider } from "mantine-contextmenu";
-
 import { MantineProvider } from "@mantine/core";
+import { ContextMenuProvider } from "mantine-contextmenu";
+import { Notifications } from "@mantine/notifications";
+import { ModalsProvider } from "@mantine/modals";
 
 export default function UiFrameworkProvider(props: { children: any }) {
   return (
@@ -8,8 +9,9 @@ export default function UiFrameworkProvider(props: { children: any }) {
       theme={{ primaryColor: "violet" }}
       defaultColorScheme="auto"
     >
+      <Notifications />
       <ContextMenuProvider submenuDelay={100}>
-        {props.children}
+        <ModalsProvider>{props.children}</ModalsProvider>
       </ContextMenuProvider>
     </MantineProvider>
   );

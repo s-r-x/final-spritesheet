@@ -9,7 +9,7 @@ export const useRemoveSprites = () => {
   const atomsStore = useStore();
   const historyManager = useHistoryManager();
   return useCallback(
-    (id: string | string[]) => {
+    async (id: string | string[]) => {
       const spritesToRemove = atomsStore
         .get(spritesAtom)
         .reduce((acc, sprite) => {

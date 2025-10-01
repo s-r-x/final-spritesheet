@@ -16,6 +16,13 @@
     "undo": "Undo",
     "save": "Save",
     "unsaved_changes_warn": "There are some unsaved changes. You might want to save them before leaving.",
+    "error": "Error",
+    "generic_error_desc": "There was an error during the operation. Check the console for details",
+    "confirm_dialog": {
+      "default_title": "Confirm your action",
+      "default_yes": "Confirm",
+      "default_no": "Cancel"
+    },
     "packer_opts": {
       "form_name": "Packer",
       "max_size": "Max sheet size",
