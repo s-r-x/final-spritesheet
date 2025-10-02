@@ -11,5 +11,6 @@ export const createDb = async (): Promise<tDb> => {
     projects: "id",
   };
   db.version(1).stores(collections);
+  await db.open();
   return db;
 };
