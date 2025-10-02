@@ -1,6 +1,12 @@
 import type { tPackerAlgorithm } from "@/packer/types";
-import type { RxCollection, RxDatabase } from "rxdb";
+import type Dexie from "dexie";
+import type { EntityTable } from "dexie";
 
+export type tPersistedBlob = {
+  id: string;
+  projectId: string;
+  data: Blob;
+};
 export type tPersistedProject = {
   id: string;
   name: string;
@@ -29,15 +35,18 @@ export type tPersistedSprite = {
   height: number;
   scale: number;
   projectId: string;
+  blobId: string;
 };
 export type tNormalizedPersistedSprite = Omit<tPersistedSprite, "blobId"> & {
   blob: Blob;
 };
 
-export type tDb = RxDatabase<{
-  sprites: RxCollection<tPersistedSprite>;
-  projects: RxCollection<tPersistedProject>;
-}>;
+export type tDbCollections = {
+  blobs: EntityTable<tPersistedBlob, "id">;
+  sprites: EntityTable<tPersistedSprite, "id">;
+  projects: EntityTable<tPersistedProject, "id">;
+};
+export type tDb = Dexie & tDbCollections;
 
 export type tUpdateProjectData = Partial<
   Pick<

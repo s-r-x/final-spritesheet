@@ -1,45 +1,15 @@
-import { addRxPlugin, createRxDatabase } from "rxdb/plugins/core";
-import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode";
-import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
-import { RxDBAttachmentsPlugin } from "rxdb/plugins/attachments";
-import { DEV } from "#config";
-import { spriteSchema } from "./sprite.schema";
-import type { tDb, tPersistedSprite } from "./types";
-import { projectSchema } from "./project.schema";
-import { wrappedValidateAjvStorage } from "rxdb/plugins/validate-ajv";
-import { RxDBUpdatePlugin } from "rxdb/plugins/update";
-import { RxDBMigrationSchemaPlugin } from "rxdb/plugins/migration-schema";
-import { isNumber } from "#utils/is-number";
-
-addRxPlugin(RxDBAttachmentsPlugin);
-addRxPlugin(RxDBUpdatePlugin);
-addRxPlugin(RxDBMigrationSchemaPlugin);
-if (DEV) {
-  addRxPlugin(RxDBDevModePlugin);
-}
+import type { tDb, tDbCollections } from "./types";
+import Dexie from "dexie";
 
 export const createDb = async (): Promise<tDb> => {
-  const storage = getRxStorageDexie();
-  const db: tDb = await createRxDatabase({
-    name: "final_spritesheet",
-    storage: DEV ? wrappedValidateAjvStorage({ storage }) : storage,
-  });
-  await db.addCollections({
-    projects: {
-      schema: projectSchema,
-    },
-    sprites: {
-      schema: spriteSchema,
-      migrationStrategies: {
-        1(oldDoc: tPersistedSprite) {
-          const doc = { ...oldDoc };
-          if (!isNumber(doc.scale)) {
-            doc.scale = 1;
-          }
-          return doc;
-        },
-      },
-    },
-  });
+  const db = new Dexie("final-spritesheet") as tDb;
+  const collections: {
+    [K in keyof tDbCollections]: string | null;
+  } = {
+    sprites: "id, projectId",
+    blobs: "id, projectId",
+    projects: "id",
+  };
+  db.version(1).stores(collections);
   return db;
 };

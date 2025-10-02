@@ -5,63 +5,27 @@ import type {
   tPersistedProjectWithThumb,
 } from "./types";
 import { asyncReduce } from "#utils/async-reduce";
-import { tryAsync } from "#utils/try-async";
 
 export class DbQueries implements tDbQueries {
   constructor(private db: tDb) {}
   async getProjectsList(): Promise<{
     projects: tPersistedProjectWithThumb[];
   }> {
-    const res = await this.db.projects.find().exec();
-    const normalizedProjects = await asyncReduce(
-      res,
-      async (acc, project) => {
-        const attachment = project.getAttachment("thumb");
-        if (attachment) {
-          const [err, blob] = await tryAsync(
-            attachment.getData.bind(attachment),
-          )();
-          if (err) console.error(err);
-          acc.push({
-            ...project.toJSON(),
-            thumb: blob,
-          });
-        } else {
-          acc.push(project.toJSON());
-        }
-        return acc;
-      },
-      [] as tPersistedProjectWithThumb[],
-    );
+    const projects = await this.db.projects.toArray();
     return {
-      projects: normalizedProjects,
+      projects,
     };
   }
   async getSpritesByProjectId(
     id: string,
   ): Promise<{ sprites: tNormalizedPersistedSprite[] }> {
-    const res = await this.db.sprites
-      .find({
-        selector: {
-          projectId: id,
-        },
-      })
-      .exec();
+    const res = await this.db.sprites.where("projectId").equals(id).toArray();
     const normalizedSprites = await asyncReduce(
       res,
       async (acc, sprite) => {
-        const attachment = sprite.getAttachment("blob");
-        if (attachment) {
-          const [err, blob] = await tryAsync(
-            attachment.getData.bind(attachment),
-          )();
-          if (err) console.error(err);
-          if (blob) {
-            acc.push({
-              ...sprite.toJSON(),
-              blob: blob,
-            });
-          }
+        const attachment = await this.db.blobs.get(sprite.blobId);
+        if (attachment?.data) {
+          acc.push({ ...sprite, blob: attachment.data });
         }
         return acc;
       },
