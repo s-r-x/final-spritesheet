@@ -19,6 +19,7 @@ import {
 } from "./use-output-settings";
 import CloseableMessage from "#components/closeable-message.component";
 import { useMutation } from "@/common/hooks/use-mutation";
+import { memo } from "react";
 
 const i18nNs = "output_opts.";
 
@@ -176,4 +177,4 @@ const OutputSettingsRoot = () => {
   );
 };
 
-export default OutputSettingsRoot;
+export default memo(OutputSettingsRoot);

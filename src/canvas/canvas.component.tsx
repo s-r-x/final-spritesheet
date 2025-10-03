@@ -1,6 +1,6 @@
 import { Application, extend } from "@pixi/react";
 import { Container, Graphics, Sprite, Text } from "pixi.js";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, memo } from "react";
 import { Viewport } from "./canvas-viewport";
 import { useCanvasRefs } from "./canvas-refs";
 import type { tPackedBin } from "@/packer/types";
@@ -184,4 +184,4 @@ const BinName = ({ name }: { name: string }) => {
 
 const getRootDomElement = () => document.getElementById("canvas-root");
 
-export default Canvas;
+export default memo(Canvas);

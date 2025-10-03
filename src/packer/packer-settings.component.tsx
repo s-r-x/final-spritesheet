@@ -17,6 +17,7 @@ import {
   usePackerSettingsFormVersion,
 } from "./use-packer-settings";
 import { useMutation } from "@/common/hooks/use-mutation";
+import { memo } from "react";
 
 const ATOMS_UPDATE_DELAY_MS = 200;
 const schema = z.object({
@@ -125,4 +126,4 @@ const PackerSettingsRoot = () => {
   );
 };
 
-export default PackerSettingsRoot;
+export default memo(PackerSettingsRoot);

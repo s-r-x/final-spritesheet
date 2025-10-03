@@ -210,4 +210,4 @@ const SpriteItem = memo(
   },
 );
 
-export default SpritesList;
+export default memo(SpritesList);

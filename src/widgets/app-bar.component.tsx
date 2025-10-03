@@ -12,6 +12,7 @@ import { useLanguage } from "@/i18n/use-language";
 import { SUPPORTED_LANGUAGES } from "#config";
 import { useMutation } from "@/common/hooks/use-mutation";
 import { useExportDb, useImportDb } from "@/persistence/use-db";
+import { memo } from "react";
 
 const i18nNs = "app_menu.";
 const PackerAppBar = () => {
@@ -145,4 +146,4 @@ const PackerAppBar = () => {
     </Flex>
   );
 };
-export default PackerAppBar;
+export default memo(PackerAppBar);

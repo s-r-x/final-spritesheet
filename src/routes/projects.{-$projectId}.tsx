@@ -171,29 +171,9 @@ function ProjectNotFound() {
 function Project() {
   useHandleSpritesPasteEvent();
   const { t } = useTranslation();
-  const projectName = useActiveProjectName();
-  useDocumentTitle(projectName || "Final spritesheet");
-  useListenShortcuts();
-  const hasUnsavedChanges = useHasUnsavedChanges();
-  const isPersisting = useIsPersisting();
-  const shouldBlockRouteChange = hasUnsavedChanges || isPersisting;
-  useBlocker({
-    shouldBlockFn({ current, next }) {
-      // this thing is also triggered when changing the search params
-      // which we don't care about in this context
-      if (current.pathname === next.pathname) {
-        return false;
-      }
-      if (!shouldBlockRouteChange) {
-        return false;
-      }
-      const yes = window.confirm(t("unsaved_changes_warn"));
-      return !yes;
-    },
-    enableBeforeUnload: shouldBlockRouteChange,
-  });
   return (
     <CanvasRefsProvider>
+      <RouteSideEffects />
       <Layout
         rightPanelLabel={t("settings")}
         appBarSlot={<PackerAppBar />}
@@ -233,3 +213,29 @@ function Project() {
     </CanvasRefsProvider>
   );
 }
+
+const RouteSideEffects = () => {
+  const { t } = useTranslation();
+  const projectName = useActiveProjectName();
+  useDocumentTitle(projectName || "Final spritesheet");
+  useListenShortcuts();
+  const hasUnsavedChanges = useHasUnsavedChanges();
+  const isPersisting = useIsPersisting();
+  const shouldBlockRouteChange = hasUnsavedChanges || isPersisting;
+  useBlocker({
+    shouldBlockFn({ current, next }) {
+      // this thing is also triggered when changing the search params
+      // which we don't care about in this context
+      if (current.pathname === next.pathname) {
+        return false;
+      }
+      if (!shouldBlockRouteChange) {
+        return false;
+      }
+      const yes = window.confirm(t("unsaved_changes_warn"));
+      return !yes;
+    },
+    enableBeforeUnload: shouldBlockRouteChange,
+  });
+  return null;
+};
