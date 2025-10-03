@@ -87,4 +87,7 @@ export class DbMutations implements tDbMutations {
       ]);
     }
   }
+  async clearDatabase() {
+    await Promise.all(this.db.tables.map((table) => table.clear()));
+  }
 }

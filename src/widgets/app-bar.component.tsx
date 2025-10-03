@@ -11,9 +11,15 @@ import { useRemoveProject } from "@/projects/use-remove-project";
 import { useLanguage } from "@/i18n/use-language";
 import { SUPPORTED_LANGUAGES } from "#config";
 import { useMutation } from "@/common/hooks/use-mutation";
+import { useExportDb, useImportDb } from "@/persistence/use-db";
 
 const i18nNs = "app_menu.";
 const PackerAppBar = () => {
+  const { mutation: importDbMut, upload: uploadBackup } = useImportDb();
+  const exportDb = useExportDb();
+  const exportDbMut = useMutation(exportDb, {
+    showLoadingBar: true,
+  });
   const activeProject = useAtomValue(activeProjectAtom);
   const navigate = useNavigate();
   const openProjectEditor = useOpenProjectEditor();
@@ -125,6 +131,15 @@ const PackerAppBar = () => {
               </Menu.Sub>
             </Menu.Sub.Dropdown>
           </Menu.Sub>
+          <Menu.Item
+            disabled={exportDbMut.isLoading}
+            onClick={() => exportDbMut.mutate()}
+          >
+            {t("backup.create_backup")}
+          </Menu.Item>
+          <Menu.Item disabled={importDbMut.isLoading} onClick={uploadBackup}>
+            {t("backup.restore_from_backup")}
+          </Menu.Item>
         </Menu.Dropdown>
       </Menu>
     </Flex>

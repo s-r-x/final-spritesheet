@@ -72,6 +72,12 @@
       "message": "Project <1>{{project}}</1> not found",
       "projects_list": "Projects",
       "new_project": "New project"
+    },
+    "backup": {
+      "create_backup": "Create backup",
+      "restore_from_backup": "Restore from backup",
+      "restore_success": "The data has been successfully restored",
+      "restore_confirm": "This operation will remove all existing data. Continue?"
     }
   }
 }

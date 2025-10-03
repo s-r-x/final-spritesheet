@@ -3,23 +3,33 @@ import UiFrameworkProvider from "./common/providers/ui-framework.provider";
 import { RouterProvider } from "@tanstack/react-router";
 import { AtomsProvider } from "./common/providers/atoms.provider";
 import { createRouter } from "./create-router";
-import type { tDbMutations, tDbQueries } from "./persistence/types";
+import type {
+  tDbImportExport,
+  tDbMutations,
+  tDbQueries,
+} from "./persistence/types";
 import { useCreateProject } from "./projects/use-create-project";
 import { useHydrateAtoms } from "jotai/utils";
-import { dbMutationsAtom, dbQueriesAtom } from "./persistence/db.atom";
+import {
+  dbImportExportAtom,
+  dbMutationsAtom,
+  dbQueriesAtom,
+} from "./persistence/db.atom";
 import { LoadingBarContainer } from "react-top-loading-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 type tProps = {
   dbQueries: tDbQueries;
   dbMutations: tDbMutations;
+  dbImportExport: tDbImportExport;
 };
 
 const router = createRouter();
-const App = ({ dbQueries, dbMutations }: tProps) => {
+const App = ({ dbQueries, dbMutations, dbImportExport }: tProps) => {
   useHydrateAtoms([
     [dbMutationsAtom, dbMutations],
     [dbQueriesAtom, dbQueries],
+    [dbImportExportAtom, dbImportExport],
   ] as const);
   const createProject = useCreateProject();
   return (

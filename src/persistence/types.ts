@@ -90,6 +90,7 @@ export type tDbMutations = {
     data: Partial<Pick<tPersistedSprite, "name" | "scale">>,
   ) => Promise<void>;
   removeSprite: (id: string) => Promise<void>;
+  clearDatabase: () => Promise<void>;
 };
 
 export type tDbQueries = {
@@ -97,4 +98,10 @@ export type tDbQueries = {
   getSpritesByProjectId: (id: string) => Promise<{
     sprites: tNormalizedPersistedSprite[];
   }>;
+};
+
+export type tDbBackupFormat = Blob;
+export type tDbImportExport = {
+  importDb: (data: tDbBackupFormat) => Promise<void>;
+  exportDb: () => Promise<tDbBackupFormat>;
 };

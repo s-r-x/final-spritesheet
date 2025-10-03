@@ -1,8 +1,9 @@
+import { DB_NAME } from "#config";
 import type { tDb, tDbCollections } from "./types";
 import Dexie from "dexie";
 
 export const createDb = async (): Promise<tDb> => {
-  const db = new Dexie("final-spritesheet") as tDb;
+  const db = new Dexie(DB_NAME) as tDb;
   const collections: {
     [K in keyof tDbCollections]: string | null;
   } = {
