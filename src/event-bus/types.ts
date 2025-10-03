@@ -1,7 +1,7 @@
 import type { tOutputSettings } from "@/output/types";
 import type { tPackerSettings } from "@/packer/types";
 import type { tProject } from "@/projects/types";
-import type { tSprite, tUpdateSpriteData } from "@/sprites/types";
+import type { tSprite, tUpdateSpriteData } from "@/input/types";
 
 export type tEventMap = {
   spritesAdded: { sprites: tSprite[] };

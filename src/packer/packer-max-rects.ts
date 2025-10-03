@@ -1,5 +1,5 @@
 import { MaxRectsPacker, Rectangle } from "maxrects-packer";
-import type { tSprite } from "@/sprites/types";
+import type { tSprite } from "@/input/types";
 import type { tPackedBin } from "./types";
 import { isEmpty } from "#utils/is-empty";
 

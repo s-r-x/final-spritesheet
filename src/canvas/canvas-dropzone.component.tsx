@@ -3,7 +3,7 @@ import styles from "./canvas-dropzone.module.css";
 import { Dropzone } from "@mantine/dropzone";
 import { Group, Text } from "@mantine/core";
 import { useAtomValue } from "jotai";
-import { hasAnySpritesAtom } from "@/sprites/sprites.atom";
+import { hasAnySpritesAtom } from "@/input/sprites.atom";
 import {
   Image as IconPhoto,
   Upload as IconUpload,
@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { SUPPORTED_SPRITE_MIME_TYPES } from "#config";
 import { useTranslation } from "@/i18n/use-translation";
-import { useAddSpritesFromFiles } from "@/sprites/use-add-sprites-from-files";
+import { useAddSpritesFromFiles } from "@/input/use-add-sprites-from-files";
 
 const CanvasDropzone = () => {
   const { t } = useTranslation();

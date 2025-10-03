@@ -11,10 +11,10 @@ import Canvas from "@/canvas/canvas.component";
 import CanvasDropzone from "@/canvas/canvas-dropzone.component";
 import PackerSettings from "@/packer/packer-settings.component";
 import OutputSettings from "@/output/output-settings.component";
-import SpritesList from "@/sprites/sprites-list.component";
+import PackedSpritesList from "@/packer/packed-sprites-list.component";
 import Toolbar from "@/widgets/toolbar.component";
 import { CanvasRefsProvider } from "@/canvas/canvas-refs";
-import SpriteEditor from "@/sprites/sprite-editor.component";
+import SpriteEditor from "@/input/sprite-editor.component";
 import {
   Accordion,
   List,
@@ -24,9 +24,9 @@ import {
   Stack,
   Mark,
 } from "@mantine/core";
-import { useHandleSpritesPasteEvent } from "@/sprites/use-handle-sprites-paste-event";
+import { useHandleSpritesPasteEvent } from "@/input/use-handle-sprites-paste-event";
 import { atomsStore } from "@/common/atoms/atoms-store";
-import { setSpritesAtom } from "@/sprites/sprites.atom";
+import { setSpritesAtom } from "@/input/sprites.atom";
 import { Loader } from "@mantine/core";
 import {
   activeProjectIdAtom,
@@ -35,7 +35,7 @@ import {
 } from "@/projects/projects.atom";
 import ProjectEditor from "@/projects/project-editor.component";
 import PackerAppBar from "@/widgets/app-bar.component";
-import { persistedToSprite } from "@/sprites/sprites.mapper";
+import { persistedToSprite } from "@/input/sprites.mapper";
 import { isEmpty } from "#utils/is-empty";
 import { persistedToProject } from "@/projects/projects.mapper";
 import { useProjectsList } from "@/projects/use-projects-list";
@@ -177,7 +177,7 @@ function Project() {
       <Layout
         rightPanelLabel={t("settings")}
         appBarSlot={<PackerAppBar />}
-        leftPanelSlot={<SpritesList />}
+        leftPanelSlot={<PackedSpritesList />}
         mainSlot={
           <>
             <Canvas />

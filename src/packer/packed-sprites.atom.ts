@@ -7,7 +7,7 @@ import {
   spritePaddingSettingAtom,
   edgeSpacingSettingAtom,
 } from "./settings.atom";
-import { spritesAtom } from "@/sprites/sprites.atom";
+import { spritesAtom } from "@/input/sprites.atom";
 import { packMaxRects } from "./packer-max-rects";
 import { isEmpty } from "#utils/is-empty";
 

@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { locationAtom } from "@/common/atoms/location.atom";
-import { spritesAtom } from "@/sprites/sprites.atom";
+import { spritesAtom } from "@/input/sprites.atom";
 import { atom } from "jotai";
-import type { tSprite } from "@/sprites/types";
+import type { tSprite } from "@/input/types";
 
 export const useOpenSpriteEditor = () => {
   const setId = useSetAtom(editableSpriteAtom);

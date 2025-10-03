@@ -1,4 +1,4 @@
-import type { tSprite } from "@/sprites/types";
+import type { tSprite } from "@/input/types";
 
 export type tPackedSprite = tSprite & {
   x: number;

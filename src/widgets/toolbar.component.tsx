@@ -10,7 +10,7 @@ import {
   Save as SaveIcon,
 } from "lucide-react";
 import { SUPPORTED_SPRITE_MIME_TYPES } from "#config";
-import { useAddSpritesFromFiles } from "@/sprites/use-add-sprites-from-files";
+import { useAddSpritesFromFiles } from "@/input/use-add-sprites-from-files";
 import {
   useExportSpritesheet,
   useIsExportSpritesheetDisabled,

@@ -1,18 +1,18 @@
 import { useAtomValue } from "jotai";
-import { hasAnySpritesAtom } from "./sprites.atom";
-import styles from "./sprites-list.module.css";
+import { hasAnySpritesAtom } from "@/input/sprites.atom";
+import styles from "./packed-sprites-list.module.css";
 import { useFocusSprite } from "@/canvas/use-focus-sprite";
 import { type JSX, memo, useCallback } from "react";
 import { useContextMenu } from "mantine-contextmenu";
 import { Avatar, Text, Group, Stack, Badge, Menu } from "@mantine/core";
-import type { tSprite } from "./types";
-import { useOpenSpriteEditor } from "./use-sprite-editor";
+import type { tSprite } from "@/input/types";
+import { useOpenSpriteEditor } from "@/input/use-sprite-editor";
 import { FileButton, Button, ActionIcon } from "@mantine/core";
 import { SUPPORTED_SPRITE_MIME_TYPES } from "#config";
 import { useTranslation } from "@/i18n/use-translation";
-import { useAddSpritesFromFiles } from "./use-add-sprites-from-files";
-import { useRemoveSprites } from "./use-remove-sprites";
-import { usePackedSprites } from "@/packer/use-packed-sprites";
+import { useAddSpritesFromFiles } from "@/input/use-add-sprites-from-files";
+import { useRemoveSprites } from "@/input/use-remove-sprites";
+import { usePackedSprites } from "./use-packed-sprites";
 import { isEmpty } from "#utils/is-empty";
 import {
   PackageCheck as PackageCheckIcon,
@@ -25,7 +25,7 @@ import { useIsMobileLayout } from "@/layout/use-is-mobile-layout";
 import { useCloseLeftPanelModal } from "@/layout/use-left-panel-modal";
 import { useMutation } from "@/common/hooks/use-mutation";
 
-const SpritesList = () => {
+const PackedSpritesList = () => {
   const { t } = useTranslation();
   const isMobile = useIsMobileLayout();
   const closeLeftPanel = useCloseLeftPanelModal();
@@ -210,4 +210,4 @@ const SpriteItem = memo(
   },
 );
 
-export default memo(SpritesList);
+export default memo(PackedSpritesList);
