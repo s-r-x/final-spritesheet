@@ -6,12 +6,12 @@ import { useHistoryManager } from "@/history/use-history-manager";
 export const useUpdateSprite = () => {
   const historyManager = useHistoryManager();
   return useCallback(
-    (sprite: tSprite, updates: tUpdateSpriteData) => {
+    async (sprite: tSprite, updates: tUpdateSpriteData) => {
       const command = new UpdateSpriteCommand({
         originalSprite: sprite,
         updates,
       });
-      historyManager.execCommand(command);
+      await historyManager.execCommand(command);
     },
     [historyManager],
   );

@@ -70,11 +70,31 @@ export const Route = createFileRoute("/projects/{-$projectId}")({
     return false;
   },
   async loader(ctx) {
+    const { logger } = ctx.context;
     const projectId = ctx.params.projectId;
+    logger?.debug({
+      layer: "router",
+      label: "loaderStarted",
+      data: { projectId },
+    });
     let loadedProjects = atomsStore.get(projectsListAtom);
     const wasProjectsLoaded = atomsStore.get(projectsInitStateAtom);
-    if (!wasProjectsLoaded) {
+    if (wasProjectsLoaded) {
+      logger?.debug({
+        layer: "router",
+        label: "projectsLoadingSkipped",
+      });
+    } else {
+      logger?.debug({
+        layer: "router",
+        label: "projectsLoadingStarted",
+      });
       const { projects } = await ctx.context.loadProjects();
+      logger?.debug({
+        layer: "router",
+        label: "projectsLoaded",
+        data: { projects },
+      });
       loadedProjects = projects.map(persistedToProject);
       atomsStore.set(projectsListAtom, loadedProjects);
       atomsStore.set(projectsInitStateAtom, true);
@@ -82,11 +102,21 @@ export const Route = createFileRoute("/projects/{-$projectId}")({
     if (!projectId) {
       let projectIdToRedirect: Maybe<string> = null;
       if (isEmpty(loadedProjects)) {
+        logger?.debug({
+          layer: "router",
+          label: "noProjectIdAndProjects",
+          data: "No project id and no loaded projects. Creating a new project",
+        });
         const { project: newProject } = await ctx.context.createNewProject();
         projectIdToRedirect = newProject.id;
       } else {
         projectIdToRedirect = loadedProjects[0].id;
       }
+      logger?.debug({
+        layer: "router",
+        label: "redirectToProject",
+        data: { projectId: projectIdToRedirect },
+      });
       throw redirect({
         to: "/projects/{-$projectId}",
         params: {
@@ -96,14 +126,36 @@ export const Route = createFileRoute("/projects/{-$projectId}")({
     }
     const project = loadedProjects.find((p) => p.id === projectId);
     if (!project) {
+      logger?.debug({
+        layer: "router",
+        label: "projectNotFound",
+        data: { projectId },
+      });
       throw notFound();
     }
+    logger?.debug({
+      layer: "router",
+      label: "spritesLoadingStarted",
+    });
     const { sprites } = await ctx.context.loadSprites(projectId);
+    logger?.debug({
+      layer: "router",
+      label: "spritesLoaded",
+    });
     const normalizedSprites = await Promise.all(sprites.map(persistedToSprite));
+    logger?.debug({
+      layer: "router",
+      label: "spritesNormalized",
+    });
     atomsStore.set(activeProjectIdAtom, projectId);
     atomsStore.set(setSpritesAtom, normalizedSprites);
     atomsStore.set(resetHistoryStackAtom);
     atomsStore.set(clearPersistenceCommandsAtom);
+    logger?.debug({
+      layer: "router",
+      label: "loaderCompleted",
+      data: { projectId },
+    });
   },
   notFoundComponent: ProjectNotFound,
 });

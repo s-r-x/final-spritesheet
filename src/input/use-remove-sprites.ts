@@ -23,7 +23,7 @@ export const useRemoveSprites = () => {
           return acc;
         }, [] as tSprite[]);
       const command = new RemoveSpritesCommand({ sprites: spritesToRemove });
-      historyManager.execCommand(command);
+      await historyManager.execCommand(command);
     },
     [historyManager],
   );

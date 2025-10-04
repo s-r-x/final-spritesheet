@@ -6,6 +6,7 @@ import { useLoadingBar } from "./use-loading-bar";
 import { useNotification } from "./use-notification";
 import { useTranslation } from "@/i18n/use-translation";
 import { useConfirm, ConfirmError } from "./use-confirm";
+import { useLogger } from "@/logger/use-logger";
 
 //UseMutationResult<TData, TError, TVariables>
 
@@ -31,6 +32,7 @@ export function useMutation<
     onError?(error: TError): any;
   } = {},
 ) {
+  const logger = useLogger();
   const loadingBar = useLoadingBar();
   const { showNotification } = useNotification();
   const { t } = useTranslation();
@@ -48,6 +50,9 @@ export function useMutation<
       if (args.onSuccess) {
         args.onSuccess(data, vars);
       }
+      if (args.showLoadingBar) {
+        loadingBar.complete();
+      }
     },
     async onMutate() {
       if (args.confirm) {
@@ -64,7 +69,7 @@ export function useMutation<
     },
     onError(e) {
       if (e instanceof ConfirmError) return;
-      console.error(e);
+      logger?.error(e);
       if (notifyOnError) {
         showNotification({
           isError: true,
@@ -73,8 +78,6 @@ export function useMutation<
         });
       }
       if (args.onError) args.onError(e);
-    },
-    onSettled() {
       if (args.showLoadingBar) {
         loadingBar.complete();
       }

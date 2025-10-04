@@ -10,7 +10,7 @@ import {
   Save as SaveIcon,
 } from "lucide-react";
 import { SUPPORTED_SPRITE_MIME_TYPES } from "#config";
-import { useAddSpritesFromFiles } from "@/input/use-add-sprites-from-files";
+import { useAddSpritesFromFilesMutation } from "@/input/use-add-sprites-from-files";
 import {
   useExportSpritesheet,
   useIsExportSpritesheetDisabled,
@@ -31,7 +31,7 @@ import { memo } from "react";
 
 const Toolbar = () => {
   const { t } = useTranslation();
-  const addSprites = useAddSpritesFromFiles();
+  const addSpritesMut = useAddSpritesFromFilesMutation();
   const exportSpritesheet = useExportSpritesheet();
   const exportSpritesheetMut = useMutation(exportSpritesheet, {
     showLoadingBar: true,
@@ -59,7 +59,7 @@ const Toolbar = () => {
       <Group gap="xs">
         <FileButton
           onChange={(files) => {
-            addSprites(files);
+            addSpritesMut.mutate(files);
           }}
           accept={SUPPORTED_SPRITE_MIME_TYPES.join(",")}
           multiple

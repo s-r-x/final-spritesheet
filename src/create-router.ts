@@ -17,6 +17,7 @@ export const createRouter = () => {
       loadSprites: undefined!,
       loadProjects: undefined!,
       createNewProject: undefined!,
+      logger: undefined,
     },
   });
 };

@@ -11,20 +11,20 @@ import {
 } from "lucide-react";
 import { SUPPORTED_SPRITE_MIME_TYPES } from "#config";
 import { useTranslation } from "@/i18n/use-translation";
-import { useAddSpritesFromFiles } from "@/input/use-add-sprites-from-files";
+import { useAddSpritesFromFilesMutation } from "@/input/use-add-sprites-from-files";
 
 const CanvasDropzone = () => {
   const { t } = useTranslation();
   const isDragging = useIsDragging();
   const hasAnySprites = useAtomValue(hasAnySpritesAtom);
   const isInteractive = isDragging || !hasAnySprites;
-  const addSprites = useAddSpritesFromFiles();
+  const addSpritesMut = useAddSpritesFromFilesMutation();
 
   return (
     <Dropzone
       accept={SUPPORTED_SPRITE_MIME_TYPES}
       onDrop={(files) => {
-        addSprites(files);
+        addSpritesMut.mutate(files);
       }}
       style={{
         pointerEvents: isInteractive ? "auto" : "none",

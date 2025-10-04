@@ -7,6 +7,7 @@ import { zod4Resolver } from "mantine-form-zod-resolver";
 import { useEditableSprite } from "./use-sprite-editor";
 import { useCloseSpriteEditor } from "./use-sprite-editor";
 import { useUpdateSprite } from "./use-update-sprite";
+import { useMutation } from "@/common/hooks/use-mutation";
 
 const i18nNs = "sprite_editor.";
 const SpriteEditorModal = () => {
@@ -42,6 +43,14 @@ const SpriteEditor = ({
   onClose: () => void;
 }) => {
   const updateSprite = useUpdateSprite();
+  const updateSpriteMut = useMutation(
+    (form: tForm) => updateSprite(sprite, form),
+    {
+      onSuccess() {
+        onClose();
+      },
+    },
+  );
   const { t } = useTranslation();
   const form = useForm<tForm>({
     mode: "uncontrolled",
@@ -55,8 +64,7 @@ const SpriteEditor = ({
   return (
     <form
       onSubmit={form.onSubmit((values) => {
-        updateSprite(sprite, values);
-        onClose();
+        updateSpriteMut.mutate(values);
       })}
     >
       <TextInput
@@ -77,7 +85,7 @@ const SpriteEditor = ({
         {...form.getInputProps("scale")}
       />
       <Group justify="flex-end" mt="md">
-        <Button type="submit" disabled={form.submitting}>
+        <Button type="submit" disabled={updateSpriteMut.isLoading}>
           {t("submit")}
         </Button>
       </Group>

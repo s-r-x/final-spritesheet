@@ -1,4 +1,5 @@
 import { MIME_TYPES } from "@mantine/dropzone";
+import { tLogLevel } from "./logger/types";
 
 export const SUPPORTED_SPRITE_MIME_TYPES: string[] = [
   MIME_TYPES.png,
@@ -50,3 +51,7 @@ export const DEV = import.meta.env.DEV;
 export const PROD = import.meta.env.PROD;
 
 export const BASE_URL = import.meta.env.BASE_URL;
+
+export const LOG_LEVELS: Set<tLogLevel> = new Set(
+  PROD ? ["info", "warn"] : ["debug", "info", "warn"],
+);

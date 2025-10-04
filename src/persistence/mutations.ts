@@ -10,9 +10,13 @@ import type {
   tPersistedBlob,
 } from "./types";
 import { generateUniqueName } from "#utils/generate-unique-name";
+import type { tLogger } from "@/logger/types";
 
 export class DbMutations implements tDbMutations {
-  constructor(private db: tDb) {}
+  constructor(
+    private _db: tDb,
+    private _logger: Maybe<tLogger>,
+  ) {}
   async createNewProject({
     id,
     name,
@@ -25,7 +29,12 @@ export class DbMutations implements tDbMutations {
       name: name || generateUniqueName(),
       createdAt: createdAt || new Date().toISOString(),
     };
-    await this.db.projects.put(project);
+    await this._db.projects.put(project);
+    this._logger?.debug({
+      layer: "db",
+      label: "projectCreated",
+      data: { data: { project } },
+    });
     return {
       project,
     };
@@ -42,52 +51,91 @@ export class DbMutations implements tDbMutations {
       projectId: sprite.projectId,
     };
     // TODO:: txn
-    await this.db.blobs.add(blobDoc);
+    await this._db.blobs.add(blobDoc);
     const spriteDoc = {
       ...sprite,
       blobId,
     };
-    await this.db.sprites.put(spriteDoc);
+    await this._db.sprites.put(spriteDoc);
+    this._logger?.debug({
+      layer: "db",
+      label: "spriteCreated",
+      data: { data: { spriteDoc } },
+    });
     return {
       sprite: spriteDoc,
     };
   }
 
   async updateProject(id: string, data: tUpdateProjectData) {
-    const numUpdated = await this.db.projects.update(id, data);
+    const numUpdated = await this._db.projects.update(id, data);
     if (!numUpdated) {
-      console.warn(`project ${id} hasn't been updated`);
+      this._logger?.warn({
+        layer: "db",
+        label: "projectUpdateSkipped",
+        data: { id },
+      });
+    } else {
+      this._logger?.debug({
+        layer: "db",
+        label: "projectUpdated",
+        data: { id, data },
+      });
     }
   }
   async removeProject(id: string) {
     // TODO:: txn
-    await this.db.projects.delete(id);
-    await this.db.sprites.where("projectId").equals(id).delete();
-    await this.db.blobs.where("projectId").equals(id).delete();
+    await this._db.projects.delete(id);
+    await this._db.sprites.where("projectId").equals(id).delete();
+    await this._db.blobs.where("projectId").equals(id).delete();
+    this._logger?.debug({
+      layer: "db",
+      label: "projectRemoved",
+      data: { id },
+    });
   }
 
   async updateSprite(
     id: string,
     data: Partial<Pick<tPersistedSprite, "name" | "scale">>,
   ) {
-    const numUpdated = await this.db.sprites.update(id, data);
+    const numUpdated = await this._db.sprites.update(id, data);
     if (!numUpdated) {
-      console.warn(`sprite ${id} hasn't been updated`);
+      this._logger?.warn({
+        layer: "db",
+        label: "spriteUpdateSkipped",
+        data: { id },
+      });
+    } else {
+      this._logger?.debug({
+        layer: "db",
+        label: "spriteUpdated",
+        data: { id, data },
+      });
     }
   }
 
   async removeSprite(id: string) {
-    const doc = await this.db.sprites.get(id);
+    const doc = await this._db.sprites.get(id);
     const blobId = doc?.blobId;
     // TODO:: txn
     if (doc) {
       await Promise.all([
-        this.db.sprites.delete(id),
-        blobId && this.db.blobs.delete(blobId),
+        this._db.sprites.delete(id),
+        blobId && this._db.blobs.delete(blobId),
       ]);
+      this._logger?.debug({
+        layer: "db",
+        label: "spriteRemoved",
+        data: { id },
+      });
     }
   }
   async clearDatabase() {
-    await Promise.all(this.db.tables.map((table) => table.clear()));
+    await Promise.all(this._db.tables.map((table) => table.clear()));
+    this._logger?.debug({
+      layer: "db",
+      label: "dbCleared",
+    });
   }
 }

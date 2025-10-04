@@ -17,19 +17,23 @@ import {
 } from "./persistence/db.atom";
 import { LoadingBarContainer } from "react-top-loading-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import type { tLogger } from "./logger/types";
+import { loggerAtom } from "./logger/logger.atom";
 
 type tProps = {
   dbQueries: tDbQueries;
   dbMutations: tDbMutations;
   dbImportExport: tDbImportExport;
+  logger: tLogger;
 };
 
 const router = createRouter();
-const App = ({ dbQueries, dbMutations, dbImportExport }: tProps) => {
+const App = ({ dbQueries, dbMutations, dbImportExport, logger }: tProps) => {
   useHydrateAtoms([
     [dbMutationsAtom, dbMutations],
     [dbQueriesAtom, dbQueries],
     [dbImportExportAtom, dbImportExport],
+    [loggerAtom, logger],
   ] as const);
   const createProject = useCreateProject();
   return (
@@ -39,6 +43,7 @@ const App = ({ dbQueries, dbMutations, dbImportExport }: tProps) => {
         loadProjects: dbQueries.getProjectsList.bind(dbQueries),
         loadSprites: dbQueries.getSpritesByProjectId.bind(dbQueries),
         createNewProject: createProject,
+        logger,
       }}
     />
   );
