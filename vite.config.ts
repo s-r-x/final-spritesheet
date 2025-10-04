@@ -6,6 +6,9 @@ import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   base: "/final-spritesheet",
+  build: {
+    sourcemap: true,
+  },
   plugins: [
     react(),
     tsconfigPaths(),
