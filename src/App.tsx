@@ -43,6 +43,7 @@ const App = ({ dbQueries, dbMutations, dbImportExport, logger }: tProps) => {
         loadProjects: dbQueries.getProjectsList.bind(dbQueries),
         loadSprites: dbQueries.getSpritesByProjectId.bind(dbQueries),
         createNewProject: createProject,
+        loadFolders: dbQueries.getFoldersByProjectId.bind(dbQueries),
         logger,
       }}
     />

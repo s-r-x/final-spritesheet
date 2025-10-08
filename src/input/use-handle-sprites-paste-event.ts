@@ -13,7 +13,7 @@ export const useHandleSpritesPasteEvent = () => {
       const filesToAdd = Array.from(clipboardData.files).filter((f) =>
         SUPPORTED_SPRITE_MIME_TYPES.includes(f.type),
       );
-      addSpritesMut.mutate(filesToAdd);
+      addSpritesMut.mutate({ files: filesToAdd });
     };
 
     document.addEventListener("paste", handler);

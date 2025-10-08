@@ -5,6 +5,16 @@ import { calcSpriteDimensions } from "./calc-sprite-dimensions";
 
 export const spritesAtom = atom<tSprite[]>([]);
 
+export const spritesMapAtom = atom((get) => {
+  return get(spritesAtom).reduce(
+    (acc, sprite) => {
+      acc[sprite.id] = sprite;
+      return acc;
+    },
+    {} as Record<string, tSprite>,
+  );
+});
+
 export const hasAnySpritesAtom = atom((get) => !isEmpty(get(spritesAtom)));
 
 const cleanupSprite = (sprite: tSprite) => {

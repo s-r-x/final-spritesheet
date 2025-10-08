@@ -78,6 +78,13 @@
       "restore_from_backup": "Restore from backup",
       "restore_success": "The data has been successfully restored",
       "restore_confirm": "This operation will remove all existing data. Continue?"
+    },
+    "folders": {
+      "add_folder": "Add folder",
+      "open_folder": "Open",
+      "close_folder": "Close",
+      "mark_as_animation": "Mark as animation",
+      "unmark_as_animation": "Unmark as animation"
     }
   }
 }

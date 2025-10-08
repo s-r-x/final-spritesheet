@@ -15,30 +15,42 @@ export class HistoryManager {
   }
   public async undo() {
     const cmd = atomsStore.set(undoAtom);
-    if (cmd?.isUndoable) {
-      await this._mutex.run(async () => {
-        await cmd.undo();
-        await this._persistCommand(cmd);
-      });
+    if (!cmd) return;
+    const cmds = this._commandToArray(cmd);
+    for (const cmd of cmds) {
+      if (cmd.isUndoable) {
+        await this._mutex.run(async () => {
+          await cmd.undo();
+          await this._persistCommand(cmd);
+        });
+      }
     }
   }
   public async redo() {
     const cmd = atomsStore.set(redoAtom);
-    if (cmd) {
+    if (!cmd) return;
+    const cmds = this._commandToArray(cmd);
+    for (const cmd of cmds) {
       await this._mutex.run(async () => {
         await cmd.exec({ isRedo: true });
         await this._persistCommand(cmd);
       });
     }
   }
-  public async execCommand(cmd: Command) {
+  public async execCommand(cmd: Command | Command[]) {
     atomsStore.set(addCmdAtom, cmd);
-    await this._mutex.run(async () => {
-      await cmd.exec();
-      await this._persistCommand(cmd);
-    });
+    const cmds = this._commandToArray(cmd);
+    for (const cmd of cmds) {
+      await this._mutex.run(async () => {
+        await cmd.exec();
+        await this._persistCommand(cmd);
+      });
+    }
   }
   private async _persistCommand(cmd: Command) {
     atomsStore.set(addPersistenceCommandAtom, cmd);
+  }
+  private _commandToArray(cmd: Command | Command[]): Command[] {
+    return Array.isArray(cmd) ? cmd : [cmd];
   }
 }

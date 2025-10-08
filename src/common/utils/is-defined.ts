@@ -1,5 +1,5 @@
 export function isDefined<T>(
   value: T | null | undefined,
-): value is NonNullable<T> {
-  return value !== null && value !== undefined;
+): value is Exclude<NonNullable<T>, false> {
+  return value !== null && value !== undefined && value !== false;
 }

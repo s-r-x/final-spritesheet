@@ -2,6 +2,7 @@ import type {
   tDb,
   tDbQueries,
   tNormalizedPersistedSprite,
+  tPersistedFolder,
   tPersistedProjectWithThumb,
 } from "./types";
 import { asyncReduce } from "#utils/async-reduce";
@@ -22,9 +23,7 @@ export class DbQueries implements tDbQueries {
       };
     } catch (e) {
       this._logger?.error(e);
-      return {
-        projects: [],
-      };
+      return { projects: [] };
     }
   }
   async getSpritesByProjectId(
@@ -57,9 +56,21 @@ export class DbQueries implements tDbQueries {
       };
     } catch (e) {
       this._logger?.error(e);
-      return {
-        sprites: [],
-      };
+      return { sprites: [] };
+    }
+  }
+  async getFoldersByProjectId(
+    id: string,
+  ): Promise<{ folders: tPersistedFolder[] }> {
+    try {
+      const folders = await this._db.folders
+        .where("projectId")
+        .equals(id)
+        .toArray();
+      return { folders };
+    } catch (e) {
+      this._logger?.error(e);
+      return { folders: [] };
     }
   }
 }

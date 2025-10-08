@@ -10,6 +10,7 @@ type tOptions = {
   edgeSpacing: number;
   pot: boolean;
   allowRotation: boolean;
+  tags?: Record<string, string>;
 };
 type tReturnValue = {
   bins: tPackedBin[];
@@ -27,6 +28,7 @@ export function packMaxRects({
   edgeSpacing,
   pot,
   allowRotation,
+  tags,
 }: tOptions): tReturnValue {
   if (isEmpty(sprites)) return defaultReturnValue;
   const { oversized: oversizedSprites, ok: okSprites } = sprites.reduce(
@@ -47,27 +49,31 @@ export function packMaxRects({
     border: edgeSpacing,
     pot,
     allowRotation,
+    tag: true,
+    exclusiveTag: true,
   });
   packer.addArray(
     okSprites.map((s) => {
       const rect = new Rectangle(s.width, s.height);
-      rect.data = { sprite: s };
+      rect.data = { sprite: s, tag: tags?.[s.id] };
       return rect;
     }),
   );
-  const bins: tPackedBin[] = packer.bins.map((bin) => ({
-    maxWidth: bin.maxWidth,
-    maxHeight: bin.maxHeight,
-    width: bin.width,
-    height: bin.height,
-    sprites: bin.rects.map((rect) => ({
-      ...(rect.data.sprite as tSprite),
-      x: rect.x,
-      y: rect.y,
-      rotated: rect.rot,
-      oversized: rect.oversized,
-    })),
-  }));
+  const bins: tPackedBin[] = packer.bins.map((bin) => {
+    return {
+      maxWidth: bin.maxWidth,
+      maxHeight: bin.maxHeight,
+      width: bin.width,
+      height: bin.height,
+      sprites: bin.rects.map((rect) => ({
+        ...(rect.data.sprite as tSprite),
+        x: rect.x,
+        y: rect.y,
+        rotated: rect.rot,
+        oversized: rect.oversized,
+      })),
+    };
+  });
   return {
     bins,
     oversizedSprites,

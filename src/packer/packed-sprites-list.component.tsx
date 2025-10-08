@@ -33,7 +33,9 @@ const PackedSpritesList = () => {
   const { bins, oversizedSprites } = usePackedSprites();
   const addSpritesFromFilesMut = useAddSpritesFromFilesMutation();
   const removeSprite = useRemoveSprites();
-  const removeSpriteMut = useMutation(removeSprite);
+  const removeSpriteMut = useMutation((id: string | string[]) =>
+    removeSprite(id),
+  );
   const focusSprite_ = useFocusSprite();
   const focusSprite = useCallback(
     (id: string) => {
@@ -61,7 +63,7 @@ const PackedSpritesList = () => {
       <div>
         <FileButton
           onChange={(files) => {
-            addSpritesFromFilesMut.mutate(files);
+            addSpritesFromFilesMut.mutate({ files });
           }}
           accept={SUPPORTED_SPRITE_MIME_TYPES.join(",")}
           multiple

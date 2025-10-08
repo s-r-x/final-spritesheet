@@ -1,0 +1,55 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-top: 1rem;
+}
+.stickyHead {
+  padding-bottom: var(--mantine-spacing-xs);
+}
+.treeRoot {
+  position: relative;
+  flex: 1;
+}
+.treeViewport {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+.tree {
+  position: absolute;
+  left: 0;
+  right: 0;
+  & [aria-selected="true"] {
+    background: var(--mantine-primary-color-filled);
+    color: white;
+  }
+}
+
+.folder {
+  user-select: none;
+  span {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-wrap: nowrap;
+  }
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+}
+
+.item {
+  gap: var(--mantine-spacing-xs);
+  user-select: none;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  span {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-wrap: nowrap;
+  }
+}

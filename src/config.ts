@@ -55,3 +55,5 @@ export const BASE_URL = import.meta.env.BASE_URL;
 export const LOG_LEVELS: Set<tLogLevel> = new Set(
   PROD ? ["info", "warn"] : ["debug", "info", "warn"],
 );
+
+export const SPRITES_ROOT_FOLDER_ID = "__ROOT__";

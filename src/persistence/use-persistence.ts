@@ -26,8 +26,6 @@ export const usePersistChanges = () => {
           await cmd.persist();
         }
       }
-    } catch (e) {
-      throw e;
     } finally {
       atomsStore.set(isPersistingAtom, false);
     }

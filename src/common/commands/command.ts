@@ -7,7 +7,6 @@ import type { tLogger } from "@/logger/types";
 export type tExecArgs = {
   isRedo?: boolean;
 };
-export type tUndoArgs = {};
 export abstract class Command<TPayload = unknown> {
   private static _id: number = 0;
   public abstract readonly isUndoable: boolean;
@@ -70,7 +69,7 @@ export abstract class Command<TPayload = unknown> {
       },
     });
   }
-  public async undo(_args: tUndoArgs = {}) {
+  public async undo() {
     if (!this.isUndoable) {
       this._logger?.warn({
         layer: "app",

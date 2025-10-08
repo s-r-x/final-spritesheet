@@ -1,6 +1,6 @@
 import { locationAtom } from "@/common/atoms/location.atom";
 import { atom } from "jotai";
-import { tProject } from "./types";
+import type { tProject } from "./types";
 import { activeProjectAtom } from "./projects.atom";
 
 const QUERY_PARAMS_KEY = "editable_project";

@@ -59,7 +59,7 @@ const Toolbar = () => {
       <Group gap="xs">
         <FileButton
           onChange={(files) => {
-            addSpritesMut.mutate(files);
+            addSpritesMut.mutate({ files });
           }}
           accept={SUPPORTED_SPRITE_MIME_TYPES.join(",")}
           multiple

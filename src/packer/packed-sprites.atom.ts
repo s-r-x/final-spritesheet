@@ -10,6 +10,7 @@ import {
 import { spritesAtom } from "@/input/sprites.atom";
 import { packMaxRects } from "./packer-max-rects";
 import { isEmpty } from "#utils/is-empty";
+import { itemIdToFolderIdMapAtom } from "@/folders/folders.atom";
 
 export const packedSpritesAtom = atom((get) => {
   //const algorithm = get(packerAlgorithmSettingAtom);
@@ -19,6 +20,7 @@ export const packedSpritesAtom = atom((get) => {
   const padding = get(spritePaddingSettingAtom);
   const sprites = get(spritesAtom);
   const edgeSpacing = get(edgeSpacingSettingAtom);
+  const itemIdToFolderIdMap = get(itemIdToFolderIdMapAtom);
   return packMaxRects({
     sprites,
     size,
@@ -26,6 +28,7 @@ export const packedSpritesAtom = atom((get) => {
     edgeSpacing,
     pot,
     allowRotation,
+    tags: itemIdToFolderIdMap,
   });
 });
 export const hasAnyPackedSpritesAtom = atom((get) => {

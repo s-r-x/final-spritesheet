@@ -16,6 +16,7 @@ export const createRouter = () => {
     context: {
       loadSprites: undefined!,
       loadProjects: undefined!,
+      loadFolders: undefined!,
       createNewProject: undefined!,
       logger: undefined,
     },

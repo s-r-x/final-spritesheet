@@ -12,11 +12,13 @@ import CanvasDropzone from "@/canvas/canvas-dropzone.component";
 import PackerSettings from "@/packer/packer-settings.component";
 import OutputSettings from "@/output/output-settings.component";
 import PackedSpritesList from "@/packer/packed-sprites-list.component";
+import FoldersList from "@/folders/folders-list.component";
 import Toolbar from "@/widgets/toolbar.component";
 import { CanvasRefsProvider } from "@/canvas/canvas-refs";
 import SpriteEditor from "@/input/sprite-editor.component";
 import {
   Accordion,
+  Tabs,
   List,
   Center,
   Title,
@@ -53,6 +55,7 @@ import {
   useIsPersisting,
 } from "@/persistence/use-persistence";
 import { useMutation } from "@/common/hooks/use-mutation";
+import { foldersAtom } from "@/folders/folders.atom";
 
 export const Route = createFileRoute("/projects/{-$projectId}")({
   component: Project,
@@ -135,12 +138,15 @@ export const Route = createFileRoute("/projects/{-$projectId}")({
     }
     logger?.debug({
       layer: "router",
-      label: "spritesLoadingStarted",
+      label: "spritesAndFoldersLoadingStarted",
     });
-    const { sprites } = await ctx.context.loadSprites(projectId);
+    const [{ sprites }, { folders }] = await Promise.all([
+      ctx.context.loadSprites(projectId),
+      ctx.context.loadFolders(projectId),
+    ]);
     logger?.debug({
       layer: "router",
-      label: "spritesLoaded",
+      label: "spritesAndFoldersLoaded",
     });
     const normalizedSprites = await Promise.all(sprites.map(persistedToSprite));
     logger?.debug({
@@ -149,6 +155,7 @@ export const Route = createFileRoute("/projects/{-$projectId}")({
     });
     atomsStore.set(activeProjectIdAtom, projectId);
     atomsStore.set(setSpritesAtom, normalizedSprites);
+    atomsStore.set(foldersAtom, folders);
     atomsStore.set(resetHistoryStackAtom);
     atomsStore.set(clearPersistenceCommandsAtom);
     logger?.debug({
@@ -229,7 +236,29 @@ function Project() {
       <Layout
         rightPanelLabel={t("settings")}
         appBarSlot={<PackerAppBar />}
-        leftPanelSlot={<PackedSpritesList />}
+        leftPanelSlot={
+          <>
+            <Tabs
+              defaultValue="folders"
+              style={{ display: "flex", flexDirection: "column", flex: 1 }}
+            >
+              <Tabs.List>
+                <Tabs.Tab value="folders">Folders</Tabs.Tab>
+                <Tabs.Tab value="bins">Packed</Tabs.Tab>
+              </Tabs.List>
+              <Tabs.Panel
+                value="folders"
+                style={{ display: "flex", flexDirection: "column", flex: 1 }}
+              >
+                <FoldersList />
+              </Tabs.Panel>
+              <Tabs.Panel value="bins">
+                <PackedSpritesList />
+              </Tabs.Panel>
+            </Tabs>
+          </>
+        }
+        //leftPanelSlot={<PackedSpritesList />}
         mainSlot={
           <>
             <Canvas />

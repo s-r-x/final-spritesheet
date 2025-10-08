@@ -40,11 +40,20 @@ export type tPersistedSprite = {
 export type tNormalizedPersistedSprite = Omit<tPersistedSprite, "blobId"> & {
   blob: Blob;
 };
+export type tPersistedFolder = {
+  id: string;
+  name: string;
+  projectId: string;
+  itemIds: string[];
+  isAnimation?: boolean;
+  createdAt: string;
+};
 
 export type tDbCollections = {
   blobs: EntityTable<tPersistedBlob, "id">;
   sprites: EntityTable<tPersistedSprite, "id">;
   projects: EntityTable<tPersistedProject, "id">;
+  folders: EntityTable<tPersistedFolder, "id">;
 };
 export type tDb = Dexie & tDbCollections;
 
@@ -76,6 +85,15 @@ export type tCreateNewProjectData = {
   name?: string;
   createdAt?: string;
 };
+export type tAddFolderData = Partial<Omit<tPersistedFolder, "projectId">> &
+  Pick<tPersistedFolder, "projectId">;
+export type tUpdateFolderData = Partial<
+  Pick<tPersistedFolder, "itemIds" | "name" | "isAnimation">
+>;
+export type tUpdateMultipleFoldersArgs = {
+  id: string;
+  data: tUpdateFolderData;
+}[];
 export type tDbMutations = {
   createNewProject: ({
     name,
@@ -90,6 +108,11 @@ export type tDbMutations = {
     data: Partial<Pick<tPersistedSprite, "name" | "scale">>,
   ) => Promise<void>;
   removeSprite: (id: string) => Promise<void>;
+  addFolder: (data: tAddFolderData) => Promise<{ folder: tPersistedFolder }>;
+  updateFolder: (id: string, data: tUpdateFolderData) => Promise<void>;
+  updateFolders: (args: tUpdateMultipleFoldersArgs) => Promise<void>;
+  removeFolder: (id: string) => Promise<void>;
+
   clearDatabase: () => Promise<void>;
 };
 
@@ -98,6 +121,9 @@ export type tDbQueries = {
   getSpritesByProjectId: (id: string) => Promise<{
     sprites: tNormalizedPersistedSprite[];
   }>;
+  getFoldersByProjectId: (
+    id: string,
+  ) => Promise<{ folders: tPersistedFolder[] }>;
 };
 
 export type tDbBackupFormat = Blob;

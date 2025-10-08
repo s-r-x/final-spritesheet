@@ -8,6 +8,9 @@ import type {
   tDbMutations,
   tDb,
   tPersistedBlob,
+  tPersistedFolder,
+  tUpdateMultipleFoldersArgs,
+  tUpdateFolderData,
 } from "./types";
 import { generateUniqueName } from "#utils/generate-unique-name";
 import type { tLogger } from "@/logger/types";
@@ -18,16 +21,16 @@ export class DbMutations implements tDbMutations {
     private _logger: Maybe<tLogger>,
   ) {}
   async createNewProject({
-    id,
-    name,
-    createdAt,
+    id = generateId(),
+    name = generateUniqueName(),
+    createdAt = new Date().toISOString(),
   }: tCreateNewProjectData = {}): Promise<{
     project: tPersistedProject;
   }> {
     const project: tPersistedProject = {
-      id: id || generateId(),
-      name: name || generateUniqueName(),
-      createdAt: createdAt || new Date().toISOString(),
+      id,
+      name,
+      createdAt,
     };
     await this._db.projects.put(project);
     this._logger?.debug({
@@ -88,6 +91,7 @@ export class DbMutations implements tDbMutations {
     await this._db.projects.delete(id);
     await this._db.sprites.where("projectId").equals(id).delete();
     await this._db.blobs.where("projectId").equals(id).delete();
+    await this._db.folders.where("projectId").equals(id).delete();
     this._logger?.debug({
       layer: "db",
       label: "projectRemoved",
@@ -128,6 +132,92 @@ export class DbMutations implements tDbMutations {
         layer: "db",
         label: "spriteRemoved",
         data: { id },
+      });
+    } else {
+      this._logger?.warn({
+        layer: "db",
+        label: "spriteRemoveSkipped",
+        data: { id, reason: "not found" },
+      });
+    }
+  }
+  async addFolder({
+    id = generateId(),
+    name = generateUniqueName(),
+    itemIds = [],
+    createdAt = new Date().toISOString(),
+    ...rest
+  }: Partial<Omit<tPersistedFolder, "projectId">> &
+    Pick<tPersistedFolder, "projectId">): Promise<{
+    folder: tPersistedFolder;
+  }> {
+    const folderDoc: tPersistedFolder = {
+      id,
+      name,
+      itemIds,
+      createdAt,
+      ...rest,
+    };
+    this._logger?.debug({
+      layer: "db",
+      label: "folderCreated",
+      data: { id, projectId: folderDoc.projectId },
+    });
+    await this._db.folders.put(folderDoc);
+    return {
+      folder: folderDoc,
+    };
+  }
+  async updateFolder(id: string, data: tUpdateFolderData) {
+    const numUpdated = await this._db.folders.update(id, data);
+    if (!numUpdated) {
+      this._logger?.warn({
+        layer: "db",
+        label: "folderUpdateSkipped",
+        data: { id },
+      });
+    } else {
+      this._logger?.debug({
+        layer: "db",
+        label: "folderUpdated",
+        data: { id, data },
+      });
+    }
+  }
+  async updateFolders(args: tUpdateMultipleFoldersArgs) {
+    const numUpdated = await this._db.folders.bulkUpdate(
+      args.map(({ id, data }) => ({ key: id, changes: data })),
+    );
+    if (numUpdated < args.length) {
+      this._logger?.warn({
+        layer: "db",
+        label: "foldersUpdateSomeSkipped",
+        data: args,
+      });
+    } else {
+      this._logger?.debug({
+        layer: "db",
+        label: "foldersUpdated",
+        data: args,
+      });
+    }
+  }
+  async removeFolder(id: string) {
+    const doc = await this._db.folders.get(id);
+    if (doc) {
+      // TODO:: txn
+      await this._db.folders.delete(id);
+      const spriteIds = doc.itemIds;
+      this._logger?.debug({
+        layer: "db",
+        label: "folderRemoved",
+        data: { id, projectId: doc.projectId, items: spriteIds },
+      });
+    } else {
+      this._logger?.warn({
+        layer: "db",
+        label: "folderRemoveSkipped",
+        data: { id, reason: "not found" },
       });
     }
   }

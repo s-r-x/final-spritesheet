@@ -37,6 +37,7 @@ export const useImportDb = () => {
           });
           await router.invalidate();
         } catch (e) {
+          console.error(e);
           window.location.reload();
         }
       },

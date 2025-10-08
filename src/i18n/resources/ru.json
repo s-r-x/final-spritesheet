@@ -78,6 +78,13 @@
       "restore_from_backup": "Восстановить из бекапа",
       "restore_success": "Данные были успешно восстановлены ",
       "restore_confirm": "Эта операция удалит все существующие данные. Продолжить?"
+    },
+    "folders": {
+      "add_folder": "Добавить папку",
+      "open_folder": "Открыть",
+      "close_folder": "Закрыть",
+      "mark_as_animation": "Пометить как анимацию",
+      "unmark_as_animation": "Убрать анимацию"
     }
   }
 }

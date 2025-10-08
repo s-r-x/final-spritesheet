@@ -32,7 +32,10 @@ const AppLayout = memo((props: tProps) => {
               <Panel defaultSize={25} minSize={5} maxSize={50}>
                 <Stack p="xs" className={styles.leftPanel}>
                   {props.appBarSlot}
-                  <div className={styles.leftPanelContent}>
+                  <div
+                    id="leftPanelScrollable"
+                    className={styles.leftPanelContent}
+                  >
                     {props.leftPanelSlot}
                   </div>
                 </Stack>

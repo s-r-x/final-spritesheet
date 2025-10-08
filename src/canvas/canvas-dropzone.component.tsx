@@ -24,7 +24,7 @@ const CanvasDropzone = () => {
     <Dropzone
       accept={SUPPORTED_SPRITE_MIME_TYPES}
       onDrop={(files) => {
-        addSpritesMut.mutate(files);
+        addSpritesMut.mutate({ files });
       }}
       style={{
         pointerEvents: isInteractive ? "auto" : "none",
