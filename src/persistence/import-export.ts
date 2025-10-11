@@ -5,8 +5,10 @@ import type {
   tDbBackupFormat,
   tDbImportExport,
   tDbMutations,
+  tPersistedBlob,
 } from "./types";
-import { exportDB, importInto, peakImportFile } from "dexie-export-import";
+import { peakImportFile } from "dexie-export-import";
+import { base64ToBlob, blobToBase64 } from "#utils/base64";
 
 export class DbImportExport implements tDbImportExport {
   constructor(
@@ -28,7 +30,24 @@ export class DbImportExport implements tDbImportExport {
     }
     await this._dbMutations.clearDatabase();
     // TODO:: maybe it's a good idea to create a backup for the current db and restore if there were any errors
-    await importInto(this._db, data);
+    await this._db.import(data, {
+      noTransaction: true,
+      async transform(
+        table,
+        value: Omit<tPersistedBlob, "data"> & { data: string },
+      ) {
+        if (table === "blobs" && typeof value.data === "string") {
+          return {
+            table,
+            value: {
+              ...value,
+              data: await base64ToBlob(value.data),
+            },
+          };
+        }
+        return { table, value };
+      },
+    });
     this._logger?.debug({
       layer: "db",
       label: "dbImportCompleted",
@@ -39,7 +58,21 @@ export class DbImportExport implements tDbImportExport {
       layer: "db",
       label: "dbExportStarted",
     });
-    const data = await exportDB(this._db);
+    const data = await this._db.export({
+      noTransaction: true,
+      async transform(table, value: tPersistedBlob) {
+        if (table === "blobs" && value.data instanceof Blob) {
+          return {
+            table,
+            value: {
+              ...value,
+              data: await blobToBase64(value.data),
+            },
+          };
+        }
+        return { table, value };
+      },
+    });
     this._logger?.debug({
       layer: "db",
       label: "dbExportCompleted",
