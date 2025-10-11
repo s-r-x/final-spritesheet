@@ -16,6 +16,6 @@ export const useGetPackedSprites = () => {
   }, []);
 };
 
-export const useHasAnyPackerSprites = () => {
+export const useHasAnyPackedSprites = () => {
   return useAtomValue(hasAnyPackedSpritesAtom);
 };

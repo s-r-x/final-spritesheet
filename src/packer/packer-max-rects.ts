@@ -1,10 +1,9 @@
 import { MaxRectsPacker, Rectangle } from "maxrects-packer";
-import type { tSprite } from "@/input/types";
-import type { tPackedBin } from "./types";
+import type { tPackerSpriteExcerpt, tRawPackedBin } from "./types";
 import { isEmpty } from "#utils/is-empty";
 
 type tOptions = {
-  sprites: tSprite[];
+  sprites: tPackerSpriteExcerpt[];
   size: number;
   padding: number;
   edgeSpacing: number;
@@ -13,8 +12,8 @@ type tOptions = {
   tags?: Record<string, string>;
 };
 type tReturnValue = {
-  bins: tPackedBin[];
-  oversizedSprites: tSprite[];
+  bins: tRawPackedBin[];
+  oversizedSprites: tPackerSpriteExcerpt[];
 };
 
 const defaultReturnValue: tReturnValue = {
@@ -43,7 +42,10 @@ export function packMaxRects({
       }
       return acc;
     },
-    { oversized: [] as tSprite[], ok: [] as tSprite[] },
+    {
+      oversized: [] as tPackerSpriteExcerpt[],
+      ok: [] as tPackerSpriteExcerpt[],
+    },
   );
   const packer = new MaxRectsPacker(size, size, padding, {
     border: edgeSpacing,
@@ -59,14 +61,14 @@ export function packMaxRects({
       return rect;
     }),
   );
-  const bins: tPackedBin[] = packer.bins.map((bin) => {
+  const bins: tRawPackedBin[] = packer.bins.map((bin) => {
     return {
       maxWidth: bin.maxWidth,
       maxHeight: bin.maxHeight,
       width: bin.width,
       height: bin.height,
       sprites: bin.rects.map((rect) => ({
-        ...(rect.data.sprite as tSprite),
+        ...(rect.data.sprite as tPackerSpriteExcerpt),
         x: rect.x,
         y: rect.y,
         rotated: rect.rot,
