@@ -34,7 +34,6 @@
     "jotai-location": "^0.6.1",
     "jszip": "^3.10.1",
     "lucide-react": "^0.503.0",
-    "mantine-contextmenu": "^7.17.1",
     "mantine-form-zod-resolver": "^1.3.0",
     "maxrects-packer": "^2.7.3",
     "nanoid": "^5.1.5",

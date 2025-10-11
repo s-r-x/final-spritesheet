@@ -1,5 +1,4 @@
 import { MantineProvider } from "@mantine/core";
-import { ContextMenuProvider } from "mantine-contextmenu";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
 import ContextMenu from "../context-menu/context-menu.component";
@@ -12,9 +11,7 @@ export default function UiFrameworkProvider(props: { children: any }) {
     >
       <ContextMenu />
       <Notifications />
-      <ContextMenuProvider submenuDelay={100}>
-        <ModalsProvider>{props.children}</ModalsProvider>
-      </ContextMenuProvider>
+      <ModalsProvider>{props.children}</ModalsProvider>
     </MantineProvider>
   );
 }

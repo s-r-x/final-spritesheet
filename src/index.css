@@ -1,6 +1,5 @@
 @import "@mantine/core/styles.layer.css";
 @import "@mantine/notifications/styles.layer.css";
-@import "mantine-contextmenu/styles.layer.css";
 @import "@szhsin/react-menu/dist/index.css";
 @import "@szhsin/react-menu/dist/theme-dark.css";
 body {
@@ -8,4 +7,4 @@ body {
   padding: 0;
 }
 
-@layer mantine, mantine-contextmenu;
+@layer mantine;

@@ -3,7 +3,7 @@ import { hasAnySpritesAtom } from "@/input/sprites.atom";
 import styles from "./packed-sprites-list.module.css";
 import { useFocusSprite } from "@/canvas/use-focus-sprite";
 import { type JSX, memo, useCallback } from "react";
-import { useContextMenu } from "mantine-contextmenu";
+import { useContextMenu } from "@/common/context-menu/use-context-menu";
 import { Avatar, Text, Group, Stack, Badge, Menu } from "@mantine/core";
 import type { tSprite } from "@/input/types";
 import { useOpenSpriteEditor } from "@/input/use-sprite-editor";
@@ -175,7 +175,7 @@ type tProps = {
 };
 const SpriteItem = memo(({ id, name, imageUrl, focusSprite }: tProps) => {
   const { t } = useTranslation();
-  const { showContextMenu } = useContextMenu();
+  const { openContextMenu } = useContextMenu();
   const openEditor = useOpenSpriteEditor();
   const removeSprite = useRemoveSprites();
   const removeSpriteMut = useMutation(() => removeSprite(id));
@@ -184,25 +184,28 @@ const SpriteItem = memo(({ id, name, imageUrl, focusSprite }: tProps) => {
       tabIndex={0}
       className={styles.listItem}
       onDoubleClick={() => focusSprite?.(id)}
-      onContextMenu={showContextMenu(
-        [
-          {
-            key: "update",
-            title: t("update"),
-            onClick: () => openEditor(id),
-          },
-          focusSprite && {
-            key: "focus",
-            title: t("focus"),
-            onClick: () => focusSprite(id),
-          },
-          {
-            key: "remove",
-            title: t("remove"),
-            onClick: () => removeSpriteMut.mutate(),
-          },
-        ].filter(isDefined),
-      )}
+      onContextMenu={(event) =>
+        openContextMenu({
+          event,
+          items: [
+            {
+              id: "update",
+              title: t("update"),
+              onClick: () => openEditor(id),
+            },
+            focusSprite && {
+              id: "focus",
+              title: t("focus"),
+              onClick: () => focusSprite(id),
+            },
+            {
+              id: "remove",
+              title: t("remove"),
+              onClick: () => removeSpriteMut.mutate(),
+            },
+          ].filter(isDefined),
+        })
+      }
     >
       <Avatar src={imageUrl} radius="sm" size="sm" />
       <span>{name}</span>
