@@ -10,7 +10,7 @@ export class Logger implements tLogger {
     console.warn(...this._normalizePayload({ payload, level }));
   }
   public debug(payload: tLoggerPayload) {
-    const level: tLogLevel = "info";
+    const level: tLogLevel = "debug";
     if (!LOG_LEVELS.has(level)) return;
     console.debug(...this._normalizePayload({ payload, level }));
   }
