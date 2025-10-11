@@ -7,7 +7,7 @@ import { useHistoryManager } from "@/history/use-history-manager";
 import { useCreateUpdateFoldersCommand } from "@/folders/use-update-folders";
 import { foldersAtom } from "@/folders/folders.atom";
 import { tUpdateFoldersArg } from "@/folders/types";
-import { isEmpty } from "radash";
+import { isEmpty } from "#utils/is-empty";
 import { Command } from "@/common/commands/command";
 
 export const useCreateRemoveSpritesCommand = () => {
