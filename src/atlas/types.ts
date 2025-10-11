@@ -1,9 +1,11 @@
+import type { tSpritesMap } from "@/input/types";
 import type { tPackedSprite } from "@/packer/types";
 
 export type tGenerateAtlasFileArgs = {
   baseFileName: string;
   fileNamePostfix?: string;
-  sprites: tPackedSprite[];
+  packedSprites: tPackedSprite[];
+  spritesMap: tSpritesMap;
   textureWidth: number;
   textureHeight: number;
   textureAtlasFilename: string;

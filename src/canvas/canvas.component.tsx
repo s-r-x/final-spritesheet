@@ -10,6 +10,7 @@ import { debounce } from "#utils/debounce";
 import { useActiveProjectId } from "@/projects/use-active-project-id";
 import { useFocusProject } from "./use-focus-project";
 import { isEmpty } from "#utils/is-empty";
+import { useSpritesMap } from "@/input/use-sprites-map";
 
 extend({
   Container,
@@ -108,6 +109,7 @@ type tBinProps = {
   index: number;
 };
 const Bin = ({ bin, index }: tBinProps) => {
+  const spritesMap = useSpritesMap();
   const { maxWidth, maxHeight, width, height } = bin;
   const bgColor = useMantineTheme().colors.gray[1];
   const drawBg = useCallback(
@@ -141,19 +143,23 @@ const Bin = ({ bin, index }: tBinProps) => {
       <BinName name={`Bin ${index + 1}`} />
       <pixiContainer label={`bin-${index}`}>
         <pixiGraphics alpha={0} draw={drawDimensions} />
-        {bin.sprites.map(({ texture, id, x, y, rotated, scale }) => (
-          <pixiSprite
-            scale={scale}
-            label={"sprite-" + id}
-            key={id}
-            texture={texture}
-            rotation={rotated ? 1.5708 : 0}
-            anchor={rotated ? ROTATED_ANCHOR : 0}
-            x={x}
-            //x={rotated ? x + texture.height : x}
-            y={y}
-          />
-        ))}
+        {bin.sprites.map(({ id, x, y, rotated }) => {
+          const sprite = spritesMap[id];
+          if (!sprite) return null;
+          return (
+            <pixiSprite
+              scale={sprite.scale}
+              label={"sprite-" + id}
+              key={id}
+              texture={sprite.texture}
+              rotation={rotated ? 1.5708 : 0}
+              anchor={rotated ? ROTATED_ANCHOR : 0}
+              x={x}
+              //x={rotated ? x + texture.height : x}
+              y={y}
+            />
+          );
+        })}
       </pixiContainer>
     </pixiContainer>
   );

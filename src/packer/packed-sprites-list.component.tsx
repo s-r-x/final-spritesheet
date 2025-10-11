@@ -24,12 +24,12 @@ import { isDefined } from "#utils/is-defined";
 import { useIsMobileLayout } from "@/layout/use-is-mobile-layout";
 import { useCloseLeftPanelModal } from "@/layout/use-left-panel-modal";
 import { useMutation } from "@/common/hooks/use-mutation";
+import { useSpritesMap } from "@/input/use-sprites-map";
 
 const PackedSpritesList = () => {
   const { t } = useTranslation();
   const isMobile = useIsMobileLayout();
   const closeLeftPanel = useCloseLeftPanelModal();
-  const openSpriteEditor = useOpenSpriteEditor();
   const { bins, oversizedSprites } = usePackedSprites();
   const addSpritesFromFilesMut = useAddSpritesFromFilesMutation();
   const removeSprite = useRemoveSprites();
@@ -136,15 +136,14 @@ const PackedSpritesList = () => {
               name={sprite.name}
               id={sprite.id}
               imageUrl={sprite.url}
-              openEditor={openSpriteEditor}
-              focusSprite={disableFocus ? undefined : focusSprite}
-              removeSprite={removeSpriteMut.mutate}
+              focusSprite={focusSprite}
             />
           ))}
         </ul>
       </Stack>
     );
   };
+  const spritesMap = useSpritesMap();
   return (
     <Stack gap="lg">
       {!isEmpty(oversizedSprites) &&
@@ -153,7 +152,7 @@ const PackedSpritesList = () => {
           color: errorColor,
           icon: <PackageFailIcon />,
           title: t("oversized_sprites"),
-          sprites: oversizedSprites,
+          sprites: oversizedSprites.map((id) => spritesMap[id]),
           disableFocus: true,
         })}
       {bins.map((bin, index) =>
@@ -161,7 +160,7 @@ const PackedSpritesList = () => {
           index,
           title: `Bin ${index + 1}`,
           icon: <PackageCheckIcon />,
-          sprites: bin.sprites,
+          sprites: bin.sprites.map((sprite) => spritesMap[sprite.id]),
         }),
       )}
     </Stack>
@@ -172,44 +171,43 @@ type tProps = {
   id: string;
   name: string;
   imageUrl: string;
-  openEditor: (id: string) => void;
-  focusSprite?: (id: string) => void;
-  removeSprite: (id: string) => void;
+  focusSprite: (id: string) => void;
 };
-const SpriteItem = memo(
-  ({ id, name, imageUrl, openEditor, focusSprite, removeSprite }: tProps) => {
-    const { t } = useTranslation();
-    const { showContextMenu } = useContextMenu();
-    return (
-      <li
-        tabIndex={0}
-        className={styles.listItem}
-        onDoubleClick={() => focusSprite?.(id)}
-        onContextMenu={showContextMenu(
-          [
-            {
-              key: "update",
-              title: t("update"),
-              onClick: () => openEditor(id),
-            },
-            focusSprite && {
-              key: "focus",
-              title: t("focus"),
-              onClick: () => focusSprite(id),
-            },
-            {
-              key: "remove",
-              title: t("remove"),
-              onClick: () => removeSprite(id),
-            },
-          ].filter(isDefined),
-        )}
-      >
-        <Avatar src={imageUrl} radius="sm" size="sm" />
-        <span>{name}</span>
-      </li>
-    );
-  },
-);
+const SpriteItem = memo(({ id, name, imageUrl, focusSprite }: tProps) => {
+  const { t } = useTranslation();
+  const { showContextMenu } = useContextMenu();
+  const openEditor = useOpenSpriteEditor();
+  const removeSprite = useRemoveSprites();
+  const removeSpriteMut = useMutation(() => removeSprite(id));
+  return (
+    <li
+      tabIndex={0}
+      className={styles.listItem}
+      onDoubleClick={() => focusSprite?.(id)}
+      onContextMenu={showContextMenu(
+        [
+          {
+            key: "update",
+            title: t("update"),
+            onClick: () => openEditor(id),
+          },
+          focusSprite && {
+            key: "focus",
+            title: t("focus"),
+            onClick: () => focusSprite(id),
+          },
+          {
+            key: "remove",
+            title: t("remove"),
+            onClick: () => removeSpriteMut.mutate(),
+          },
+        ].filter(isDefined),
+      )}
+    >
+      <Avatar src={imageUrl} radius="sm" size="sm" />
+      <span>{name}</span>
+    </li>
+  );
+});
 
 export default memo(PackedSpritesList);

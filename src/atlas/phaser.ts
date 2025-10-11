@@ -3,26 +3,29 @@ import type { tGenerateAtlasFileArgs, tGenerateAtlasFileOutput } from "./types";
 export const generatePhaserAtlasFile = ({
   baseFileName,
   fileNamePostfix,
-  sprites,
+  packedSprites,
   textureWidth,
   textureHeight,
   textureAtlasFilename,
+  spritesMap,
 }: tGenerateAtlasFileArgs): tGenerateAtlasFileOutput => {
   const atlas = {
-    frames: sprites.reduce(
-      (acc, sprite) => {
-        const { rotated, width, height } = sprite;
+    frames: packedSprites.reduce(
+      (acc, packedSprite) => {
+        const sprite = spritesMap[packedSprite.id];
+        if (!sprite) return acc;
+        const { width, height } = sprite;
         acc[sprite.name] = {
           frame: {
-            x: sprite.x,
-            y: sprite.y,
+            x: packedSprite.x,
+            y: packedSprite.y,
             w: width,
             h: height,
           },
           sourceSize: { w: width, h: height },
           spriteSourceSize: { x: 0, y: 0, w: width, h: height },
           trimmed: false,
-          rotated,
+          rotated: packedSprite.rotated,
         };
         return acc;
       },

@@ -1,18 +1,15 @@
 import { atom } from "jotai";
-import type { tSprite, tUpdateSpriteData } from "./types";
+import type { tSprite, tSpritesMap, tUpdateSpriteData } from "./types";
 import { isEmpty } from "#utils/is-empty";
 import { calcSpriteDimensions } from "./calc-sprite-dimensions";
 
 export const spritesAtom = atom<tSprite[]>([]);
 
 export const spritesMapAtom = atom((get) => {
-  return get(spritesAtom).reduce(
-    (acc, sprite) => {
-      acc[sprite.id] = sprite;
-      return acc;
-    },
-    {} as Record<string, tSprite>,
-  );
+  return get(spritesAtom).reduce((acc, sprite) => {
+    acc[sprite.id] = sprite;
+    return acc;
+  }, {} as tSpritesMap);
 });
 
 export const hasAnySpritesAtom = atom((get) => !isEmpty(get(spritesAtom)));

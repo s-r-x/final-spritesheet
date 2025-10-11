@@ -4,6 +4,7 @@ import { asyncReduce } from "#utils/async-reduce";
 import { generateAtlasFile } from "@/atlas/generate-atlas-file";
 import { convertBinToBlob } from "@/canvas/convert-bin-to-blob";
 import type { tPackedBin } from "@/packer/types";
+import type { tSpritesMap } from "@/input/types";
 
 type tOptions = {
   framework: string;
@@ -13,6 +14,7 @@ type tOptions = {
   dataFileName: string;
   textureFileName: string;
   packedSprites: tPackedBin[];
+  spritesMap: tSpritesMap;
   archiveName?: string;
 };
 
@@ -35,8 +37,9 @@ export const exportSpritesheet = async (opts: tOptions) => {
       const imageFilename = `${opts.textureFileName}${filePostfix}.${opts.textureFormat}`;
       const { entries: atlasFileEntries } = generateAtlasFile({
         baseFileName: opts.dataFileName,
+        spritesMap: opts.spritesMap,
         fileNamePostfix: filePostfix,
-        sprites: packedBin.sprites,
+        packedSprites: packedBin.sprites,
         textureWidth: packedBin.width,
         textureHeight: packedBin.height,
         textureAtlasFilename: imageFilename,

@@ -6,22 +6,20 @@ export type tPackerDependantSpriteField =
 
 export type tPackerSpriteExcerpt = Pick<tSprite, tPackerDependantSpriteField>;
 
-export type tRawPackedSprite = tPackerSpriteExcerpt & {
+export type tPackedSprite = {
+  id: string;
   x: number;
   y: number;
   rotated?: boolean;
   oversized?: boolean;
 };
-export type tPackedSprite = tRawPackedSprite & tSprite;
-export type tRawPackedBin = {
-  sprites: tRawPackedSprite[];
+export type tPackedBin = {
+  tag?: string;
+  sprites: tPackedSprite[];
   maxWidth: number;
   maxHeight: number;
   width: number;
   height: number;
-};
-export type tPackedBin = Omit<tRawPackedBin, "sprites"> & {
-  sprites: tPackedSprite[];
 };
 
 export type tPackerAlgorithm = "grid" | "maxRects";

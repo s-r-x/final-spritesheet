@@ -14,5 +14,6 @@ export type tSprite = {
   url: string;
   scale: number;
 };
+export type tSpritesMap = Record<string, tSprite>;
 
 export type tUpdateSpriteData = Partial<Pick<tSprite, "name" | "scale">>;
