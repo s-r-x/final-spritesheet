@@ -140,7 +140,7 @@ const FoldersList = () => {
   const projectId = useActiveProjectId()!;
   return (
     <>
-      <div ref={ref} className={styles.root}>
+      <div className={styles.root}>
         <div className={styles.stickyHead}>
           <Button
             fullWidth
@@ -150,7 +150,7 @@ const FoldersList = () => {
             {t("folders.add_folder")}
           </Button>
         </div>
-        <div className={styles.treeRoot}>
+        <div ref={ref} className={styles.treeRoot}>
           <div className={styles.treeViewport}>
             {rootWidth > 0 && rootHeight > 0 && (
               <Tree
@@ -160,7 +160,7 @@ const FoldersList = () => {
                 rowHeight={30}
                 className={styles.tree}
                 data={treeData}
-                width={rootWidth - 5}
+                width={rootWidth - 1}
                 height={rootHeight - 1}
                 renderRow={(args) => (
                   <div
