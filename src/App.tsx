@@ -15,7 +15,6 @@ import {
   dbMutationsAtom,
   dbQueriesAtom,
 } from "./persistence/db.atom";
-import { LoadingBarContainer } from "react-top-loading-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { tLogger } from "./logger/types";
 import { loggerAtom } from "./logger/logger.atom";
@@ -57,13 +56,11 @@ const AppWithProviders = (props: tProps) => {
   return (
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <LoadingBarContainer>
-          <AtomsProvider>
-            <UiFrameworkProvider>
-              <App {...props} />
-            </UiFrameworkProvider>
-          </AtomsProvider>
-        </LoadingBarContainer>
+        <AtomsProvider>
+          <UiFrameworkProvider>
+            <App {...props} />
+          </UiFrameworkProvider>
+        </AtomsProvider>
       </QueryClientProvider>
     </StrictMode>
   );

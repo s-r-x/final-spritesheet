@@ -2,9 +2,14 @@
 @import "@mantine/notifications/styles.layer.css";
 @import "@szhsin/react-menu/dist/index.css";
 @import "@szhsin/react-menu/dist/theme-dark.css";
+@import "@bprogress/core/css";
 body {
   margin: 0;
   padding: 0;
 }
 
 @layer mantine;
+
+:root {
+  --bprogress-color: var(--mantine-primary-color-filled);
+}
