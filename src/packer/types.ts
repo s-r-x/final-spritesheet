@@ -1,10 +1,10 @@
 import type { tSprite } from "@/input/types";
 import { packerSpriteExcerptFields } from "./config";
 
-export type tPackerDependantSpriteField =
+export type tPackerSpriteExcerptField =
   (typeof packerSpriteExcerptFields)[number];
 
-export type tPackerSpriteExcerpt = Pick<tSprite, tPackerDependantSpriteField>;
+export type tPackerSpriteExcerpt = Pick<tSprite, tPackerSpriteExcerptField>;
 
 export type tPackedSprite = {
   id: string;
