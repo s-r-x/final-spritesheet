@@ -58,6 +58,7 @@ const PackedSpritesList = () => {
   );
   const hasAnySprites = useAtomValue(hasAnySpritesAtom);
   const errorColor = "var(--mantine-color-error)";
+  const spritesMap = useSpritesMap();
   if (!hasAnySprites) {
     return (
       <div>
@@ -143,7 +144,6 @@ const PackedSpritesList = () => {
       </Stack>
     );
   };
-  const spritesMap = useSpritesMap();
   return (
     <Stack gap="lg">
       {!isEmpty(oversizedSprites) &&
