@@ -243,8 +243,12 @@ function Project() {
               style={{ display: "flex", flexDirection: "column", flex: 1 }}
             >
               <Tabs.List>
-                <Tabs.Tab value="bins">Packed</Tabs.Tab>
-                <Tabs.Tab value="folders">Folders</Tabs.Tab>
+                <Tabs.Tab value="bins">
+                  {t("packed_sprites_list_sect_name")}
+                </Tabs.Tab>
+                <Tabs.Tab value="folders">
+                  {t("folders_list_sect_name")}
+                </Tabs.Tab>
               </Tabs.List>
               <Tabs.Panel
                 value="folders"

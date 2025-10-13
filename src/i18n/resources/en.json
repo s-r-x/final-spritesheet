@@ -19,6 +19,9 @@
     "unsaved_changes_warn": "There are some unsaved changes. You might want to save them before leaving.",
     "error": "Error",
     "generic_error_desc": "There was an error during the operation. Check the console for details",
+    "packed_sprites_list_sect_name": "Packed",
+    "packed_bin_with_id": "Bin {{id}}",
+    "folders_list_sect_name": "Folders",
     "confirm_dialog": {
       "default_title": "Confirm your action",
       "default_yes": "Confirm",

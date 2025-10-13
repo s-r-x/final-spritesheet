@@ -102,7 +102,7 @@ const PackedSpritesList = () => {
     }) => {
       const title = isOversized
         ? t("oversized_sprites")
-        : "Bin " + (index! + 1);
+        : t("packed_bin_with_id", { id: (index || 0) + 1 });
       const nodeProps: tNodeData = {
         kind: "bin",
         itemIds: items,

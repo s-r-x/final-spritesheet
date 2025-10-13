@@ -11,6 +11,7 @@ import { useActiveProjectId } from "@/projects/use-active-project-id";
 import { useFocusProject } from "./use-focus-project";
 import { isEmpty } from "#utils/is-empty";
 import { useSpritesMap } from "@/input/use-sprites-map";
+import { useTranslation } from "@/i18n/use-translation";
 
 extend({
   Container,
@@ -109,6 +110,7 @@ type tBinProps = {
   index: number;
 };
 const Bin = ({ bin, index }: tBinProps) => {
+  const { t } = useTranslation();
   const spritesMap = useSpritesMap();
   const { maxWidth, maxHeight, width, height } = bin;
   const bgColor = useMantineTheme().colors.gray[1];
@@ -140,7 +142,7 @@ const Bin = ({ bin, index }: tBinProps) => {
   return (
     <pixiContainer>
       <pixiGraphics draw={drawBg} />
-      <BinName name={`Bin ${index + 1}`} />
+      <BinName name={t("packed_bin_with_id", { id: index + 1 })} />
       <pixiContainer label={`bin-${index}`}>
         <pixiGraphics alpha={0} draw={drawDimensions} />
         {bin.sprites.map(({ id, x, y, rotated }) => {
