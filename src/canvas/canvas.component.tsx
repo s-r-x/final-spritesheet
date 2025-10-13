@@ -175,10 +175,10 @@ const BinName = ({ name }: { name: string }) => {
     <pixiText
       y={y}
       text={name}
-      //resolution={3}
+      resolution={window.devicePixelRatio}
       style={{
         fill: color,
-        fontSize: 24,
+        fontSize: 32,
         fontFamily: "sans-serif",
       }}
       ref={(text) => {
