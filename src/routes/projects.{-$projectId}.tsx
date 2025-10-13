@@ -239,12 +239,12 @@ function Project() {
         leftPanelSlot={
           <>
             <Tabs
-              defaultValue="folders"
+              defaultValue="bins"
               style={{ display: "flex", flexDirection: "column", flex: 1 }}
             >
               <Tabs.List>
-                <Tabs.Tab value="folders">Folders</Tabs.Tab>
                 <Tabs.Tab value="bins">Packed</Tabs.Tab>
+                <Tabs.Tab value="folders">Folders</Tabs.Tab>
               </Tabs.List>
               <Tabs.Panel
                 value="folders"
@@ -252,7 +252,10 @@ function Project() {
               >
                 <FoldersList />
               </Tabs.Panel>
-              <Tabs.Panel value="bins">
+              <Tabs.Panel
+                value="bins"
+                style={{ display: "flex", flexDirection: "column", flex: 1 }}
+              >
                 <PackedSpritesList />
               </Tabs.Panel>
             </Tabs>

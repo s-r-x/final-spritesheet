@@ -4,7 +4,6 @@ import type { tFolder, tUpdateFolderData, tUpdateFoldersArg } from "./types";
 import styles from "./folders-list.module.css";
 import { useUpdateFolders } from "./use-update-folders";
 import { CSSProperties, forwardRef, useMemo, useRef } from "react";
-import clsx from "clsx";
 import { Avatar, Button } from "@mantine/core";
 import {
   Folder as FolderIcon,
@@ -124,10 +123,7 @@ const FoldersList = () => {
     });
   }, [folders]);
   const removeItemNodes = (nodes: NodeApi<tTreeNodeData<tItemNodeData>>[]) => {
-    const itemsToRemove = nodes.reduce((acc, node) => {
-      acc.push(node.id);
-      return acc;
-    }, [] as string[]);
+    const itemsToRemove = nodes.map((node) => node.id);
     if (!isEmpty(itemsToRemove)) {
       removeSprites(itemsToRemove);
     }
@@ -484,7 +480,7 @@ const Folder = forwardRef<any, tFolderProps>(({ folder, style }, ref) => {
       style={style}
       ref={ref}
       aria-label={folder.name}
-      className={clsx(styles.folder)}
+      className={styles.folder}
     >
       {folder.isAnimation ? (
         <AnimationIcon size={iconSize} />
@@ -503,7 +499,7 @@ type tItemProps = {
 };
 const Item = forwardRef<any, tItemProps>((props, ref) => {
   return (
-    <div style={props.style} ref={ref} className={clsx(styles.item)}>
+    <div style={props.style} ref={ref} className={styles.item}>
       <Avatar
         imageProps={{ draggable: false }}
         src={props.item.url}

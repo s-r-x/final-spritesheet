@@ -1,12 +1,53 @@
-.list {
+.root {
   display: flex;
   flex-direction: column;
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+  flex: 1;
+  margin-top: 1rem;
+}
+.stickyHead {
+  padding-bottom: var(--mantine-spacing-xs);
+}
+.treeRoot {
+  position: relative;
+  flex: 1;
+}
+.tree {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+.treeViewport {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.treeRow {
+  &[aria-selected="true"] {
+    background: var(--mantine-primary-color-filled);
+    color: white;
+  }
+  &.oversized[aria-selected="false"] {
+    color: var(--mantine-color-error);
+  }
+}
+
+.bin {
+  user-select: none;
+  span {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-wrap: nowrap;
+  }
+  display: flex;
+  align-items: center;
   gap: var(--mantine-spacing-xs);
 }
-.listItem {
+
+.item {
   gap: var(--mantine-spacing-xs);
   user-select: none;
   max-width: 100%;

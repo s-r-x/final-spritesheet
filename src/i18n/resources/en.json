@@ -15,6 +15,7 @@
     "redo": "Redo",
     "undo": "Undo",
     "save": "Save",
+    "clear_packed_bin": "Clear",
     "unsaved_changes_warn": "There are some unsaved changes. You might want to save them before leaving.",
     "error": "Error",
     "generic_error_desc": "There was an error during the operation. Check the console for details",

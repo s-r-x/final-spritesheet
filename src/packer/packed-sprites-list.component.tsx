@@ -1,13 +1,18 @@
-import { useAtomValue } from "jotai";
-import { hasAnySpritesAtom } from "@/input/sprites.atom";
 import styles from "./packed-sprites-list.module.css";
 import { useFocusSprite } from "@/canvas/use-focus-sprite";
-import { type JSX, memo, useCallback } from "react";
+import {
+  CSSProperties,
+  forwardRef,
+  memo,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import { useContextMenu } from "@/common/context-menu/use-context-menu";
-import { Avatar, Text, Group, Stack, Badge, Menu } from "@mantine/core";
+import { Avatar } from "@mantine/core";
 import type { tSprite } from "@/input/types";
 import { useOpenSpriteEditor } from "@/input/use-sprite-editor";
-import { FileButton, Button, ActionIcon } from "@mantine/core";
+import { FileButton, Button, Badge } from "@mantine/core";
 import { SUPPORTED_SPRITE_MIME_TYPES } from "#config";
 import { useTranslation } from "@/i18n/use-translation";
 import { useAddSpritesFromFilesMutation } from "@/input/use-add-sprites-from-files";
@@ -17,7 +22,7 @@ import { isEmpty } from "#utils/is-empty";
 import {
   PackageCheck as PackageCheckIcon,
   PackageX as PackageFailIcon,
-  Ellipsis as EllipsisIcon,
+  Plus as PlusIcon,
 } from "lucide-react";
 import { useFocusBin } from "@/canvas/use-focus-bin";
 import { isDefined } from "#utils/is-defined";
@@ -25,8 +30,36 @@ import { useIsMobileLayout } from "@/layout/use-is-mobile-layout";
 import { useCloseLeftPanelModal } from "@/layout/use-left-panel-modal";
 import { useMutation } from "@/common/hooks/use-mutation";
 import { useSpritesMap } from "@/input/use-sprites-map";
+import {
+  type NodeApi,
+  type NodeRendererProps,
+  Tree,
+  type TreeApi,
+} from "react-arborist";
+import { useElementSize } from "@mantine/hooks";
+import clsx from "clsx";
 
+type tItemNodeData = {
+  kind: "item";
+  props: tItemProps;
+};
+type tBinNodeData = {
+  kind: "bin";
+  itemIds: string[];
+  props: tBinProps;
+};
+type tNodeData = tItemNodeData | tBinNodeData;
+type tTreeNodeData<TNodeData extends tNodeData = tNodeData> = {
+  id: string;
+  name: string;
+  nodeProps: TNodeData;
+  children?: tTreeNodeData[];
+};
 const PackedSpritesList = () => {
+  const openSpriteEditor = useOpenSpriteEditor();
+  const { openContextMenu } = useContextMenu();
+  const { ref, width: rootWidth, height: rootHeight } = useElementSize();
+  const treeApiRef = useRef<TreeApi<tTreeNodeData> | undefined>(undefined);
   const { t } = useTranslation();
   const isMobile = useIsMobileLayout();
   const closeLeftPanel = useCloseLeftPanelModal();
@@ -56,160 +89,298 @@ const PackedSpritesList = () => {
     },
     [focusBin_, isMobile, closeLeftPanel],
   );
-  const hasAnySprites = useAtomValue(hasAnySpritesAtom);
-  const errorColor = "var(--mantine-color-error)";
   const spritesMap = useSpritesMap();
-  if (!hasAnySprites) {
-    return (
-      <div>
-        <FileButton
-          onChange={(files) => {
-            addSpritesFromFilesMut.mutate({ files });
-          }}
-          accept={SUPPORTED_SPRITE_MIME_TYPES.join(",")}
-          multiple
-        >
-          {(props) => (
-            <Button {...props} color="cyan">
-              {t("add_sprites")}
-            </Button>
-          )}
-        </FileButton>
-      </div>
+  const treeData: tTreeNodeData[] = useMemo(() => {
+    const generateNodeData = ({
+      index,
+      isOversized,
+      items,
+    }: {
+      index?: number;
+      isOversized?: boolean;
+      items: string[];
+    }) => {
+      const title = isOversized
+        ? t("oversized_sprites")
+        : "Bin " + (index! + 1);
+      const nodeProps: tNodeData = {
+        kind: "bin",
+        itemIds: items,
+        props: { title, isOversized, itemsCount: items.length },
+      };
+      const data: tTreeNodeData = {
+        id: isOversized ? "oversized" : String(index),
+        name: title,
+        nodeProps,
+        children: items.map((itemId) => {
+          const sprite = spritesMap[itemId];
+          const nodeProps: tNodeData = {
+            kind: "item",
+            props: { item: sprite },
+          };
+          const data: tTreeNodeData = {
+            name: sprite.name,
+            id: itemId,
+            nodeProps,
+          };
+          return data;
+        }),
+      };
+      return data;
+    };
+    const binsData = bins.map((bin, idx) =>
+      generateNodeData({
+        index: idx,
+        items: bin.sprites.map((sprite) => sprite.id),
+        isOversized: false,
+      }),
     );
-  }
-  const renderBin = ({
-    color,
-    title,
-    sprites,
-    icon,
-    index,
-    disableFocus,
-  }: {
-    index: number;
-    title: string;
-    color?: string;
-    sprites: tSprite[];
-    icon: JSX.Element;
-    disableFocus?: boolean;
-  }) => {
-    return (
-      <Stack gap="xs" key={index}>
-        <Group gap="xs" style={{ color }}>
-          {icon}
-          <Text fw={700} span>
-            {title}
-          </Text>
-          <Badge color="gray" size="sm" circle={sprites.length < 10}>
-            {sprites.length}
-          </Badge>
-          <Menu width={200}>
-            <Menu.Target>
-              <ActionIcon
-                aria-label={t("open_menu")}
-                ml="auto"
-                size="sm"
-                variant="transparent"
-              >
-                <EllipsisIcon />
-              </ActionIcon>
-            </Menu.Target>
-            <Menu.Dropdown>
-              {!disableFocus && (
-                <Menu.Item onClick={() => focusBin(index)}>
-                  {t("focus")}
-                </Menu.Item>
-              )}
-              <Menu.Item
-                onClick={() =>
-                  removeSpriteMut.mutate(sprites.map((sprite) => sprite.id))
-                }
-              >
-                {t("remove")}
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        </Group>
-        <ul className={styles.list}>
-          {sprites.map((sprite) => (
-            <SpriteItem
-              key={sprite.id}
-              name={sprite.name}
-              id={sprite.id}
-              imageUrl={sprite.url}
-              focusSprite={focusSprite}
-            />
-          ))}
-        </ul>
-      </Stack>
+    if (!isEmpty(oversizedSprites)) {
+      binsData.unshift(
+        generateNodeData({ isOversized: true, items: oversizedSprites }),
+      );
+    }
+    return binsData;
+  }, [oversizedSprites, bins, spritesMap, t]);
+  const removeItemNodes = (nodes: NodeApi<tTreeNodeData<tItemNodeData>>[]) => {
+    const itemsToRemove = nodes.map((node) => node.id);
+    if (!isEmpty(itemsToRemove)) {
+      removeSpriteMut.mutate(itemsToRemove);
+    }
+  };
+  const clearBinNodes = (nodes: NodeApi<tTreeNodeData<tBinNodeData>>[]) => {
+    removeSpriteMut.mutate(
+      nodes.map((node) => node.data.nodeProps.itemIds).flat(),
     );
   };
+
   return (
-    <Stack gap="lg">
-      {!isEmpty(oversizedSprites) &&
-        renderBin({
-          index: -1,
-          color: errorColor,
-          icon: <PackageFailIcon />,
-          title: t("oversized_sprites"),
-          sprites: oversizedSprites.map((id) => spritesMap[id]),
-          disableFocus: true,
-        })}
-      {bins.map((bin, index) =>
-        renderBin({
-          index,
-          title: `Bin ${index + 1}`,
-          icon: <PackageCheckIcon />,
-          sprites: bin.sprites.map((sprite) => spritesMap[sprite.id]),
-        }),
-      )}
-    </Stack>
+    <>
+      <div ref={ref} className={styles.root}>
+        <div className={styles.stickyHead}>
+          <FileButton
+            onChange={(files) => {
+              addSpritesFromFilesMut.mutate({ files });
+            }}
+            accept={SUPPORTED_SPRITE_MIME_TYPES.join(",")}
+            multiple
+          >
+            {(props) => (
+              <Button leftSection={<PlusIcon />} fullWidth {...props}>
+                {t("add_sprites")}
+              </Button>
+            )}
+          </FileButton>
+        </div>
+        <div ref={ref} className={styles.treeRoot}>
+          <div className={styles.treeViewport}>
+            {rootWidth > 0 && rootHeight > 0 && (
+              <Tree
+                data={treeData}
+                ref={treeApiRef}
+                openByDefault
+                disableDrag
+                rowHeight={30}
+                className={styles.tree}
+                width={rootWidth - 1}
+                height={rootHeight - 1}
+                renderRow={(args) => (
+                  <div
+                    {...args.attrs}
+                    className={clsx(
+                      styles.treeRow,
+                      args.node.id === "oversized" && styles.oversized,
+                    )}
+                    data-node-id={args.node.id}
+                    ref={args.innerRef}
+                    onFocus={(e) => e.stopPropagation()}
+                    onClick={args.node.handleClick}
+                  >
+                    {args.children}
+                  </div>
+                )}
+                onDelete={({ nodes }) => {
+                  if (isEmpty(nodes)) return;
+                  const nodeKind = nodes[0].data.nodeProps.kind;
+                  if (nodeKind === "bin") {
+                    clearBinNodes(
+                      nodes as NodeApi<tTreeNodeData<tBinNodeData>>[],
+                    );
+                  } else {
+                    removeItemNodes(
+                      nodes as NodeApi<tTreeNodeData<tItemNodeData>>[],
+                    );
+                  }
+                }}
+                onSelect={(nodes) => {
+                  const treeApi = treeApiRef.current;
+                  if (isEmpty(nodes) || !treeApi) return;
+                  const firstNode = nodes[0];
+                  for (let i = 1; i < nodes.length; i++) {
+                    const node = nodes[i];
+                    if (node.level !== firstNode.level) {
+                      node.deselect();
+                    }
+                  }
+                }}
+                onContextMenu={(e) => {
+                  if (!(e?.target instanceof HTMLElement)) return;
+                  const $node = e.target.closest("[data-node-id]");
+                  const treeApi = treeApiRef.current;
+                  if (!treeApi || !$node) return;
+                  const id = $node.getAttribute("data-node-id");
+                  if (!id) return;
+                  const selectedIds = treeApi.selectedIds;
+
+                  // select the node if it's not selected
+                  if (!selectedIds.has(id)) {
+                    const visibleNodes = treeApi.visibleNodes;
+                    const node = visibleNodes.find((node) => node.id === id);
+                    if (!node) return;
+                    treeApi.select(node, { focus: true });
+                  }
+                  if (isEmpty(treeApi.selectedNodes)) return;
+
+                  const selectedKind =
+                    treeApi.selectedNodes[0].data.nodeProps.kind;
+                  const isOnlyOneSelected = treeApi.selectedNodes.length === 1;
+
+                  if (selectedKind === "bin") {
+                    const selectedNodes = treeApi.selectedNodes as NodeApi<
+                      tTreeNodeData<tBinNodeData>
+                    >[];
+                    const firstFolder = selectedNodes[0];
+                    const isOpened = selectedNodes.every((node) => node.isOpen);
+                    const isOversizedSelected = firstFolder.id === "oversized";
+                    const toggleOpenedState = () => {
+                      for (const node of selectedNodes) {
+                        if (isOpened) {
+                          node.close();
+                        } else {
+                          node.open();
+                        }
+                      }
+                    };
+                    openContextMenu({
+                      event: e,
+                      items: [
+                        isOnlyOneSelected &&
+                          !isOversizedSelected && {
+                            id: "focus_bin",
+                            title: t("focus"),
+                            onClick: () => focusBin(Number(firstFolder.id)),
+                          },
+                        {
+                          id: "clear_bin",
+                          title: t("clear_packed_bin"),
+                          onClick: () => clearBinNodes(selectedNodes),
+                        },
+                        {
+                          id: "toggle",
+                          title: t(
+                            `folders.${isOpened ? "close_folder" : "open_folder"}`,
+                          ),
+                          onClick: toggleOpenedState,
+                        },
+                      ].filter(isDefined),
+                    });
+                  } else if (selectedKind === "item") {
+                    const selectedNodes = treeApi.selectedNodes as NodeApi<
+                      tTreeNodeData<tItemNodeData>
+                    >[];
+                    const firstItem =
+                      selectedNodes[0].data.nodeProps.props.item;
+                    openContextMenu({
+                      event: e,
+                      items: [
+                        isOnlyOneSelected && {
+                          id: "focus",
+                          title: t("focus"),
+                          onClick: () => focusSprite(firstItem.id),
+                        },
+                        isOnlyOneSelected && {
+                          id: "update",
+                          title: t("update"),
+                          onClick: () => openSpriteEditor(firstItem.id),
+                        },
+                        {
+                          id: "delete",
+                          title: t("remove"),
+                          onClick: () => {
+                            removeItemNodes(selectedNodes);
+                          },
+                        },
+                      ].filter(isDefined),
+                    });
+                  }
+                }}
+              >
+                {Node}
+              </Tree>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 
-type tProps = {
-  id: string;
-  name: string;
-  imageUrl: string;
-  focusSprite: (id: string) => void;
+function Node({ node, style, dragHandle }: NodeRendererProps<tTreeNodeData>) {
+  const { nodeProps } = node.data;
+  if (nodeProps.kind === "item") {
+    return <Item style={style} ref={dragHandle} item={nodeProps.props.item} />;
+  } else if (nodeProps.kind === "bin") {
+    return <Bin style={style} ref={dragHandle} {...nodeProps.props} />;
+  } else {
+    return (
+      <div style={style} ref={dragHandle}>
+        {node.isLeaf ? "🍁" : "🗀"}
+        {node.data.name}
+      </div>
+    );
+  }
+}
+
+type tBinProps = {
+  title: string;
+  isOversized?: boolean;
+  itemsCount: number;
+  style?: CSSProperties;
 };
-const SpriteItem = memo(({ id, name, imageUrl, focusSprite }: tProps) => {
-  const { t } = useTranslation();
-  const { openContextMenu } = useContextMenu();
-  const openEditor = useOpenSpriteEditor();
-  const removeSprite = useRemoveSprites();
-  const removeSpriteMut = useMutation(() => removeSprite(id));
+const Bin = forwardRef<any, tBinProps>(
+  ({ title, style, isOversized, itemsCount }, ref) => {
+    const iconSize = 20;
+    return (
+      <div style={style} ref={ref} aria-label={title} className={styles.bin}>
+        {isOversized ? (
+          <PackageFailIcon size={iconSize} />
+        ) : (
+          <PackageCheckIcon size={iconSize} />
+        )}
+        <span>{title}</span>
+        <Badge color="gray" size="sm" circle={itemsCount < 10}>
+          {itemsCount}
+        </Badge>
+      </div>
+    );
+  },
+);
+
+type tItemProps = {
+  item: tSprite;
+  style?: CSSProperties;
+};
+const Item = forwardRef<any, tItemProps>((props, ref) => {
   return (
-    <li
-      tabIndex={0}
-      className={styles.listItem}
-      onDoubleClick={() => focusSprite?.(id)}
-      onContextMenu={(event) =>
-        openContextMenu({
-          event,
-          items: [
-            {
-              id: "update",
-              title: t("update"),
-              onClick: () => openEditor(id),
-            },
-            focusSprite && {
-              id: "focus",
-              title: t("focus"),
-              onClick: () => focusSprite(id),
-            },
-            {
-              id: "remove",
-              title: t("remove"),
-              onClick: () => removeSpriteMut.mutate(),
-            },
-          ].filter(isDefined),
-        })
-      }
-    >
-      <Avatar src={imageUrl} radius="sm" size="sm" />
-      <span>{name}</span>
-    </li>
+    <div style={props.style} ref={ref} className={styles.item}>
+      <Avatar
+        imageProps={{ draggable: false }}
+        src={props.item.url}
+        radius="sm"
+        size="sm"
+      />
+      <span>{props.item.name}</span>
+    </div>
   );
 });
 
