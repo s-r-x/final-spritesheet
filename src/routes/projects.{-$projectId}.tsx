@@ -239,6 +239,7 @@ function Project() {
         leftPanelSlot={
           <>
             <Tabs
+              keepMounted={false}
               defaultValue="bins"
               style={{ display: "flex", flexDirection: "column", flex: 1 }}
             >
