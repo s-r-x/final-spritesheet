@@ -9,20 +9,10 @@ import {
 import Layout from "@/layout/layout.component";
 import Canvas from "@/canvas/canvas.component";
 import CanvasDropzone from "@/canvas/canvas-dropzone.component";
-import PackerSettings from "@/packer/packer-settings.component";
-import OutputSettings from "@/output/output-settings.component";
 import Toolbar from "@/widgets/toolbar.component";
 import { CanvasRefsProvider } from "@/canvas/canvas-refs";
 import SpriteEditor from "@/input/sprite-editor.component";
-import {
-  Accordion,
-  List,
-  Center,
-  Title,
-  Button,
-  Stack,
-  Mark,
-} from "@mantine/core";
+import { List, Center, Title, Button, Stack, Mark } from "@mantine/core";
 import { useHandleSpritesPasteEvent } from "@/input/use-handle-sprites-paste-event";
 import { atomsStore } from "@/common/atoms/atoms-store";
 import { setSpritesAtom } from "@/input/sprites.atom";
@@ -54,6 +44,7 @@ import {
 import { useMutation } from "@/common/hooks/use-mutation";
 import { foldersAtom } from "@/folders/folders.atom";
 import PackedSpritesAndFolders from "@/organisms/packed-sprites-and-folders.component";
+import PackerAndOutputSettings from "@/organisms/packer-and-output-settings.component";
 
 export const Route = createFileRoute("/projects/{-$projectId}")({
   component: Project,
@@ -241,28 +232,7 @@ function Project() {
             <CanvasDropzone />
           </>
         }
-        rightPanelSlot={
-          <>
-            <Accordion multiple defaultValue={["output", "packer"]}>
-              <Accordion.Item value="packer">
-                <Accordion.Control>
-                  {t("packer_opts.form_name")}
-                </Accordion.Control>
-                <Accordion.Panel>
-                  <PackerSettings />
-                </Accordion.Panel>
-              </Accordion.Item>
-              <Accordion.Item value="output">
-                <Accordion.Control>
-                  {t("output_opts.form_name")}
-                </Accordion.Control>
-                <Accordion.Panel>
-                  <OutputSettings />
-                </Accordion.Panel>
-              </Accordion.Item>
-            </Accordion>
-          </>
-        }
+        rightPanelSlot={<PackerAndOutputSettings />}
         toolbarSlot={<Toolbar />}
       />
       <SpriteEditor />
