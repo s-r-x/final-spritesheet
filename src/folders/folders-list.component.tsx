@@ -4,7 +4,7 @@ import type { tFolder, tUpdateFolderData, tUpdateFoldersArg } from "./types";
 import styles from "./folders-list.module.css";
 import { useUpdateFolders } from "./use-update-folders";
 import { CSSProperties, forwardRef, useMemo, useRef } from "react";
-import { Avatar, Button } from "@mantine/core";
+import { Avatar, Button, ActionIcon } from "@mantine/core";
 import {
   Folder as FolderIcon,
   Film as AnimationIcon,
@@ -134,17 +134,27 @@ const FoldersList = () => {
     removeFolders(nodes.map((node) => node.id));
   };
   const projectId = useActiveProjectId()!;
+  const addFolderBtnLabel = t("folders.add_folder");
   return (
     <>
       <div className={styles.root}>
         <div className={styles.stickyHead}>
           <Button
+            arial-label={addFolderBtnLabel}
+            className={styles.wideViewportButton}
             fullWidth
             leftSection={<PlusIcon />}
             onClick={() => addFolder({ projectId })}
           >
-            {t("folders.add_folder")}
+            {addFolderBtnLabel}
           </Button>
+          <ActionIcon
+            arial-label={addFolderBtnLabel}
+            className={styles.narrowViewportButton}
+            onClick={() => addFolder({ projectId })}
+          >
+            <PlusIcon />
+          </ActionIcon>
         </div>
         <div ref={ref} className={styles.treeRoot}>
           <div className={styles.treeViewport}>
@@ -483,11 +493,11 @@ const Folder = forwardRef<any, tFolderProps>(({ folder, style }, ref) => {
       className={styles.folder}
     >
       {folder.isAnimation ? (
-        <AnimationIcon size={iconSize} />
+        <AnimationIcon size={iconSize} className={styles.folderIcon} />
       ) : (
-        <FolderIcon size={iconSize} />
+        <FolderIcon size={iconSize} className={styles.folderIcon} />
       )}
-      <span>{folder.name}</span>
+      <span className={styles.nodeTitle}>{folder.name}</span>
     </div>
   );
 });
@@ -506,7 +516,7 @@ const Item = forwardRef<any, tItemProps>((props, ref) => {
         radius="sm"
         size="sm"
       />
-      <span>{props.item.name}</span>
+      <span className={styles.nodeTitle}>{props.item.name}</span>
     </div>
   );
 });

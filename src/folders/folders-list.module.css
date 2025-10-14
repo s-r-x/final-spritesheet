@@ -3,9 +3,13 @@
   flex-direction: column;
   flex: 1;
   margin-top: 1rem;
+  container-type: inline-size;
 }
 .stickyHead {
   padding-bottom: var(--mantine-spacing-xs);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .treeRoot {
   position: relative;
@@ -29,16 +33,20 @@
   }
 }
 
+.nodeTitle {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-wrap: nowrap;
+}
 .folder {
   user-select: none;
-  span {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    text-wrap: nowrap;
-  }
   display: flex;
   align-items: center;
   gap: var(--mantine-spacing-xs);
+}
+.folderIcon {
+  flex-shrink: 0;
+  display: block;
 }
 
 .item {
@@ -47,9 +55,30 @@
   max-width: 100%;
   display: flex;
   align-items: center;
-  span {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    text-wrap: nowrap;
+}
+
+.wideViewportButton {
+  display: block;
+}
+.narrowViewportButton {
+  display: none;
+}
+
+@container (width < 4.5rem) {
+  .nodeTitle {
+    display: none;
+  }
+  .item {
+    padding-left: 0 !important;
+  }
+  .item,
+  .folder {
+    justify-content: center;
+  }
+  .wideViewportButton {
+    display: none;
+  }
+  .narrowViewportButton {
+    display: block;
   }
 }
