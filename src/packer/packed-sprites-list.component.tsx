@@ -9,7 +9,7 @@ import {
   useRef,
 } from "react";
 import { useContextMenu } from "@/common/context-menu/use-context-menu";
-import { Avatar } from "@mantine/core";
+import { ActionIcon, Avatar } from "@mantine/core";
 import type { tSprite } from "@/input/types";
 import { useOpenSpriteEditor } from "@/input/use-sprite-editor";
 import { FileButton, Button, Badge } from "@mantine/core";
@@ -154,9 +154,10 @@ const PackedSpritesList = () => {
     );
   };
 
+  const addSpritesBtnLabel = t("add_sprites");
   return (
     <>
-      <div ref={ref} className={styles.root}>
+      <div className={styles.root}>
         <div className={styles.stickyHead}>
           <FileButton
             onChange={(files) => {
@@ -166,9 +167,24 @@ const PackedSpritesList = () => {
             multiple
           >
             {(props) => (
-              <Button leftSection={<PlusIcon />} fullWidth {...props}>
-                {t("add_sprites")}
-              </Button>
+              <>
+                <Button
+                  className={styles.wideViewportButton}
+                  aria-label={addSpritesBtnLabel}
+                  leftSection={<PlusIcon />}
+                  fullWidth
+                  {...props}
+                >
+                  {addSpritesBtnLabel}
+                </Button>
+                <ActionIcon
+                  className={styles.narrowViewportButton}
+                  aria-label={addSpritesBtnLabel}
+                  {...props}
+                >
+                  <PlusIcon />
+                </ActionIcon>
+              </>
             )}
           </FileButton>
         </div>
@@ -353,12 +369,17 @@ const Bin = forwardRef<any, tBinProps>(
     return (
       <div style={style} ref={ref} aria-label={title} className={styles.bin}>
         {isOversized ? (
-          <PackageFailIcon size={iconSize} />
+          <PackageFailIcon size={iconSize} className={styles.binIcon} />
         ) : (
-          <PackageCheckIcon size={iconSize} />
+          <PackageCheckIcon size={iconSize} className={styles.binIcon} />
         )}
-        <span>{title}</span>
-        <Badge color="gray" size="sm" circle={itemsCount < 10}>
+        <span className={styles.nodeTitle}>{title}</span>
+        <Badge
+          className={styles.itemsCount}
+          color="gray"
+          size="sm"
+          circle={itemsCount < 10}
+        >
           {itemsCount}
         </Badge>
       </div>
@@ -379,7 +400,7 @@ const Item = forwardRef<any, tItemProps>((props, ref) => {
         radius="sm"
         size="sm"
       />
-      <span>{props.item.name}</span>
+      <span className={styles.nodeTitle}>{props.item.name}</span>
     </div>
   );
 });
