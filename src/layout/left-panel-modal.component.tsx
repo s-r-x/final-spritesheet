@@ -4,6 +4,7 @@ import {
   useLeftPanelModalVisibilityState,
 } from "./use-left-panel-modal";
 import type { JSX } from "react";
+import styles from "./layout.module.css";
 
 type tProps = {
   title?: string;
@@ -18,6 +19,7 @@ const LeftPanelModal = (props: tProps) => {
       opened={isOpen}
       onClose={onClose}
       title={props.title}
+      className={styles.leftPanel}
     >
       {props.children}
     </Drawer>

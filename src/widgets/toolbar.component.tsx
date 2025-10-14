@@ -55,91 +55,89 @@ const Toolbar = () => {
   });
   const isExportDisabled = useIsExportSpritesheetDisabled();
   return (
-    <div className={styles.root}>
-      <Group gap="xs">
-        <FileButton
-          onChange={(files) => {
-            addSpritesMut.mutate({ files });
-          }}
-          accept={SUPPORTED_SPRITE_MIME_TYPES.join(",")}
-          multiple
-        >
-          {(props) =>
-            isMobile ? (
-              <ActionIcon size="lg" aria-label={addSpritesLabel} {...props}>
-                <PlusIcon />
-              </ActionIcon>
-            ) : (
-              <Button
-                size="sm"
-                variant="filled"
-                {...props}
-                aria-label={addSpritesLabel}
-                leftSection={<PlusIcon size={20} />}
-                disabled={isPersisting}
-              >
-                {addSpritesLabel}
-              </Button>
-            )
-          }
-        </FileButton>
+    <Group className={styles.root} gap="xs">
+      <FileButton
+        onChange={(files) => {
+          addSpritesMut.mutate({ files });
+        }}
+        accept={SUPPORTED_SPRITE_MIME_TYPES.join(",")}
+        multiple
+      >
+        {(props) =>
+          isMobile ? (
+            <ActionIcon size="lg" aria-label={addSpritesLabel} {...props}>
+              <PlusIcon />
+            </ActionIcon>
+          ) : (
+            <Button
+              size="sm"
+              variant="filled"
+              {...props}
+              aria-label={addSpritesLabel}
+              leftSection={<PlusIcon size={20} />}
+              disabled={isPersisting}
+            >
+              {addSpritesLabel}
+            </Button>
+          )
+        }
+      </FileButton>
+      <ActionIcon
+        onClick={() => undoMut.mutate()}
+        disabled={!canUndo || isPersisting}
+        size="lg"
+        aria-label={t("undo")}
+      >
+        <UndoIcon />
+      </ActionIcon>
+      <ActionIcon
+        onClick={() => redoMut.mutate()}
+        disabled={!canRedo || isPersisting}
+        size="lg"
+        aria-label={t("redo")}
+      >
+        <RedoIcon />
+      </ActionIcon>
+      {isMobile && (
         <ActionIcon
-          onClick={() => undoMut.mutate()}
-          disabled={!canUndo || isPersisting}
+          aria-label={t("settings")}
           size="lg"
-          aria-label={t("undo")}
+          onClick={openRightPanel}
         >
-          <UndoIcon />
+          <SettingsIcon />
         </ActionIcon>
+      )}
+      {isMobile && (
         <ActionIcon
-          onClick={() => redoMut.mutate()}
-          disabled={!canRedo || isPersisting}
+          aria-label={t("sprites_list")}
           size="lg"
-          aria-label={t("redo")}
+          onClick={openLeftPanel}
         >
-          <RedoIcon />
+          <ListIcon />
         </ActionIcon>
-        {isMobile && (
-          <ActionIcon
-            aria-label={t("settings")}
-            size="lg"
-            onClick={openRightPanel}
-          >
-            <SettingsIcon />
-          </ActionIcon>
-        )}
-        {isMobile && (
-          <ActionIcon
-            aria-label={t("sprites_list")}
-            size="lg"
-            onClick={openLeftPanel}
-          >
-            <ListIcon />
-          </ActionIcon>
-        )}
-        <ActionIcon
-          disabled={!canPersist}
-          aria-label={t("save")}
-          onClick={() => persistChangesMut.mutate()}
-          loading={isPersisting}
-          variant="light"
-          size="lg"
-        >
-          <SaveIcon />
-        </ActionIcon>
-        <Button
-          variant="light"
-          leftSection={<DownloadIcon size={20} />}
-          size="sm"
-          onClick={() => exportSpritesheetMut.mutate()}
-          loading={exportSpritesheetMut.isLoading}
-          disabled={isExportDisabled || isPersisting}
-          aria-label={exportLabel}
-        >
-          {exportLabel}
-        </Button>
-      </Group>
-    </div>
+      )}
+      <ActionIcon
+        disabled={!canPersist}
+        aria-label={t("save")}
+        onClick={() => persistChangesMut.mutate()}
+        loading={isPersisting}
+        variant="light"
+        size="lg"
+      >
+        <SaveIcon />
+      </ActionIcon>
+      <Button
+        variant="light"
+        leftSection={<DownloadIcon size={20} />}
+        size="sm"
+        onClick={() => exportSpritesheetMut.mutate()}
+        loading={exportSpritesheetMut.isLoading}
+        disabled={isExportDisabled || isPersisting}
+        aria-label={exportLabel}
+      >
+        {exportLabel}
+      </Button>
+    </Group>
   );
 };
 

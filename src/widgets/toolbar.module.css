@@ -1,4 +1,7 @@
 .root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: var(--mantine-color-text);
   background: var(--mantine-color-body);
   border-radius: var(--mantine-radius-default);

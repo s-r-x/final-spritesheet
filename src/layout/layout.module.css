@@ -60,11 +60,22 @@
 }
 .toolbar {
   position: absolute;
-  top: 10px;
-  display: flex;
-  justify-content: center;
-  left: 0;
-  right: 0;
+  top: 0.5rem;
+  width: max-content;
+  left: 1rem;
+  right: 1rem;
   margin: 0 auto;
   z-index: 2;
+}
+
+.leftPanel {
+  :global(.mantine-Drawer-content) {
+    display: flex;
+    flex-direction: column;
+  }
+  :global(.mantine-Drawer-body) {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
 }
