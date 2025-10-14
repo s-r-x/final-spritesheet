@@ -29,7 +29,14 @@ const AppLayout = memo((props: tProps) => {
         >
           {isDesktop && (
             <>
-              <Panel defaultSize={25} minSize={5} maxSize={50}>
+              <Panel
+                defaultSize={25}
+                minSize={1}
+                maxSize={50}
+                style={{
+                  minWidth: "4rem",
+                }}
+              >
                 <Stack p="xs" className={styles.leftPanel}>
                   {props.appBarSlot}
                   <div
