@@ -1,7 +1,7 @@
 import { useTranslation } from "@/i18n/use-translation";
 import { activeProjectAtom } from "@/projects/projects.atom";
 import { useOpenProjectEditor } from "@/projects/use-project-editor";
-import { Menu, ActionIcon, Flex, useMantineColorScheme } from "@mantine/core";
+import { Menu, ActionIcon, useMantineColorScheme } from "@mantine/core";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { Menu as MenuIcon } from "lucide-react";
@@ -13,6 +13,7 @@ import { SUPPORTED_LANGUAGES } from "#config";
 import { useMutation } from "@/common/hooks/use-mutation";
 import { useExportDb, useImportDb } from "@/persistence/use-db";
 import { memo } from "react";
+import styles from "./app-bar.module.css";
 
 const i18nNs = "app_menu.";
 const PackerAppBar = () => {
@@ -46,8 +47,10 @@ const PackerAppBar = () => {
   const { setColorScheme } = useMantineColorScheme();
   const { t } = useTranslation();
   return (
-    <Flex justify="space-between" align="center">
-      {activeProject && <span>{activeProject.name}</span>}
+    <div className={styles.root}>
+      {activeProject && (
+        <span className={styles.projectName}>{activeProject.name}</span>
+      )}
       <Menu width={200} position="right-start">
         <Menu.Target>
           <ActionIcon aria-label={t("open_menu")} variant="transparent">
@@ -143,7 +146,7 @@ const PackerAppBar = () => {
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>
-    </Flex>
+    </div>
   );
 };
 export default memo(PackerAppBar);
