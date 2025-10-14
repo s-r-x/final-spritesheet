@@ -11,14 +11,11 @@ import Canvas from "@/canvas/canvas.component";
 import CanvasDropzone from "@/canvas/canvas-dropzone.component";
 import PackerSettings from "@/packer/packer-settings.component";
 import OutputSettings from "@/output/output-settings.component";
-import PackedSpritesList from "@/packer/packed-sprites-list.component";
-import FoldersList from "@/folders/folders-list.component";
 import Toolbar from "@/widgets/toolbar.component";
 import { CanvasRefsProvider } from "@/canvas/canvas-refs";
 import SpriteEditor from "@/input/sprite-editor.component";
 import {
   Accordion,
-  Tabs,
   List,
   Center,
   Title,
@@ -56,6 +53,7 @@ import {
 } from "@/persistence/use-persistence";
 import { useMutation } from "@/common/hooks/use-mutation";
 import { foldersAtom } from "@/folders/folders.atom";
+import PackedSpritesAndFolders from "@/organisms/packed-sprites-and-folders.component";
 
 export const Route = createFileRoute("/projects/{-$projectId}")({
   component: Project,
@@ -236,37 +234,7 @@ function Project() {
       <Layout
         rightPanelLabel={t("settings")}
         appBarSlot={<PackerAppBar />}
-        leftPanelSlot={
-          <>
-            <Tabs
-              keepMounted={false}
-              defaultValue="bins"
-              style={{ display: "flex", flexDirection: "column", flex: 1 }}
-            >
-              <Tabs.List>
-                <Tabs.Tab value="bins">
-                  {t("packed_sprites_list_sect_name")}
-                </Tabs.Tab>
-                <Tabs.Tab value="folders">
-                  {t("folders_list_sect_name")}
-                </Tabs.Tab>
-              </Tabs.List>
-              <Tabs.Panel
-                value="folders"
-                style={{ display: "flex", flexDirection: "column", flex: 1 }}
-              >
-                <FoldersList />
-              </Tabs.Panel>
-              <Tabs.Panel
-                value="bins"
-                style={{ display: "flex", flexDirection: "column", flex: 1 }}
-              >
-                <PackedSpritesList />
-              </Tabs.Panel>
-            </Tabs>
-          </>
-        }
-        //leftPanelSlot={<PackedSpritesList />}
+        leftPanelSlot={<PackedSpritesAndFolders />}
         mainSlot={
           <>
             <Canvas />
