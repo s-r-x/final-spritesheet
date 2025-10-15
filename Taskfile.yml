@@ -1,0 +1,18 @@
+version: "3"
+
+tasks:
+  default:
+    - task: dev
+  dev: npm run dev
+  build: npm run build
+  lint: npm run lint
+  check-types: npm run check-types
+  format.check: npm run format:check
+  format.fix: npm run format:fix
+  preview: npm run preview
+  deps.install: npm ci
+  deps.audit: npm audit
+  deps.audit.fix: npm audit fix
+  test.e2e: npx playwright test {{.CLI_ARGS}}
+  test.e2e.ui: npx playwright test --ui
+  test.e2e.codegen: npx playwright codegen http://localhost:5173/final-spritesheet
