@@ -4,10 +4,16 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import { VitePWA } from "vite-plugin-pwa";
 
+export const PORT = 5173;
+export const BASE_URL = "/final-spritesheet";
+
 export default defineConfig({
-  base: "/final-spritesheet",
+  base: BASE_URL,
   build: {
     sourcemap: true,
+  },
+  server: {
+    port: PORT,
   },
   plugins: [
     react(),

@@ -189,7 +189,10 @@ const PackedSpritesList = () => {
           </FileButton>
         </div>
         <div ref={ref} className={styles.treeRoot}>
-          <div className={styles.treeViewport}>
+          <div
+            className={styles.treeViewport}
+            data-testid="packed-sprites-tree-viewport"
+          >
             {rootWidth > 0 && rootHeight > 0 && (
               <Tree
                 data={treeData}
@@ -200,6 +203,7 @@ const PackedSpritesList = () => {
                 className={styles.tree}
                 width={rootWidth - 1}
                 height={rootHeight - 1}
+                data-testid="true"
                 renderRow={(args) => (
                   <div
                     {...args.attrs}

@@ -157,7 +157,10 @@ const FoldersList = () => {
           </ActionIcon>
         </div>
         <div ref={ref} className={styles.treeRoot}>
-          <div className={styles.treeViewport}>
+          <div
+            data-testid="folders-tree-viewport"
+            className={styles.treeViewport}
+          >
             {rootWidth > 0 && rootHeight > 0 && (
               <Tree
                 ref={treeApiRef}
