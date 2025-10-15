@@ -4,7 +4,7 @@ import type { tSprite } from "./types";
 import { fileToSprite } from "./sprites.mapper";
 import { useHistoryManager } from "@/history/use-history-manager";
 import { AddSpritesCommand } from "./add-sprites.command";
-import { useMutation } from "@/common/hooks/use-mutation";
+import { useMutation } from "#hooks/use-mutation";
 import { useCreateUpdateFoldersCommand } from "@/folders/use-update-folders";
 import { Command } from "@/common/commands/command";
 import { useStore } from "jotai";

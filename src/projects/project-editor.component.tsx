@@ -9,7 +9,7 @@ import {
   useCloseProjectEditor,
 } from "./use-project-editor";
 import { useUpdateProject } from "./use-update-project";
-import { useMutation } from "@/common/hooks/use-mutation";
+import { useMutation } from "#hooks/use-mutation";
 
 const i18nNs = "project_editor.";
 const ProjectEditorModal = () => {

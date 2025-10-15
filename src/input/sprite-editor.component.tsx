@@ -7,7 +7,7 @@ import { zod4Resolver } from "mantine-form-zod-resolver";
 import { useEditableSprite } from "./use-sprite-editor";
 import { useCloseSpriteEditor } from "./use-sprite-editor";
 import { useUpdateSprite } from "./use-update-sprite";
-import { useMutation } from "@/common/hooks/use-mutation";
+import { useMutation } from "#hooks/use-mutation";
 
 const i18nNs = "sprite_editor.";
 const SpriteEditorModal = () => {

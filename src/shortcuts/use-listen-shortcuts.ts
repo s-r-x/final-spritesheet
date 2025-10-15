@@ -1,4 +1,4 @@
-import { useMutation } from "@/common/hooks/use-mutation";
+import { useMutation } from "#hooks/use-mutation";
 import { useRedo } from "@/history/use-redo";
 import { useUndo } from "@/history/use-undo";
 import {

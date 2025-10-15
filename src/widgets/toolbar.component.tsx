@@ -26,7 +26,7 @@ import {
   useIsPersisting,
   usePersistChanges,
 } from "@/persistence/use-persistence";
-import { useMutation } from "@/common/hooks/use-mutation";
+import { useMutation } from "#hooks/use-mutation";
 import { memo } from "react";
 
 const Toolbar = () => {

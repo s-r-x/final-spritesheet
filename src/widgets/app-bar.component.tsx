@@ -10,7 +10,7 @@ import { useProjectsList } from "@/projects/use-projects-list";
 import { useRemoveProject } from "@/projects/use-remove-project";
 import { useLanguage } from "@/i18n/use-language";
 import { SUPPORTED_LANGUAGES } from "#config";
-import { useMutation } from "@/common/hooks/use-mutation";
+import { useMutation } from "#hooks/use-mutation";
 import { useExportDb, useImportDb } from "@/persistence/use-db";
 import { memo } from "react";
 import styles from "./app-bar.module.css";

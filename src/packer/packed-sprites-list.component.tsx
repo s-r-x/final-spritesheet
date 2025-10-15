@@ -28,7 +28,7 @@ import { useFocusBin } from "@/canvas/use-focus-bin";
 import { isDefined } from "#utils/is-defined";
 import { useIsMobileLayout } from "@/layout/use-is-mobile-layout";
 import { useCloseLeftPanelModal } from "@/layout/use-left-panel-modal";
-import { useMutation } from "@/common/hooks/use-mutation";
+import { useMutation } from "#hooks/use-mutation";
 import { useSpritesMap } from "@/input/use-sprites-map";
 import {
   type NodeApi,
@@ -37,7 +37,7 @@ import {
   type TreeApi,
 } from "react-arborist";
 import clsx from "clsx";
-import { useMeasure } from "@/common/hooks/use-measure";
+import { useMeasure } from "#hooks/use-measure";
 
 type tItemNodeData = {
   kind: "item";

@@ -30,9 +30,9 @@ import { useAddFolder } from "./use-add-folder";
 import { useActiveProjectId } from "@/projects/use-active-project-id";
 import { useAddSpritesFromFiles } from "@/input/use-add-sprites-from-files";
 import { useFileDialog } from "@mantine/hooks";
-import { useMutation } from "@/common/hooks/use-mutation";
+import { useMutation } from "#hooks/use-mutation";
 import { SUPPORTED_SPRITE_MIME_TYPES } from "#config";
-import { useMeasure } from "@/common/hooks/use-measure";
+import { useMeasure } from "#hooks/use-measure";
 
 type tItemNodeData = {
   kind: "item";

@@ -23,6 +23,7 @@
       "#config": ["./src/config"],
       "#utils/*": ["./src/common/utils/*"],
       "#components/*": ["./src/common/components/*"],
+      "#hooks/*": ["./src/common/hooks/*"],
       "@/*": ["./src/*"]
     }
   },

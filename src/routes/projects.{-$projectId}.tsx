@@ -41,7 +41,7 @@ import {
   useHasUnsavedChanges,
   useIsPersisting,
 } from "@/persistence/use-persistence";
-import { useMutation } from "@/common/hooks/use-mutation";
+import { useMutation } from "#hooks/use-mutation";
 import { foldersAtom } from "@/folders/folders.atom";
 import PackedSpritesAndFolders from "@/organisms/packed-sprites-and-folders.component";
 import PackerAndOutputSettings from "@/organisms/packer-and-output-settings.component";

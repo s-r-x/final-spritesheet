@@ -18,7 +18,7 @@ import {
   useOutputSettingsFormVersion,
 } from "./use-output-settings";
 import CloseableMessage from "#components/closeable-message.component";
-import { useMutation } from "@/common/hooks/use-mutation";
+import { useMutation } from "#hooks/use-mutation";
 import { memo } from "react";
 
 const i18nNs = "output_opts.";

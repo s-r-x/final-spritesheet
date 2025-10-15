@@ -16,7 +16,7 @@ import {
   useIsRotationSupported,
   usePackerSettingsFormVersion,
 } from "./use-packer-settings";
-import { useMutation } from "@/common/hooks/use-mutation";
+import { useMutation } from "#hooks/use-mutation";
 import { memo } from "react";
 
 const ATOMS_UPDATE_DELAY_MS = 200;
