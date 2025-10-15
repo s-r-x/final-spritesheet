@@ -36,8 +36,8 @@ import {
   Tree,
   type TreeApi,
 } from "react-arborist";
-import { useElementSize } from "@mantine/hooks";
 import clsx from "clsx";
+import { useMeasure } from "@/common/hooks/use-measure";
 
 type tItemNodeData = {
   kind: "item";
@@ -58,7 +58,7 @@ type tTreeNodeData<TNodeData extends tNodeData = tNodeData> = {
 const PackedSpritesList = () => {
   const openSpriteEditor = useOpenSpriteEditor();
   const { openContextMenu } = useContextMenu();
-  const { ref, width: rootWidth, height: rootHeight } = useElementSize();
+  const { ref, width: rootWidth, height: rootHeight } = useMeasure();
   const treeApiRef = useRef<TreeApi<tTreeNodeData> | undefined>(undefined);
   const { t } = useTranslation();
   const isMobile = useIsMobileLayout();

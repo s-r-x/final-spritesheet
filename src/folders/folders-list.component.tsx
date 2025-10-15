@@ -16,7 +16,6 @@ import {
   Tree,
   type TreeApi,
 } from "react-arborist";
-import { useElementSize } from "@mantine/hooks";
 import { isEmpty } from "#utils/is-empty";
 import { arrayMoveMultiple } from "#utils/array-move-multiple";
 import { useRemoveSprites } from "@/input/use-remove-sprites";
@@ -33,6 +32,7 @@ import { useAddSpritesFromFiles } from "@/input/use-add-sprites-from-files";
 import { useFileDialog } from "@mantine/hooks";
 import { useMutation } from "@/common/hooks/use-mutation";
 import { SUPPORTED_SPRITE_MIME_TYPES } from "#config";
+import { useMeasure } from "@/common/hooks/use-measure";
 
 type tItemNodeData = {
   kind: "item";
@@ -93,7 +93,7 @@ const FoldersList = () => {
   const focusSprite = useFocusSprite();
   const openSpriteEditor = useOpenSpriteEditor();
   const { openContextMenu } = useContextMenu();
-  const { ref, width: rootWidth, height: rootHeight } = useElementSize();
+  const { ref, width: rootWidth, height: rootHeight } = useMeasure();
   const treeApiRef = useRef<TreeApi<tTreeNodeData> | undefined>(undefined);
   const treeData: tTreeNodeData[] = useMemo(() => {
     return folders.map(({ folder, items }) => {
