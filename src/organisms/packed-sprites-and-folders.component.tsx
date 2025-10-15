@@ -7,7 +7,7 @@ import {
   Folder as FoldersIcon,
 } from "lucide-react";
 import styles from "./packed-sprites-and-folders.module.css";
-import { useLocalStorage } from "@mantine/hooks";
+import { usePersistedState } from "#hooks/use-persisted-state";
 
 const PackedSpritesAndFolders = () => {
   const { t } = useTranslation();
@@ -15,7 +15,7 @@ const PackedSpritesAndFolders = () => {
   const iconSize = 20;
   const packedSpritesLabel = t("packed_sprites_list_sect_name");
   const foldersLabel = t("folders_list_sect_name");
-  const [value, setValue] = useLocalStorage({
+  const [value, setValue] = usePersistedState({
     key: "sprites_and_folders_tab",
     defaultValue: "bins",
   });

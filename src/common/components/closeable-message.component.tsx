@@ -1,6 +1,6 @@
+import { usePersistedState } from "#hooks/use-persisted-state";
 import { useTranslation } from "@/i18n/use-translation";
 import { Alert } from "@mantine/core";
-import { useLocalStorage } from "@mantine/hooks";
 import type { ReactNode } from "react";
 
 type tProps = {
@@ -12,7 +12,7 @@ type tProps = {
 const DOMAIN = "closeable_msg::";
 const CloseableMessage = (props: tProps) => {
   const { t } = useTranslation();
-  const [value, setValue] = useLocalStorage<"0" | "1">({
+  const [value, setValue] = usePersistedState<"0" | "1">({
     key: DOMAIN + props.id,
     defaultValue: "1",
   });

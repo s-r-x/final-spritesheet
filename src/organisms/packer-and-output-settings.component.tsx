@@ -2,14 +2,13 @@ import { Accordion } from "@mantine/core";
 import PackerSettings from "@/packer/packer-settings.component";
 import OutputSettings from "@/output/output-settings.component";
 import { useTranslation } from "@/i18n/use-translation";
-import { useLocalStorage } from "@mantine/hooks";
+import { usePersistedState } from "#hooks/use-persisted-state";
 
 const PackerAndOutputSettings = () => {
   const { t } = useTranslation();
-  const [value, setValue] = useLocalStorage<string[]>({
+  const [value, setValue] = usePersistedState<string[]>({
     key: "packer_and_output_settings_accordion",
     defaultValue: ["output", "packer"],
-    getInitialValueInEffect: false,
   });
   return (
     <Accordion multiple value={value} onChange={setValue}>
