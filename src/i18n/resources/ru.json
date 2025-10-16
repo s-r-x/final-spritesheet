@@ -84,6 +84,7 @@
       "restore_confirm": "Эта операция удалит все существующие данные. Продолжить?"
     },
     "folders": {
+      "default_folder_name": "Без папки",
       "add_folder": "Добавить папку",
       "open_folder": "Открыть",
       "close_folder": "Закрыть",

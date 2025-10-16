@@ -84,6 +84,7 @@
       "restore_confirm": "This operation will remove all existing data. Continue?"
     },
     "folders": {
+      "default_folder_name": "No folder",
       "add_folder": "Add folder",
       "open_folder": "Open",
       "close_folder": "Close",

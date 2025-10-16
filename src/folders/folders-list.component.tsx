@@ -488,6 +488,7 @@ type tFolderProps = {
 };
 const Folder = forwardRef<any, tFolderProps>(({ folder, style }, ref) => {
   const iconSize = 20;
+  const { t } = useTranslation();
   return (
     <div
       style={style}
@@ -500,7 +501,9 @@ const Folder = forwardRef<any, tFolderProps>(({ folder, style }, ref) => {
       ) : (
         <FolderIcon size={iconSize} className={styles.folderIcon} />
       )}
-      <span className={styles.nodeTitle}>{folder.name}</span>
+      <span className={styles.nodeTitle}>
+        {isRootFolder(folder) ? t("folders.default_folder_name") : folder.name}
+      </span>
     </div>
   );
 });
