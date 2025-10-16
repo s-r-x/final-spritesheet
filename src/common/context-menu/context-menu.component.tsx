@@ -13,6 +13,7 @@ const ContextMenu = () => {
   });
   return (
     <ControlledMenu
+      data-testid="context-menu"
       anchorPoint={state.anchorPoint}
       theming={theme === "dark" ? "dark" : undefined}
       state={state.isOpen ? "open" : "closed"}

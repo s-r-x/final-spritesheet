@@ -47,10 +47,10 @@ export const OUTPUT_ENABLE_PNG_COMPRESSION = false;
 
 export const DB_NAME = "final-spritesheet";
 
-export const DEV = import.meta.env.DEV;
-export const PROD = import.meta.env.PROD;
+export const DEV = import.meta.env?.DEV;
+export const PROD = import.meta.env?.PROD;
 
-export const BASE_URL = import.meta.env.BASE_URL;
+export const BASE_URL = import.meta.env?.BASE_URL;
 
 export const LOG_LEVELS: Set<tLogLevel> = new Set(
   PROD ? ["info", "warn"] : ["debug", "info", "warn"],

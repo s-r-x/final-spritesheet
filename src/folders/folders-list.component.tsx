@@ -178,6 +178,11 @@ const FoldersList = () => {
                     ref={args.innerRef}
                     onFocus={(e) => e.stopPropagation()}
                     onClick={args.node.handleClick}
+                    data-parent-folder={
+                      args.node.data.nodeProps.kind === "item"
+                        ? args.node.data.nodeProps.props.folderId
+                        : undefined
+                    }
                   >
                     {args.children}
                   </div>

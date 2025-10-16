@@ -15,7 +15,7 @@ import { PORT as APP_DEV_SERVER_PORT } from "./vite.config";
 
 const DEV_SERVER_URL = `http://localhost:${APP_DEV_SERVER_PORT}`;
 export default defineConfig({
-  testDir: "./tests",
+  testDir: "./e2e",
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -25,7 +25,7 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: "html",
+  reporter: "line",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     locale: "en-US",
@@ -47,7 +47,7 @@ export default defineConfig({
       name: "firefox",
       use: { ...devices["Desktop Firefox"] },
     },
-
+    
     {
       name: "webkit",
       use: { ...devices["Desktop Safari"] },
