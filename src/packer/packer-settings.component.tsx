@@ -1,4 +1,4 @@
-import { Select, NumberInput, Switch, Stack } from "@mantine/core";
+import { Select, NumberInput, Checkbox, Stack } from "@mantine/core";
 import { useTranslation } from "@/i18n/use-translation";
 import { useForm } from "@mantine/form";
 import * as z from "zod";
@@ -95,7 +95,10 @@ const PackerSettings = ({ getCurrentSettings }: tProps) => {
     isTextInput: true,
   });
   return (
-    <form onSubmit={form.onSubmit(onValuesChange)}>
+    <form
+      data-testid="packer-settings-form"
+      onSubmit={form.onSubmit(onValuesChange)}
+    >
       <Stack gap="sm">
         <Select
           label={t("packer_opts.max_size")}
@@ -156,14 +159,14 @@ const PackerSettings = ({ getCurrentSettings }: tProps) => {
             edgeSpacingInputProps.onBlur?.(e);
           }}
         />
-        <Switch
+        <Checkbox
           label={t("packer_opts.pot")}
           key={form.key("pot")}
           {...normalizeInputProps({
             props: form.getInputProps("pot", { type: "checkbox" }),
           })}
         />
-        <Switch
+        <Checkbox
           disabled={!isRotationSupported}
           label={t("packer_opts.allow_rot")}
           key={form.key("allowRotation")}
