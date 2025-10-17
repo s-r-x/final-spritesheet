@@ -22,6 +22,7 @@
     "packed_sprites_list_sect_name": "Packed",
     "packed_bin_with_id": "Bin {{id}}",
     "folders_list_sect_name": "Folders",
+    "generate_random_name": "Random name",
     "confirm_dialog": {
       "default_title": "Confirm your action",
       "default_yes": "Confirm",
@@ -48,13 +49,20 @@
     "sprite_editor": {
       "editor_title": "Edit sprite",
       "name": "Name",
-      "name_placeholder": "Enter the name",
+      "name_placeholder": "Enter the sprite name",
       "scale": "Scale"
+    },
+    "folder_editor": {
+      "editor_title": "Edit folder",
+      "editor_title_new": "Create folder",
+      "name": "Name",
+      "name_placeholder": "Enter the folder name",
+      "is_animation": "Animation"
     },
     "project_editor": {
       "editor_title": "Edit project",
       "name": "Name",
-      "name_placeholder": "Enter the name"
+      "name_placeholder": "Enter the project name"
     },
     "sprites_drop_zone": {
       "head": "Drop your sprites here",

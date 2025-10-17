@@ -22,6 +22,7 @@
     "packed_sprites_list_sect_name": "Спрайты",
     "packed_bin_with_id": "Контейнер {{id}}",
     "folders_list_sect_name": "Папки",
+    "generate_random_name": "Случайное имя",
     "confirm_dialog": {
       "default_title": "Подтвердите действие",
       "default_yes": "Подтвердить",
@@ -48,13 +49,20 @@
     "sprite_editor": {
       "editor_title": "Редактирование спрайта",
       "name": "Имя",
-      "name_placeholder": "Введите имя",
+      "name_placeholder": "Введите имя спрайта",
       "scale": "Масштаб"
+    },
+    "folder_editor": {
+      "editor_title": "Редактирование папки",
+      "editor_title_new": "Создание папки",
+      "name": "Имя",
+      "name_placeholder": "Введите имя папки",
+      "is_animation": "Анимация"
     },
     "project_editor": {
       "editor_title": "Редактирование проекта",
-      "name": "Имя",
-      "name_placeholder": "Введите имя"
+      "name": "Название",
+      "name_placeholder": "Введите название проекта"
     },
     "sprites_drop_zone": {
       "head": "Перетащите свои спрайты сюда",

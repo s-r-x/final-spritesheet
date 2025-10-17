@@ -26,13 +26,12 @@ import { useFocusSprite } from "@/canvas/use-focus-sprite";
 import { isDefined } from "#utils/is-defined";
 import { useOpenSpriteEditor } from "@/input/use-sprite-editor";
 import { useContextMenu } from "@/common/context-menu/use-context-menu";
-import { useAddFolder } from "./use-add-folder";
-import { useActiveProjectId } from "@/projects/use-active-project-id";
 import { useAddSpritesFromFiles } from "@/input/use-add-sprites-from-files";
 import { useFileDialog } from "@mantine/hooks";
 import { useMutation } from "#hooks/use-mutation";
 import { SUPPORTED_SPRITE_MIME_TYPES } from "#config";
 import { useMeasure } from "#hooks/use-measure";
+import { useOpenFolderEditor } from "./use-folder-editor";
 
 type tItemNodeData = {
   kind: "item";
@@ -87,7 +86,7 @@ const FoldersList = () => {
   });
   const folders = useNormalizedFolders();
   const updateFolders = useUpdateFolders();
-  const addFolder = useAddFolder();
+  const openFolderEditor = useOpenFolderEditor();
   const removeSprites = useRemoveSprites();
   const removeFolders = useRemoveFolders();
   const focusSprite = useFocusSprite();
@@ -133,8 +132,8 @@ const FoldersList = () => {
   ) => {
     removeFolders(nodes.map((node) => node.id));
   };
-  const projectId = useActiveProjectId()!;
   const addFolderBtnLabel = t("folders.add_folder");
+  const openNewFolderCreator = () => openFolderEditor("new");
   return (
     <>
       <div className={styles.root}>
@@ -144,14 +143,14 @@ const FoldersList = () => {
             className={styles.wideViewportButton}
             fullWidth
             leftSection={<PlusIcon />}
-            onClick={() => addFolder({ projectId })}
+            onClick={openNewFolderCreator}
           >
             {addFolderBtnLabel}
           </Button>
           <ActionIcon
             arial-label={addFolderBtnLabel}
             className={styles.narrowViewportButton}
-            onClick={() => addFolder({ projectId })}
+            onClick={openNewFolderCreator}
           >
             <PlusIcon />
           </ActionIcon>
@@ -395,6 +394,12 @@ const FoldersList = () => {
                             fileDialog.open();
                           },
                         },
+                        isOnlyOneSelected &&
+                          !isOnlyRootSelected && {
+                            id: "update_folder",
+                            title: t("update"),
+                            onClick: () => openFolderEditor(firstFolder.id),
+                          },
                         !isOnlyRootSelected &&
                           !isMarkedAsAnimation && {
                             id: "animation",

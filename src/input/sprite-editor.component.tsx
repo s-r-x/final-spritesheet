@@ -4,8 +4,7 @@ import type { tSprite } from "./types";
 import { useForm } from "@mantine/form";
 import * as z from "zod";
 import { zod4Resolver } from "mantine-form-zod-resolver";
-import { useEditableSprite } from "./use-sprite-editor";
-import { useCloseSpriteEditor } from "./use-sprite-editor";
+import { useEditableSprite, useCloseSpriteEditor } from "./use-sprite-editor";
 import { useUpdateSprite } from "./use-update-sprite";
 import { useMutation } from "#hooks/use-mutation";
 
