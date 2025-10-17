@@ -6,7 +6,7 @@ export const getOrderedSpritesFromPackedBin = async (
   name?: string,
 ): Promise<string[]> => {
   const list = packedSpritesListLocator(page);
-  let locator = list.getByRole("treeitem", {
+  const locator = list.getByRole("treeitem", {
     level: 2,
     ...(name ? { name, exact: true } : {}),
   });

@@ -1,6 +1,7 @@
 import type { Page } from "@playwright/test";
 import { t } from "../utils/t";
 import { normalizeAssetName } from "../utils/normalize-asset-name";
+import { toolbarLocator } from "../locators/toolbar";
 
 export const uploadSprites = async (
   page: Page,
@@ -9,7 +10,7 @@ export const uploadSprites = async (
   const filePaths = sprites.map(normalizeAssetName);
   const [fileChooser] = await Promise.all([
     page.waitForEvent("filechooser"),
-    page.getByRole("toolbar").getByText(t("add_sprites")).click(),
+    toolbarLocator(page).getByText(t("add_sprites")).click(),
   ]);
 
   await fileChooser.setFiles(filePaths);
