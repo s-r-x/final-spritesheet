@@ -47,7 +47,10 @@ const ProjectEditor = ({
 }) => {
   const updateProject = useUpdateProject();
   const updateProjectMut = useMutation(
-    (form: tForm) => updateProject(project.id, form),
+    (form: tForm) => {
+      form = schema.parse(form);
+      return updateProject(project.id, form);
+    },
     {
       onSuccess: onClose,
     },

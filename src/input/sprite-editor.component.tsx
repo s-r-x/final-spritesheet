@@ -43,7 +43,10 @@ const SpriteEditor = ({
 }) => {
   const updateSprite = useUpdateSprite();
   const updateSpriteMut = useMutation(
-    (form: tForm) => updateSprite(sprite, form),
+    (form: tForm) => {
+      form = schema.parse(form);
+      return updateSprite(sprite, form);
+    },
     {
       onSuccess() {
         onClose();
