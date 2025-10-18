@@ -14,7 +14,7 @@ import { CanvasRefsProvider } from "@/canvas/canvas-refs";
 import SpriteEditor from "@/input/sprite-editor.component";
 import ProjectEditor from "@/projects/project-editor.component";
 import FolderEditor from "@/folders/folder-editor.component";
-import { List, Center, Title, Button, Stack, Mark } from "@mantine/core";
+import { List, Center, Title, Button, Stack, Mark, Tabs, Accordion } from "@mantine/core";
 import { useHandleSpritesPasteEvent } from "@/input/use-handle-sprites-paste-event";
 import { atomsStore } from "@/common/atoms/atoms-store";
 import { setSpritesAtom } from "@/input/sprites.atom";
@@ -44,8 +44,16 @@ import {
 } from "@/persistence/use-persistence";
 import { useMutation } from "#hooks/use-mutation";
 import { foldersAtom } from "@/folders/folders.atom";
-import PackedSpritesAndFolders from "@/organisms/packed-sprites-and-folders.component";
-import PackerAndOutputSettings from "@/organisms/packer-and-output-settings.component";
+import {
+  Package as PackedSpritesIcon,
+  Folder as FoldersIcon,
+} from "lucide-react";
+import { usePersistedState } from "#hooks/use-persisted-state";
+import FoldersList from "@/folders/folders-list.component";
+import PackedSpritesList from "@/packer/packed-sprites-list.component";
+import PackerSettings from "@/packer/packer-settings.component";
+import OutputSettings from "@/output/output-settings.component";
+import type { CSSProperties } from "react";
 
 export const Route = createFileRoute("/projects/{-$projectId}")({
   component: Project,
@@ -242,6 +250,84 @@ function Project() {
     </CanvasRefsProvider>
   );
 }
+const PackedSpritesAndFolders = () => {
+  const { t } = useTranslation();
+
+  const iconSize = 20;
+  const packedSpritesLabel = t("packed_sprites_list_sect_name");
+  const foldersLabel = t("folders_list_sect_name");
+  const [value, setValue] = usePersistedState({
+    key: "sprites_and_folders_tab",
+    defaultValue: "bins",
+  });
+  const panelStyles: CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    flex: 1,
+  };
+  return (
+    <Tabs
+      keepMounted={false}
+      value={value}
+      variant="pills"
+      onChange={(value) => {
+        if (value) setValue(value);
+      }}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        flex: 1,
+      }}
+    >
+      <Tabs.List>
+        <Tabs.Tab
+          aria-label={packedSpritesLabel}
+          leftSection={<PackedSpritesIcon size={iconSize} />}
+          value="bins"
+        >
+          {packedSpritesLabel}
+        </Tabs.Tab>
+        <Tabs.Tab
+          aria-label={foldersLabel}
+          leftSection={<FoldersIcon size={iconSize} />}
+          value="folders"
+        >
+          {foldersLabel}
+        </Tabs.Tab>
+      </Tabs.List>
+      <Tabs.Panel value="folders" style={panelStyles}>
+        <FoldersList />
+      </Tabs.Panel>
+      <Tabs.Panel value="bins" style={panelStyles}>
+        <PackedSpritesList />
+      </Tabs.Panel>
+    </Tabs>
+  );
+};
+
+const PackerAndOutputSettings = () => {
+  const { t } = useTranslation();
+  const [value, setValue] = usePersistedState<string[]>({
+    key: "packer_and_output_settings_accordion",
+    defaultValue: ["output", "packer"],
+  });
+  return (
+    <Accordion multiple value={value} onChange={setValue}>
+      <Accordion.Item value="packer">
+        <Accordion.Control>{t("packer_opts.form_name")}</Accordion.Control>
+        <Accordion.Panel>
+          <PackerSettings />
+        </Accordion.Panel>
+      </Accordion.Item>
+      <Accordion.Item value="output">
+        <Accordion.Control>{t("output_opts.form_name")}</Accordion.Control>
+        <Accordion.Panel>
+          <OutputSettings />
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
+  );
+};
 
 const RouteSideEffects = () => {
   const { t } = useTranslation();
