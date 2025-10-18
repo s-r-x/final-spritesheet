@@ -20,6 +20,7 @@ export default defineConfig({
   },
   build: {
     sourcemap: true,
+    chunkSizeWarningLimit: 99999,
   },
   server: {
     port: PORT,
