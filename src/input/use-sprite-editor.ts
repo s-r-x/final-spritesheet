@@ -1,53 +1,29 @@
+import {
+  useSearchParams,
+  useSetSearchParams,
+} from "@/router/use-search-params";
+import { useGoBack } from "@/router/use-go-back";
+import { useSpritesMap } from "./use-sprites-map";
 import { useCallback } from "react";
-import { useAtomValue, useSetAtom } from "jotai";
-import { locationAtom } from "@/common/atoms/location.atom";
-import { spritesAtom } from "@/input/sprites.atom";
-import { atom } from "jotai";
-import type { tSprite } from "@/input/types";
 
+const QUERY_PARAMS_KEY = "editable_sprite";
 export const useOpenSpriteEditor = () => {
-  const setId = useSetAtom(editableSpriteAtom);
+  const setParams = useSetSearchParams();
   return useCallback(
     (id: string) => {
-      setId(id);
+      setParams((old) => ({ ...old, [QUERY_PARAMS_KEY]: id }));
     },
-    [setId],
+    [setParams],
   );
 };
 export const useCloseSpriteEditor = () => {
-  const setId = useSetAtom(editableSpriteAtom);
-  return useCallback(() => {
-    setId(null);
-  }, [setId]);
+  return useGoBack();
 };
 
 export const useEditableSprite = () => {
-  const sprite = useAtomValue(editableSpriteAtom);
-  return sprite;
+  const searchParams = useSearchParams();
+  const id = searchParams[QUERY_PARAMS_KEY];
+  const spritesMap = useSpritesMap();
+  if (!id) return null;
+  return spritesMap[id] || null;
 };
-
-const QUERY_PARAMS_KEY = "editable_sprite";
-export const editableSpriteAtom = atom<Maybe<tSprite>, [Maybe<string>], void>(
-  (get) => {
-    const id = get(locationAtom).searchParams?.get(QUERY_PARAMS_KEY);
-    if (!id) return null;
-    return get(spritesAtom).find((sprite) => sprite.id === id) || null;
-  },
-  (get, set, id) => {
-    const loc = get(locationAtom);
-    if (loc.searchParams?.has(QUERY_PARAMS_KEY) && !id) {
-      window.history.back();
-      return;
-    }
-    set(locationAtom, (prev) => {
-      const searchParams = new URLSearchParams(prev.searchParams);
-      if (id) {
-        searchParams.set(QUERY_PARAMS_KEY, id);
-      }
-      return {
-        ...prev,
-        searchParams,
-      };
-    });
-  },
-);

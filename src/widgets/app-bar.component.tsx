@@ -2,10 +2,9 @@ import { useTranslation } from "@/i18n/use-translation";
 import { activeProjectAtom } from "@/projects/projects.atom";
 import { useOpenProjectEditor } from "@/projects/use-project-editor";
 import { Menu, ActionIcon, useMantineColorScheme } from "@mantine/core";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { Menu as MenuIcon } from "lucide-react";
-import { useCreateProject } from "@/projects/use-create-project";
 import { useProjectsList } from "@/projects/use-projects-list";
 import { useRemoveProject } from "@/projects/use-remove-project";
 import { useLanguage } from "@/i18n/use-language";
@@ -23,20 +22,7 @@ const PackerAppBar = () => {
     showLoadingBar: true,
   });
   const activeProject = useAtomValue(activeProjectAtom);
-  const navigate = useNavigate();
   const openProjectEditor = useOpenProjectEditor();
-  const createProject = useCreateProject();
-  const createProjectMut = useMutation(createProject, {
-    showLoadingBar: true,
-    onSuccess({ project }) {
-      navigate({
-        to: "/projects/{-$projectId}",
-        params: {
-          projectId: project.id,
-        },
-      });
-    },
-  });
   const projectsList = useProjectsList();
   const removeProject = useRemoveProject();
   const removeProjectMut = useMutation(removeProject, {
@@ -77,10 +63,7 @@ const PackerAppBar = () => {
               ))}
             </Menu.Sub.Dropdown>
           </Menu.Sub>
-          <Menu.Item
-            disabled={createProjectMut.isLoading}
-            onClick={() => createProjectMut.mutate()}
-          >
+          <Menu.Item onClick={() => openProjectEditor("new")}>
             {t(i18nNs + "new_project")}
           </Menu.Item>
           {activeProject && (

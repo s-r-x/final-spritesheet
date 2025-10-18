@@ -12,6 +12,7 @@ export const Route = createRootRouteWithContext<{
   createNewProject: () => Promise<{ project: tProject }>;
   logger?: tLogger;
 }>()({
+  validateSearch: (params) => params as Record<string, string>,
   component: () => (
     <>
       <Outlet />

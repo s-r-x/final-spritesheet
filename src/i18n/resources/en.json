@@ -54,13 +54,14 @@
     },
     "folder_editor": {
       "editor_title": "Edit folder",
-      "editor_title_new": "Create folder",
+      "editor_title_new": "New folder",
       "name": "Name",
       "name_placeholder": "Enter the folder name",
       "is_animation": "Animation"
     },
     "project_editor": {
       "editor_title": "Edit project",
+      "editor_title_new": "New project",
       "name": "Name",
       "name_placeholder": "Enter the project name"
     },

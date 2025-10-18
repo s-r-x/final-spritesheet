@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import UiFrameworkProvider from "./common/providers/ui-framework.provider";
 import { RouterProvider } from "@tanstack/react-router";
 import { AtomsProvider } from "./common/providers/atoms.provider";
-import { createRouter } from "./create-router";
+import { createRouter } from "./router/create-router";
 import type {
   tDbImportExport,
   tDbMutations,

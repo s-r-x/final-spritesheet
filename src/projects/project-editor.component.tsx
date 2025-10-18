@@ -1,4 +1,4 @@
-import { Button, Group, Modal, TextInput } from "@mantine/core";
+import { Button, Group, Modal, Stack, TextInput } from "@mantine/core";
 import { useTranslation } from "@/i18n/use-translation";
 import { tProject } from "./types";
 import { useForm } from "@mantine/form";
@@ -10,6 +10,10 @@ import {
 } from "./use-project-editor";
 import { useUpdateProject } from "./use-update-project";
 import { useMutation } from "#hooks/use-mutation";
+import { useCreateProject } from "./use-create-project";
+import { useNavigate } from "@tanstack/react-router";
+import { Dices as RandomNameIcon } from "lucide-react";
+import { generateUniqueName } from "#utils/generate-unique-name";
 
 const i18nNs = "project_editor.";
 const ProjectEditorModal = () => {
@@ -18,7 +22,12 @@ const ProjectEditorModal = () => {
   const close = useCloseProjectEditor();
   const renderEditor = () => {
     if (!editableProject) return null;
-    return <ProjectEditor project={editableProject} onClose={close} />;
+    return (
+      <ProjectEditor
+        project={editableProject === "new" ? null : editableProject}
+        onClose={close}
+      />
+    );
   };
   return (
     <Modal
@@ -27,7 +36,10 @@ const ProjectEditorModal = () => {
       }}
       opened={!!editableProject}
       onClose={close}
-      title={t(i18nNs + "editor_title")}
+      title={t(
+        i18nNs +
+          (editableProject === "new" ? "editor_title_new" : "editor_title"),
+      )}
     >
       {renderEditor()}
     </Modal>
@@ -42,24 +54,45 @@ const ProjectEditor = ({
   project,
   onClose,
 }: {
-  project: tProject;
+  project: Maybe<tProject>;
   onClose: () => void;
 }) => {
+  const navigate = useNavigate();
   const updateProject = useUpdateProject();
-  const updateProjectMut = useMutation(
-    (form: tForm) => {
+  const createProject = useCreateProject();
+  const submitMut = useMutation(
+    async (form: tForm): Promise<{ id: string }> => {
       form = schema.parse(form);
-      return updateProject(project.id, form);
+      if (project) {
+        await updateProject(project.id, form);
+        return { id: project.id };
+      } else {
+        const { project: newProject } = await createProject(form);
+        return { id: newProject.id };
+      }
     },
     {
-      onSuccess: onClose,
+      showLoadingBar: !project,
+      onSuccess({ id }) {
+        if (project) {
+          onClose();
+        } else {
+          navigate({
+            to: "/projects/{-$projectId}",
+            params: {
+              projectId: id,
+            },
+            search: {},
+          });
+        }
+      },
     },
   );
   const { t } = useTranslation();
   const form = useForm<tForm>({
     mode: "uncontrolled",
     initialValues: {
-      name: project.name,
+      name: project?.name || "",
     },
     validate: zod4Resolver(schema),
   });
@@ -67,18 +100,30 @@ const ProjectEditor = ({
   return (
     <form
       onSubmit={form.onSubmit((values) => {
-        updateProjectMut.mutate(values);
+        submitMut.mutate(values);
       })}
     >
-      <TextInput
-        withAsterisk
-        label={t(i18nNs + "name")}
-        placeholder={t(i18nNs + "name_placeholder")}
-        key={form.key("name")}
-        {...form.getInputProps("name")}
-      />
+      <Stack gap="xs">
+        <TextInput
+          withAsterisk
+          label={t(i18nNs + "name")}
+          placeholder={t(i18nNs + "name_placeholder")}
+          key={form.key("name")}
+          {...form.getInputProps("name")}
+        />
+        {!project && (
+          <Button
+            leftSection={<RandomNameIcon size={20} />}
+            onClick={() => form.setFieldValue("name", generateUniqueName())}
+            style={{ alignSelf: "flex-start" }}
+            size="sm"
+          >
+            {t("generate_random_name")}
+          </Button>
+        )}
+      </Stack>
       <Group justify="flex-end" mt="md">
-        <Button type="submit" disabled={updateProjectMut.isLoading}>
+        <Button type="submit" disabled={submitMut.isLoading}>
           Submit
         </Button>
       </Group>

@@ -1,24 +1,32 @@
-import { useCallback } from "react";
-import { useAtomValue, useSetAtom } from "jotai";
-import { editableProjectAtom } from "./project-editor.atom";
+import {
+  useSearchParams,
+  useSetSearchParams,
+} from "@/router/use-search-params";
+import { useGoBack } from "@/router/use-go-back";
+import { useCallback, useMemo } from "react";
+import { useProjectsList } from "./use-projects-list";
 
+const QUERY_PARAMS_KEY = "editable_project";
 export const useOpenProjectEditor = () => {
-  const setId = useSetAtom(editableProjectAtom);
+  const setParams = useSetSearchParams();
   return useCallback(
     (id: string) => {
-      setId(id);
+      setParams((old) => ({ ...old, [QUERY_PARAMS_KEY]: id }));
     },
-    [setId],
+    [setParams],
   );
 };
 export const useCloseProjectEditor = () => {
-  const setId = useSetAtom(editableProjectAtom);
-  return useCallback(() => {
-    setId(null);
-  }, [setId]);
+  return useGoBack();
 };
 
 export const useEditableProject = () => {
-  const sprite = useAtomValue(editableProjectAtom);
-  return sprite;
+  const searchParams = useSearchParams();
+  const id = searchParams[QUERY_PARAMS_KEY];
+  const projectsList = useProjectsList();
+  return useMemo(() => {
+    if (!id) return null;
+    if (id === "new") return "new";
+    return projectsList.find((p) => p.id === id) || null;
+  }, [projectsList, id]);
 };

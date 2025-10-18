@@ -2,7 +2,7 @@ import {
   createRouter as createTanstackRouter,
   createHashHistory,
 } from "@tanstack/react-router";
-import { routeTree } from "./routeTree.gen";
+import { routeTree } from "../routeTree.gen";
 //import { BASE_URL } from "#config";
 
 const hashHistory = createHashHistory();

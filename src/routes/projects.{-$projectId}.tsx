@@ -208,7 +208,7 @@ function ProjectNotFound() {
         <Button
           leftSection={<PlusIcon />}
           disabled={createProjectMut.isLoading}
-          onClick={() => createProjectMut.mutate()}
+          onClick={() => createProjectMut.mutate({})}
         >
           {t(i18nNs + "new_project")}
         </Button>

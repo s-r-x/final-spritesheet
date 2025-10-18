@@ -1,58 +1,32 @@
-import { useCallback } from "react";
-import { useAtomValue, useSetAtom } from "jotai";
-import { locationAtom } from "@/common/atoms/location.atom";
-import { atom } from "jotai";
-import type { tFolder } from "./types";
-import { foldersAtom } from "./folders.atom";
+import {
+  useSearchParams,
+  useSetSearchParams,
+} from "@/router/use-search-params";
+import { useGoBack } from "@/router/use-go-back";
+import { useFoldersList } from "./use-folders-list";
+import { useCallback, useMemo } from "react";
 
+const QUERY_PARAMS_KEY = "editable_folder";
 export const useOpenFolderEditor = () => {
-  const setId = useSetAtom(editableFolderAtom);
+  const setParams = useSetSearchParams();
   return useCallback(
     (id: string) => {
-      setId(id);
+      setParams((old) => ({ ...old, [QUERY_PARAMS_KEY]: id }));
     },
-    [setId],
+    [setParams],
   );
 };
 export const useCloseFolderEditor = () => {
-  const setId = useSetAtom(editableFolderAtom);
-  return useCallback(() => {
-    setId(null);
-  }, [setId]);
+  return useGoBack();
 };
 
 export const useEditableFolder = () => {
-  const sprite = useAtomValue(editableFolderAtom);
-  return sprite;
-};
-
-const QUERY_PARAMS_KEY = "editable_folder";
-export const editableFolderAtom = atom<
-  Maybe<tFolder> | "new",
-  [Maybe<string>],
-  void
->(
-  (get) => {
-    const id = get(locationAtom).searchParams?.get(QUERY_PARAMS_KEY);
+  const searchParams = useSearchParams();
+  const id = searchParams[QUERY_PARAMS_KEY];
+  const foldersList = useFoldersList();
+  return useMemo(() => {
     if (!id) return null;
     if (id === "new") return "new";
-    return get(foldersAtom).find((folder) => folder.id === id) || null;
-  },
-  (get, set, id) => {
-    const loc = get(locationAtom);
-    if (loc.searchParams?.has(QUERY_PARAMS_KEY) && !id) {
-      window.history.back();
-      return;
-    }
-    set(locationAtom, (prev) => {
-      const searchParams = new URLSearchParams(prev.searchParams);
-      if (id) {
-        searchParams.set(QUERY_PARAMS_KEY, id);
-      }
-      return {
-        ...prev,
-        searchParams,
-      };
-    });
-  },
-);
+    return foldersList.find((f) => f.id === id) || null;
+  }, [foldersList, id]);
+};

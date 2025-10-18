@@ -9,15 +9,18 @@ import { useDbMutations } from "@/persistence/use-db";
 export const useCreateProject = () => {
   const addProjectToAtom = useSetAtom(addProjectAtom);
   const dbMutations = useDbMutations();
-  const createProject = useCallback(async () => {
-    const project: tProject = {
-      id: generateId(),
-      name: generateUniqueName(),
-      createdAt: new Date().toISOString(),
-    };
-    await dbMutations.createNewProject(project);
-    addProjectToAtom(project);
-    return { project };
-  }, [dbMutations]);
+  const createProject = useCallback(
+    async ({ name = generateUniqueName() }: { name?: string } = {}) => {
+      const project: tProject = {
+        id: generateId(),
+        name,
+        createdAt: new Date().toISOString(),
+      };
+      await dbMutations.createNewProject(project);
+      addProjectToAtom(project);
+      return { project };
+    },
+    [dbMutations],
+  );
   return createProject;
 };

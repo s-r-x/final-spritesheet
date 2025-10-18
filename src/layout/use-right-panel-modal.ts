@@ -1,26 +1,23 @@
 import { useCallback } from "react";
-import { useAtomValue, useSetAtom } from "jotai";
-import { queryParamBindedModalAtom } from "@/common/atoms/query-param-binded-modal-atom";
+import {
+  useSearchParams,
+  useSetSearchParams,
+} from "@/router/use-search-params";
+import { useGoBack } from "@/router/use-go-back";
 
+const QUERY_PARAMS_KEY = "right_panel";
+const OPENED_VALUE = "y";
 export const useRightPanelModal = () => {
-  const setValue = useSetAtom(rightPanelModalVisibilityAtom);
+  const setParams = useSetSearchParams();
   return useCallback(() => {
-    setValue(true);
-  }, [setValue]);
+    setParams((old) => ({ ...old, [QUERY_PARAMS_KEY]: OPENED_VALUE }));
+  }, [setParams]);
 };
 export const useCloseRightPanelModal = () => {
-  const setId = useSetAtom(rightPanelModalVisibilityAtom);
-  return useCallback(() => {
-    setId(false);
-  }, [setId]);
+  return useGoBack();
 };
 
 export const useRightPanelModalVisibilityState = (): boolean => {
-  const isVisible = useAtomValue(rightPanelModalVisibilityAtom);
-  return isVisible;
+  const params = useSearchParams();
+  return params[QUERY_PARAMS_KEY] === OPENED_VALUE;
 };
-
-const QUERY_PARAMS_KEY = "right_panel";
-const rightPanelModalVisibilityAtom = queryParamBindedModalAtom({
-  key: QUERY_PARAMS_KEY,
-});
