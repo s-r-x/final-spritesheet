@@ -11,7 +11,6 @@ import * as z from "zod";
 import { useForm } from "@mantine/form";
 import { useActiveProjectId } from "@/projects/use-active-project-id";
 import { useUpdateOutputSettings } from "./use-update-output-settings";
-import { useDebouncedCallback } from "@mantine/hooks";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import {
   useGetOutputSettings,
@@ -20,6 +19,8 @@ import {
 import CloseableMessage from "#components/closeable-message.component";
 import { useMutation } from "#hooks/use-mutation";
 import { memo } from "react";
+import type { tOutputSettings } from "./types";
+import { isEqual } from "#utils/is-equal";
 
 const i18nNs = "output_opts.";
 
@@ -36,21 +37,34 @@ const schema = z.object({
   imageQuality: z.number().min(1).max(100),
 });
 type tForm = z.input<typeof schema>;
-const OutputSettings = ({ initialValues }: { initialValues: tForm }) => {
+const OutputSettings = ({
+  getCurrentSettings,
+}: {
+  getCurrentSettings: () => tOutputSettings;
+}) => {
+  const getInitialValues = (): tForm => {
+    const settings = getCurrentSettings();
+    return {
+      ...settings,
+      pngCompression: String(settings.pngCompression),
+    };
+  };
   const updateSettings = useUpdateOutputSettings();
   const updateSettingsMut = useMutation(updateSettings);
-  const onValuesChange = useDebouncedCallback((values: tForm) => {
+  const onValuesChange = () => {
+    const values = form.getValues();
     const result = schema.safeParse(values);
-    if (result.success) {
+    if (!result.success) return;
+    const isChanged = !isEqual(getCurrentSettings(), result.data);
+    if (isChanged) {
       updateSettingsMut.mutate(result.data);
     }
-  }, 200);
+  };
   const form = useForm<tForm>({
     mode: "uncontrolled",
-    initialValues,
+    initialValues: getInitialValues(),
     validate: zod4Resolver(schema),
     validateInputOnChange: true,
-    onValuesChange,
   });
   const isPng = form.values.textureFormat === "png";
   const framework = form.values.framework;
@@ -68,6 +82,30 @@ const OutputSettings = ({ initialValues }: { initialValues: tForm }) => {
     }
   };
   const { t } = useTranslation();
+  type tGetInputPropsReturnType = ReturnType<typeof form.getInputProps>;
+  function normalizeInputProps<TOnChangeData = any>({
+    props,
+    isTextInput,
+  }: {
+    props: tGetInputPropsReturnType;
+    isTextInput?: boolean;
+  }): tGetInputPropsReturnType {
+    return {
+      ...props,
+      onChange(e: TOnChangeData) {
+        props.onChange?.(e);
+        if (!isTextInput) {
+          onValuesChange();
+        }
+      },
+      onBlur(e: any) {
+        props.onBlur?.(e);
+        if (isTextInput) {
+          onValuesChange();
+        }
+      },
+    };
+  }
   const renderPngCompressionInput = () => {
     if (!OUTPUT_ENABLE_PNG_COMPRESSION) return null;
     return (
@@ -111,25 +149,33 @@ const OutputSettings = ({ initialValues }: { initialValues: tForm }) => {
             value: "8",
           },
         ]}
-        {...form.getInputProps("pngCompression")}
+        {...normalizeInputProps({
+          props: form.getInputProps("pngCompression"),
+        })}
       />
     );
   };
   return (
-    <form>
+    <form onSubmit={form.onSubmit(onValuesChange)}>
       <Stack gap="xs">
         <Select
           allowDeselect={false}
           label={t(i18nNs + "framework")}
           data={SUPPORTED_FRAMEWORKS}
-          {...form.getInputProps("framework")}
+          key={form.key("framework")}
+          {...normalizeInputProps({
+            props: form.getInputProps("framework"),
+          })}
         />
         {renderFrameworkInfo()}
         <Select
           allowDeselect={false}
           label={t(i18nNs + "texture_format")}
           data={SUPPORTED_OUTPUT_IMAGE_FORMATS}
-          {...form.getInputProps("textureFormat")}
+          key={form.key("textureFormat")}
+          {...normalizeInputProps({
+            props: form.getInputProps("textureFormat"),
+          })}
         />
         {isPng ? (
           renderPngCompressionInput()
@@ -140,19 +186,32 @@ const OutputSettings = ({ initialValues }: { initialValues: tForm }) => {
             clampBehavior="strict"
             label={t(i18nNs + "image_quality")}
             min={1}
+            key={form.key("imageQuality")}
             max={100}
-            {...form.getInputProps("imageQuality")}
+            {...normalizeInputProps({
+              props: form.getInputProps("imageQuality"),
+              isTextInput: true,
+            })}
           />
         )}
         <TextInput
           label={t(i18nNs + "data_file")}
-          {...form.getInputProps("dataFileName")}
+          key={form.key("dataFileName")}
+          {...normalizeInputProps({
+            props: form.getInputProps("dataFileName"),
+            isTextInput: true,
+          })}
         />
         <TextInput
           label={t(i18nNs + "texture_file")}
-          {...form.getInputProps("textureFileName")}
+          key={form.key("textureFileName")}
+          {...normalizeInputProps({
+            props: form.getInputProps("textureFileName"),
+            isTextInput: true,
+          })}
         />
       </Stack>
+      <button type="submit" style={{ display: "none" }} aria-hidden="true" />
     </form>
   );
 };
@@ -161,18 +220,10 @@ const OutputSettingsRoot = () => {
   const formVersion = useOutputSettingsFormVersion();
   const getOutputSettings = useGetOutputSettings();
   if (!projectId) return null;
-  const settings = getOutputSettings();
   return (
     <OutputSettings
       key={projectId + formVersion}
-      initialValues={{
-        pngCompression: String(settings.pngCompression),
-        imageQuality: settings.imageQuality,
-        textureFormat: settings.textureFormat,
-        framework: settings.framework,
-        textureFileName: settings.textureFileName,
-        dataFileName: settings.dataFileName,
-      }}
+      getCurrentSettings={getOutputSettings}
     />
   );
 };
