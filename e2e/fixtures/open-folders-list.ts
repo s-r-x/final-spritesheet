@@ -1,4 +1,4 @@
-import { type Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
 import { t } from "../utils/t";
 import { foldersListLocator } from "../locators/folders-list";
 

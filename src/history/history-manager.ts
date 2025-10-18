@@ -1,5 +1,5 @@
 import { atomsStore } from "@/common/atoms/atoms-store";
-import { Command } from "@/common/commands/command";
+import type { Command } from "@/common/commands/command";
 import { addCmdAtom, redoAtom, undoAtom } from "./history.atom";
 import { Mutex } from "#utils/mutex";
 import { addPersistenceCommandAtom } from "@/persistence/persistence.atom";

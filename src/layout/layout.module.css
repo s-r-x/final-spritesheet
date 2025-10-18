@@ -5,7 +5,7 @@
   --separator-size: 1px;
   --content-height: 100dvh;
   --header-height: 50px;
-  @media (max-width: $mantine-breakpoint-md) {
+  @media (max-width: 62em) {
     --content-height: calc(100dvh - var(--header-height));
   }
   height: 100dvh;

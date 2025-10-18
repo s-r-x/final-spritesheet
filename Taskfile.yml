@@ -6,9 +6,12 @@ tasks:
   dev: npm run dev
   build: npm run build
   lint: npm run lint
+  lint.fix: npm run lint:fix
   check-types: npm run check-types
   format.check: npm run format:check
   format.fix: npm run format:fix
+  check: npm run check
+  check.fix: npm run check:fix
   preview: npm run preview
   deps.install: npm ci
   deps.audit: npm audit

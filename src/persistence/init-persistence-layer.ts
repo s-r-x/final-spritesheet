@@ -1,4 +1,4 @@
-import { tLogger } from "@/logger/types";
+import type { tLogger } from "@/logger/types";
 import { createDb } from "./db";
 import { DbImportExport } from "./import-export";
 import { DbMutations } from "./mutations";

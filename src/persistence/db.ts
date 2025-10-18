@@ -1,5 +1,5 @@
 import { DB_NAME } from "#config";
-import { tLogger } from "@/logger/types";
+import type { tLogger } from "@/logger/types";
 import type { tDb, tDbCollections } from "./types";
 import Dexie from "dexie";
 

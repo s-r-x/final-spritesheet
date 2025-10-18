@@ -1,5 +1,5 @@
 import { MIME_TYPES } from "@mantine/dropzone";
-import { tLogLevel } from "./logger/types";
+import type { tLogLevel } from "./logger/types";
 
 export const SUPPORTED_SPRITE_MIME_TYPES: string[] = [
   MIME_TYPES.png,

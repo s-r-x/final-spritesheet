@@ -1,5 +1,5 @@
 import type { tSprite } from "@/input/types";
-import { packerSpriteExcerptFields } from "./config";
+import type { packerSpriteExcerptFields } from "./config";
 
 export type tPackerSpriteExcerptField =
   (typeof packerSpriteExcerptFields)[number];

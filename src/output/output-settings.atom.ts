@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { tOutputSettings } from "./types";
+import type { tOutputSettings } from "./types";
 import {
   OUTPUT_DEFAULT_DATA_FILE_NAME,
   OUTPUT_DEFAULT_FRAMEWORK,

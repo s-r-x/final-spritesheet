@@ -6,7 +6,7 @@ import {
   Checkbox,
   Stack,
 } from "@mantine/core";
-import { useTranslation } from "@/i18n/use-translation";
+import {  useTranslation } from "@/i18n/use-translation";
 import { useForm } from "@mantine/form";
 import * as z from "zod";
 import { zod4Resolver } from "mantine-form-zod-resolver";
@@ -51,7 +51,7 @@ const schema = z.object({
 
 type tForm = z.infer<typeof schema>;
 const FolderEditor = ({
-  folder: folder,
+  folder,
   onClose,
 }: {
   folder: Maybe<tFolder>;

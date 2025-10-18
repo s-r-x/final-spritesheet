@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { tDbImportExport, tDbMutations, tDbQueries } from "./types";
+import type { tDbImportExport, tDbMutations, tDbQueries } from "./types";
 
 export const dbMutationsAtom = atom(null! as tDbMutations);
 export const dbQueriesAtom = atom(null! as tDbQueries);

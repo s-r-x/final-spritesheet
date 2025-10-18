@@ -1,6 +1,6 @@
 import { Button, Group, Modal, Stack, TextInput } from "@mantine/core";
 import { useTranslation } from "@/i18n/use-translation";
-import { tProject } from "./types";
+import type { tProject } from "./types";
 import { useForm } from "@mantine/form";
 import * as z from "zod";
 import { zod4Resolver } from "mantine-form-zod-resolver";

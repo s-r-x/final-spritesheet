@@ -3,7 +3,7 @@ import type { tSprite as tItem } from "@/input/types";
 import type { tFolder, tUpdateFolderData, tUpdateFoldersArg } from "./types";
 import styles from "./folders-list.module.css";
 import { useUpdateFolders } from "./use-update-folders";
-import { CSSProperties, forwardRef, useMemo, useRef } from "react";
+import { type CSSProperties, forwardRef, useMemo, useRef } from "react";
 import { Avatar, Button, ActionIcon } from "@mantine/core";
 import {
   Folder as FolderIcon,
@@ -96,14 +96,17 @@ const FoldersList = () => {
   const treeApiRef = useRef<TreeApi<tTreeNodeData> | undefined>(undefined);
   const treeData: tTreeNodeData[] = useMemo(() => {
     return folders.map(({ folder, items }) => {
+      const name = isRootFolder(folder)
+        ? t("folders.default_folder_name")
+        : folder.name;
       const nodeProps: tNodeData = {
         kind: "folder",
         items,
-        props: { folder },
+        props: { folder, name },
       };
       const data: tTreeNodeData = {
         id: folder.id,
-        name: folder.name,
+        name: name,
         nodeProps,
         children: items.map((item) => {
           const nodeProps: tNodeData = {
@@ -120,7 +123,7 @@ const FoldersList = () => {
       };
       return data;
     });
-  }, [folders]);
+  }, [folders, t]);
   const removeItemNodes = (nodes: NodeApi<tTreeNodeData<tItemNodeData>>[]) => {
     const itemsToRemove = nodes.map((node) => node.id);
     if (!isEmpty(itemsToRemove)) {
@@ -135,48 +138,53 @@ const FoldersList = () => {
   const addFolderBtnLabel = t("folders.add_folder");
   const openNewFolderCreator = () => openFolderEditor("new");
   return (
-    <>
-      <div className={styles.root}>
-        <div className={styles.stickyHead}>
-          <Button
-            arial-label={addFolderBtnLabel}
-            className={styles.wideViewportButton}
-            fullWidth
-            leftSection={<PlusIcon />}
-            onClick={openNewFolderCreator}
-          >
-            {addFolderBtnLabel}
-          </Button>
-          <ActionIcon
-            arial-label={addFolderBtnLabel}
-            className={styles.narrowViewportButton}
-            onClick={openNewFolderCreator}
-          >
-            <PlusIcon />
-          </ActionIcon>
-        </div>
-        <div ref={ref} className={styles.treeRoot}>
-          <div
-            data-testid="folders-tree-viewport"
-            className={styles.treeViewport}
-          >
-            {rootWidth > 0 && rootHeight > 0 && (
-              <Tree
-                ref={treeApiRef}
-                openByDefault
-                disableDrag={(v) => v.nodeProps.kind === "folder"}
-                rowHeight={30}
-                className={styles.tree}
-                data={treeData}
-                width={rootWidth - 1}
-                height={rootHeight - 1}
-                renderRow={(args) => (
+    <div className={styles.root}>
+      <div className={styles.stickyHead}>
+        <Button
+          arial-label={addFolderBtnLabel}
+          className={styles.wideViewportButton}
+          fullWidth
+          leftSection={<PlusIcon />}
+          onClick={openNewFolderCreator}
+        >
+          {addFolderBtnLabel}
+        </Button>
+        <ActionIcon
+          arial-label={addFolderBtnLabel}
+          className={styles.narrowViewportButton}
+          onClick={openNewFolderCreator}
+        >
+          <PlusIcon />
+        </ActionIcon>
+      </div>
+      <div ref={ref} className={styles.treeRoot}>
+        <div
+          data-testid="folders-tree-viewport"
+          className={styles.treeViewport}
+        >
+          {rootWidth > 0 && rootHeight > 0 && (
+            <Tree
+              ref={treeApiRef}
+              openByDefault
+              disableDrag={(v) => v.nodeProps.kind === "folder"}
+              rowHeight={30}
+              className={styles.tree}
+              data={treeData}
+              width={rootWidth - 1}
+              height={rootHeight - 1}
+              renderRow={(args) => {
+                const label = args.node.data.name;
+                return (
+                  // biome-ignore lint/a11y/noStaticElementInteractions: <react-arborist>
+                  // biome-ignore lint/a11y/useKeyWithClickEvents: <react-arborist>
+                  // biome-ignore lint/a11y/useAriaPropsSupportedByRole: <react-arborist>
                   <div
                     {...args.attrs}
                     data-node-id={args.node.id}
                     ref={args.innerRef}
                     onFocus={(e) => e.stopPropagation()}
                     onClick={args.node.handleClick}
+                    aria-label={label}
                     data-parent-folder={
                       args.node.data.nodeProps.kind === "item"
                         ? args.node.data.nodeProps.props.folderId
@@ -185,285 +193,282 @@ const FoldersList = () => {
                   >
                     {args.children}
                   </div>
-                )}
-                onSelect={(nodes) => {
-                  const treeApi = treeApiRef.current;
-                  if (isEmpty(nodes) || !treeApi) return;
-                  const firstNode = nodes[0];
-                  for (let i = 1; i < nodes.length; i++) {
-                    const node = nodes[i];
-                    if (node.level !== firstNode.level) {
-                      node.deselect();
-                    }
+                );
+              }}
+              onSelect={(nodes) => {
+                const treeApi = treeApiRef.current;
+                if (isEmpty(nodes) || !treeApi) return;
+                const firstNode = nodes[0];
+                for (let i = 1; i < nodes.length; i++) {
+                  const node = nodes[i];
+                  if (node.level !== firstNode.level) {
+                    node.deselect();
                   }
-                }}
-                onDelete={({ nodes }) => {
-                  if (isEmpty(nodes)) return;
-                  const nodeKind = nodes[0].data.nodeProps.kind;
-                  if (nodeKind === "folder") {
-                    removeFolderNodes(
-                      nodes as NodeApi<tTreeNodeData<tFolderNodeData>>[],
-                    );
-                  } else {
-                    removeItemNodes(
-                      nodes as NodeApi<tTreeNodeData<tItemNodeData>>[],
-                    );
+                }
+              }}
+              onDelete={({ nodes }) => {
+                if (isEmpty(nodes)) return;
+                const nodeKind = nodes[0].data.nodeProps.kind;
+                if (nodeKind === "folder") {
+                  removeFolderNodes(
+                    nodes as NodeApi<tTreeNodeData<tFolderNodeData>>[],
+                  );
+                } else {
+                  removeItemNodes(
+                    nodes as NodeApi<tTreeNodeData<tItemNodeData>>[],
+                  );
+                }
+              }}
+              onMove={(e) => {
+                if (!e.parentNode) return;
+                const srcItems = e.dragNodes.reduce((acc, node) => {
+                  if (node.data.nodeProps.kind === "item") {
+                    acc.push(node.data.nodeProps.props);
                   }
-                }}
-                onMove={(e) => {
-                  if (!e.parentNode) return;
-                  const srcItems = e.dragNodes.reduce((acc, node) => {
-                    if (node.data.nodeProps.kind === "item") {
-                      acc.push(node.data.nodeProps.props);
-                    }
-                    return acc;
-                  }, [] as tItemProps[]);
-                  if (isEmpty(srcItems)) return;
-                  const targetIndex = e.index;
-                  const parentProps = e.parentNode.data.nodeProps;
-                  if (parentProps.kind !== "folder") return;
-                  const targetFolder = parentProps.props.folder;
-                  if (!targetFolder) return;
+                  return acc;
+                }, [] as tItemProps[]);
+                if (isEmpty(srcItems)) return;
+                const targetIndex = e.index;
+                const parentProps = e.parentNode.data.nodeProps;
+                if (parentProps.kind !== "folder") return;
+                const targetFolder = parentProps.props.folder;
+                if (!targetFolder) return;
 
-                  const updates: tUpdateFoldersArg = {};
-                  const addUpdate = (
-                    folder: tFolder,
-                    data: tUpdateFolderData,
-                  ) => {
-                    updates[folder.id] = { folder, data };
-                  };
-                  const updateFoldersWithAccumulatedUpdates = () => {
-                    if (!isEmpty(updates)) {
-                      updateFolders(updates);
-                    }
-                  };
-
-                  const cleanOldFolders = () => {
-                    const folderMap = new Map(
-                      folders.map((f) => [f.folder.id, f.folder]),
-                    );
-                    for (const { item, folderId } of srcItems) {
-                      if (
-                        isRootFolder(folderId) ||
-                        folderId === targetFolder.id
-                      ) {
-                        continue;
-                      }
-                      const folder = folderMap.get(folderId);
-                      if (!folder) continue;
-
-                      if (!updates[folderId]) {
-                        updates[folderId] = {
-                          folder,
-                          data: { itemIds: folder.itemIds },
-                        };
-                      }
-                      addUpdate(folder, {
-                        itemIds: updates[folderId].data.itemIds!.filter(
-                          (id) => id !== item.id,
-                        ),
-                      });
-                    }
-                  };
-
-                  cleanOldFolders();
-
-                  if (isRootFolder(targetFolder)) {
-                    // dropped to the default folder which doesn't have ordering
-                    // we need only to remove from the old folders which is already done
-                    updateFoldersWithAccumulatedUpdates();
-                    return;
+                const updates: tUpdateFoldersArg = {};
+                const addUpdate = (
+                  folder: tFolder,
+                  data: tUpdateFolderData,
+                ) => {
+                  updates[folder.id] = { folder, data };
+                };
+                const updateFoldersWithAccumulatedUpdates = () => {
+                  if (!isEmpty(updates)) {
+                    updateFolders(updates);
                   }
+                };
 
-                  const insertIntoTargetFolder = () => {
-                    let targetFolderItemIds = [...targetFolder.itemIds];
-                    const indexesToMoveInsideSameFolder: number[] = [];
-                    const itemIdsToMoveFromOtherFolders: string[] = [];
-                    for (const { item } of srcItems) {
-                      const index = targetFolderItemIds.findIndex(
-                        (id) => id === item.id,
-                      );
-                      const isSameFolder = index !== -1;
-                      if (isSameFolder && index === targetIndex) {
-                        continue;
-                      }
-                      if (isSameFolder) {
-                        indexesToMoveInsideSameFolder.push(index);
-                      } else {
-                        itemIdsToMoveFromOtherFolders.push(item.id);
-                      }
+                const cleanOldFolders = () => {
+                  const folderMap = new Map(
+                    folders.map((f) => [f.folder.id, f.folder]),
+                  );
+                  for (const { item, folderId } of srcItems) {
+                    if (
+                      isRootFolder(folderId) ||
+                      folderId === targetFolder.id
+                    ) {
+                      continue;
                     }
+                    const folder = folderMap.get(folderId);
+                    if (!folder) continue;
 
-                    const hasUpdatesInSameFolder = !isEmpty(
-                      indexesToMoveInsideSameFolder,
-                    );
-                    if (hasUpdatesInSameFolder) {
-                      targetFolderItemIds = arrayMoveMultiple(
-                        targetFolderItemIds,
-                        indexesToMoveInsideSameFolder,
-                        targetIndex,
-                      );
+                    if (!updates[folderId]) {
+                      updates[folderId] = {
+                        folder,
+                        data: { itemIds: folder.itemIds },
+                      };
                     }
-                    const hasUpdatesFromOtherFolders = !isEmpty(
-                      itemIdsToMoveFromOtherFolders,
-                    );
-                    if (hasUpdatesFromOtherFolders) {
-                      targetFolderItemIds.splice(
-                        targetIndex,
-                        0,
-                        ...itemIdsToMoveFromOtherFolders,
-                      );
-                    }
-                    if (hasUpdatesInSameFolder || hasUpdatesFromOtherFolders) {
-                      addUpdate(targetFolder, { itemIds: targetFolderItemIds });
-                    }
-                  };
+                    addUpdate(folder, {
+                      itemIds: updates[folderId].data.itemIds!.filter(
+                        (id) => id !== item.id,
+                      ),
+                    });
+                  }
+                };
 
-                  insertIntoTargetFolder();
+                cleanOldFolders();
 
+                if (isRootFolder(targetFolder)) {
+                  // dropped to the default folder which doesn't have ordering
+                  // we need only to remove from the old folders which is already done
                   updateFoldersWithAccumulatedUpdates();
-                }}
-                onContextMenu={(e) => {
-                  if (!(e?.target instanceof HTMLElement)) return;
-                  const $node = e.target.closest("[data-node-id]");
-                  const treeApi = treeApiRef.current;
-                  if (!treeApi || !$node) return;
-                  const id = $node.getAttribute("data-node-id");
-                  if (!id) return;
-                  const selectedIds = treeApi.selectedIds;
+                  return;
+                }
 
-                  // select the node if it's not selected
-                  if (!selectedIds.has(id)) {
-                    const visibleNodes = treeApi.visibleNodes;
-                    const node = visibleNodes.find((node) => node.id === id);
-                    if (!node) return;
-                    treeApi.select(node, { focus: true });
+                const insertIntoTargetFolder = () => {
+                  let targetFolderItemIds = [...targetFolder.itemIds];
+                  const indexesToMoveInsideSameFolder: number[] = [];
+                  const itemIdsToMoveFromOtherFolders: string[] = [];
+                  for (const { item } of srcItems) {
+                    const index = targetFolderItemIds.indexOf(item.id);
+                    const isSameFolder = index !== -1;
+                    if (isSameFolder && index === targetIndex) {
+                      continue;
+                    }
+                    if (isSameFolder) {
+                      indexesToMoveInsideSameFolder.push(index);
+                    } else {
+                      itemIdsToMoveFromOtherFolders.push(item.id);
+                    }
                   }
-                  if (isEmpty(treeApi.selectedNodes)) return;
 
-                  const selectedKind =
-                    treeApi.selectedNodes[0].data.nodeProps.kind;
-                  const isOnlyOneSelected = treeApi.selectedNodes.length === 1;
-
-                  if (selectedKind === "folder") {
-                    const selectedNodes = treeApi.selectedNodes as NodeApi<
-                      tTreeNodeData<tFolderNodeData>
-                    >[];
-                    const firstFolder =
-                      selectedNodes[0].data.nodeProps.props.folder;
-                    const isOnlyRootSelected =
-                      isOnlyOneSelected && isRootFolder(firstFolder);
-                    const updateSelectedFolders = (data: tUpdateFolderData) => {
-                      if (isEmpty(data)) return;
-                      const updates: tUpdateFoldersArg = {};
-                      for (const node of selectedNodes) {
-                        const { folder } = node.data.nodeProps.props;
-                        if (isRootFolder(folder)) continue;
-                        updates[folder.id] = {
-                          folder,
-                          data,
-                        };
-                      }
-                      updateFolders(updates);
-                    };
-                    const updateAnimationState = (isAnimation: boolean) => {
-                      updateSelectedFolders({ isAnimation });
-                    };
-                    const isMarkedAsAnimation = selectedNodes.every(
-                      (node) => node.data.nodeProps.props.folder.isAnimation,
+                  const hasUpdatesInSameFolder = !isEmpty(
+                    indexesToMoveInsideSameFolder,
+                  );
+                  if (hasUpdatesInSameFolder) {
+                    targetFolderItemIds = arrayMoveMultiple(
+                      targetFolderItemIds,
+                      indexesToMoveInsideSameFolder,
+                      targetIndex,
                     );
-                    const isOpened = selectedNodes.every((node) => node.isOpen);
-                    const toggleOpenedState = () => {
-                      for (const node of selectedNodes) {
-                        if (isOpened) {
-                          node.close();
-                        } else {
-                          node.open();
-                        }
-                      }
-                    };
-                    openContextMenu({
-                      event: e,
-                      items: [
-                        isOnlyOneSelected && {
-                          id: "add_sprites",
-                          title: t("add_sprites"),
-                          onClick: () => {
-                            uploadFilesTargetFolderRef.current =
-                              isOnlyRootSelected ? null : firstFolder.id;
-                            fileDialog.open();
-                          },
-                        },
-                        isOnlyOneSelected &&
-                          !isOnlyRootSelected && {
-                            id: "update_folder",
-                            title: t("update"),
-                            onClick: () => openFolderEditor(firstFolder.id),
-                          },
-                        !isOnlyRootSelected &&
-                          !isMarkedAsAnimation && {
-                            id: "animation",
-                            title: t("folders.mark_as_animation") + " (WIP)",
-                            onClick: () => updateAnimationState(true),
-                          },
-                        !isOnlyRootSelected &&
-                          isMarkedAsAnimation && {
-                            id: "animation",
-                            title: t("folders.unmark_as_animation") + " (WIP)",
-                            onClick: () => updateAnimationState(false),
-                          },
-                        {
-                          id: "delete",
-                          title: t("remove"),
-                          onClick: () => removeFolderNodes(selectedNodes),
-                        },
-                        {
-                          id: "toggle",
-                          title: t(
-                            `folders.${isOpened ? "close_folder" : "open_folder"}`,
-                          ),
-                          onClick: toggleOpenedState,
-                        },
-                      ].filter(isDefined),
-                    });
-                  } else if (selectedKind === "item") {
-                    const selectedNodes = treeApi.selectedNodes as NodeApi<
-                      tTreeNodeData<tItemNodeData>
-                    >[];
-                    const firstItem =
-                      selectedNodes[0].data.nodeProps.props.item;
-                    openContextMenu({
-                      event: e,
-                      items: [
-                        isOnlyOneSelected && {
-                          id: "focus",
-                          title: t("focus"),
-                          onClick: () => focusSprite(firstItem.id),
-                        },
-                        isOnlyOneSelected && {
-                          id: "update",
-                          title: t("update"),
-                          onClick: () => openSpriteEditor(firstItem.id),
-                        },
-                        {
-                          id: "delete",
-                          title: t("remove"),
-                          onClick: () => {
-                            removeItemNodes(selectedNodes);
-                          },
-                        },
-                      ].filter(isDefined),
-                    });
                   }
-                }}
-              >
-                {Node}
-              </Tree>
-            )}
-          </div>
+                  const hasUpdatesFromOtherFolders = !isEmpty(
+                    itemIdsToMoveFromOtherFolders,
+                  );
+                  if (hasUpdatesFromOtherFolders) {
+                    targetFolderItemIds.splice(
+                      targetIndex,
+                      0,
+                      ...itemIdsToMoveFromOtherFolders,
+                    );
+                  }
+                  if (hasUpdatesInSameFolder || hasUpdatesFromOtherFolders) {
+                    addUpdate(targetFolder, { itemIds: targetFolderItemIds });
+                  }
+                };
+
+                insertIntoTargetFolder();
+
+                updateFoldersWithAccumulatedUpdates();
+              }}
+              onContextMenu={(e) => {
+                if (!(e?.target instanceof HTMLElement)) return;
+                const $node = e.target.closest("[data-node-id]");
+                const treeApi = treeApiRef.current;
+                if (!treeApi || !$node) return;
+                const id = $node.getAttribute("data-node-id");
+                if (!id) return;
+                const selectedIds = treeApi.selectedIds;
+
+                // select the node if it's not selected
+                if (!selectedIds.has(id)) {
+                  const visibleNodes = treeApi.visibleNodes;
+                  const node = visibleNodes.find((node) => node.id === id);
+                  if (!node) return;
+                  treeApi.select(node, { focus: true });
+                }
+                if (isEmpty(treeApi.selectedNodes)) return;
+
+                const selectedKind =
+                  treeApi.selectedNodes[0].data.nodeProps.kind;
+                const isOnlyOneSelected = treeApi.selectedNodes.length === 1;
+
+                if (selectedKind === "folder") {
+                  const selectedNodes = treeApi.selectedNodes as NodeApi<
+                    tTreeNodeData<tFolderNodeData>
+                  >[];
+                  const firstFolder =
+                    selectedNodes[0].data.nodeProps.props.folder;
+                  const isOnlyRootSelected =
+                    isOnlyOneSelected && isRootFolder(firstFolder);
+                  const updateSelectedFolders = (data: tUpdateFolderData) => {
+                    if (isEmpty(data)) return;
+                    const updates: tUpdateFoldersArg = {};
+                    for (const node of selectedNodes) {
+                      const { folder } = node.data.nodeProps.props;
+                      if (isRootFolder(folder)) continue;
+                      updates[folder.id] = {
+                        folder,
+                        data,
+                      };
+                    }
+                    updateFolders(updates);
+                  };
+                  const updateAnimationState = (isAnimation: boolean) => {
+                    updateSelectedFolders({ isAnimation });
+                  };
+                  const isMarkedAsAnimation = selectedNodes.every(
+                    (node) => node.data.nodeProps.props.folder.isAnimation,
+                  );
+                  const isOpened = selectedNodes.every((node) => node.isOpen);
+                  const toggleOpenedState = () => {
+                    for (const node of selectedNodes) {
+                      if (isOpened) {
+                        node.close();
+                      } else {
+                        node.open();
+                      }
+                    }
+                  };
+                  openContextMenu({
+                    event: e,
+                    items: [
+                      isOnlyOneSelected && {
+                        id: "add_sprites",
+                        title: t("add_sprites"),
+                        onClick: () => {
+                          uploadFilesTargetFolderRef.current =
+                            isOnlyRootSelected ? null : firstFolder.id;
+                          fileDialog.open();
+                        },
+                      },
+                      isOnlyOneSelected &&
+                        !isOnlyRootSelected && {
+                          id: "update_folder",
+                          title: t("update"),
+                          onClick: () => openFolderEditor(firstFolder.id),
+                        },
+                      !isOnlyRootSelected &&
+                        !isMarkedAsAnimation && {
+                          id: "animation",
+                          title: t("folders.mark_as_animation") + " (WIP)",
+                          onClick: () => updateAnimationState(true),
+                        },
+                      !isOnlyRootSelected &&
+                        isMarkedAsAnimation && {
+                          id: "animation",
+                          title: t("folders.unmark_as_animation") + " (WIP)",
+                          onClick: () => updateAnimationState(false),
+                        },
+                      {
+                        id: "delete",
+                        title: t("remove"),
+                        onClick: () => removeFolderNodes(selectedNodes),
+                      },
+                      {
+                        id: "toggle",
+                        title: t(
+                          `folders.${isOpened ? "close_folder" : "open_folder"}`,
+                        ),
+                        onClick: toggleOpenedState,
+                      },
+                    ].filter(isDefined),
+                  });
+                } else if (selectedKind === "item") {
+                  const selectedNodes = treeApi.selectedNodes as NodeApi<
+                    tTreeNodeData<tItemNodeData>
+                  >[];
+                  const firstItem = selectedNodes[0].data.nodeProps.props.item;
+                  openContextMenu({
+                    event: e,
+                    items: [
+                      isOnlyOneSelected && {
+                        id: "focus",
+                        title: t("focus"),
+                        onClick: () => focusSprite(firstItem.id),
+                      },
+                      isOnlyOneSelected && {
+                        id: "update",
+                        title: t("update"),
+                        onClick: () => openSpriteEditor(firstItem.id),
+                      },
+                      {
+                        id: "delete",
+                        title: t("remove"),
+                        onClick: () => {
+                          removeItemNodes(selectedNodes);
+                        },
+                      },
+                    ].filter(isDefined),
+                  });
+                }
+              }}
+            >
+              {Node}
+            </Tree>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
@@ -480,7 +485,12 @@ function Node({ node, style, dragHandle }: NodeRendererProps<tTreeNodeData>) {
     );
   } else if (nodeProps.kind === "folder") {
     return (
-      <Folder style={style} ref={dragHandle} folder={nodeProps.props.folder} />
+      <Folder
+        style={style}
+        ref={dragHandle}
+        folder={nodeProps.props.folder}
+        name={nodeProps.props.name}
+      />
     );
   } else {
     return (
@@ -494,26 +504,19 @@ function Node({ node, style, dragHandle }: NodeRendererProps<tTreeNodeData>) {
 
 type tFolderProps = {
   folder: tFolder;
+  name: string;
   style?: CSSProperties;
 };
-const Folder = forwardRef<any, tFolderProps>(({ folder, style }, ref) => {
+const Folder = forwardRef<any, tFolderProps>(({ folder, style, name }, ref) => {
   const iconSize = 20;
-  const { t } = useTranslation();
   return (
-    <div
-      style={style}
-      ref={ref}
-      aria-label={folder.name}
-      className={styles.folder}
-    >
+    <div style={style} ref={ref} className={styles.folder}>
       {folder.isAnimation ? (
         <AnimationIcon size={iconSize} className={styles.folderIcon} />
       ) : (
         <FolderIcon size={iconSize} className={styles.folderIcon} />
       )}
-      <span className={styles.nodeTitle}>
-        {isRootFolder(folder) ? t("folders.default_folder_name") : folder.name}
-      </span>
+      <span className={styles.nodeTitle}>{name}</span>
     </div>
   );
 });

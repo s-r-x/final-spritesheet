@@ -1,7 +1,7 @@
 import styles from "./packed-sprites-list.module.css";
 import { useFocusSprite } from "@/canvas/use-focus-sprite";
 import {
-  CSSProperties,
+  type CSSProperties,
   forwardRef,
   memo,
   useCallback,
@@ -150,61 +150,64 @@ const PackedSpritesList = () => {
   };
   const clearBinNodes = (nodes: NodeApi<tTreeNodeData<tBinNodeData>>[]) => {
     removeSpriteMut.mutate(
-      nodes.map((node) => node.data.nodeProps.itemIds).flat(),
+      nodes.flatMap((node) => node.data.nodeProps.itemIds),
     );
   };
 
   const addSpritesBtnLabel = t("add_sprites");
   return (
-    <>
-      <div className={styles.root}>
-        <div className={styles.stickyHead}>
-          <FileButton
-            onChange={(files) => {
-              addSpritesFromFilesMut.mutate({ files });
-            }}
-            accept={SUPPORTED_SPRITE_MIME_TYPES.join(",")}
-            multiple
-          >
-            {(props) => (
-              <>
-                <Button
-                  className={styles.wideViewportButton}
-                  aria-label={addSpritesBtnLabel}
-                  leftSection={<PlusIcon />}
-                  fullWidth
-                  {...props}
-                >
-                  {addSpritesBtnLabel}
-                </Button>
-                <ActionIcon
-                  className={styles.narrowViewportButton}
-                  aria-label={addSpritesBtnLabel}
-                  {...props}
-                >
-                  <PlusIcon />
-                </ActionIcon>
-              </>
-            )}
-          </FileButton>
-        </div>
-        <div ref={ref} className={styles.treeRoot}>
-          <div
-            className={styles.treeViewport}
-            data-testid="packed-sprites-tree-viewport"
-          >
-            {rootWidth > 0 && rootHeight > 0 && (
-              <Tree
-                data={treeData}
-                ref={treeApiRef}
-                openByDefault
-                disableDrag
-                rowHeight={30}
-                className={styles.tree}
-                width={rootWidth - 1}
-                height={rootHeight - 1}
-                data-testid="true"
-                renderRow={(args) => (
+    <div className={styles.root}>
+      <div className={styles.stickyHead}>
+        <FileButton
+          onChange={(files) => {
+            addSpritesFromFilesMut.mutate({ files });
+          }}
+          accept={SUPPORTED_SPRITE_MIME_TYPES.join(",")}
+          multiple
+        >
+          {(props) => (
+            <>
+              <Button
+                className={styles.wideViewportButton}
+                aria-label={addSpritesBtnLabel}
+                leftSection={<PlusIcon />}
+                fullWidth
+                {...props}
+              >
+                {addSpritesBtnLabel}
+              </Button>
+              <ActionIcon
+                className={styles.narrowViewportButton}
+                aria-label={addSpritesBtnLabel}
+                {...props}
+              >
+                <PlusIcon />
+              </ActionIcon>
+            </>
+          )}
+        </FileButton>
+      </div>
+      <div ref={ref} className={styles.treeRoot}>
+        <div
+          className={styles.treeViewport}
+          data-testid="packed-sprites-tree-viewport"
+        >
+          {rootWidth > 0 && rootHeight > 0 && (
+            <Tree
+              data={treeData}
+              ref={treeApiRef}
+              openByDefault
+              disableDrag
+              rowHeight={30}
+              className={styles.tree}
+              width={rootWidth - 1}
+              height={rootHeight - 1}
+              renderRow={(args) => {
+                const label = args.node.data.name;
+                return (
+                  // biome-ignore lint/a11y/noStaticElementInteractions: <react-arborist>
+                  // biome-ignore lint/a11y/useAriaPropsSupportedByRole: <react-arborist>
+                  // biome-ignore lint/a11y/useKeyWithClickEvents: <react-arborist>
                   <div
                     {...args.attrs}
                     className={clsx(
@@ -212,136 +215,136 @@ const PackedSpritesList = () => {
                       args.node.id === "oversized" && styles.oversized,
                     )}
                     data-node-id={args.node.id}
+                    aria-label={label}
                     ref={args.innerRef}
                     onFocus={(e) => e.stopPropagation()}
                     onClick={args.node.handleClick}
                   >
                     {args.children}
                   </div>
-                )}
-                onDelete={({ nodes }) => {
-                  if (isEmpty(nodes)) return;
-                  const nodeKind = nodes[0].data.nodeProps.kind;
-                  if (nodeKind === "bin") {
-                    clearBinNodes(
-                      nodes as NodeApi<tTreeNodeData<tBinNodeData>>[],
-                    );
-                  } else {
-                    removeItemNodes(
-                      nodes as NodeApi<tTreeNodeData<tItemNodeData>>[],
-                    );
+                );
+              }}
+              onDelete={({ nodes }) => {
+                if (isEmpty(nodes)) return;
+                const nodeKind = nodes[0].data.nodeProps.kind;
+                if (nodeKind === "bin") {
+                  clearBinNodes(
+                    nodes as NodeApi<tTreeNodeData<tBinNodeData>>[],
+                  );
+                } else {
+                  removeItemNodes(
+                    nodes as NodeApi<tTreeNodeData<tItemNodeData>>[],
+                  );
+                }
+              }}
+              onSelect={(nodes) => {
+                const treeApi = treeApiRef.current;
+                if (isEmpty(nodes) || !treeApi) return;
+                const firstNode = nodes[0];
+                for (let i = 1; i < nodes.length; i++) {
+                  const node = nodes[i];
+                  if (node.level !== firstNode.level) {
+                    node.deselect();
                   }
-                }}
-                onSelect={(nodes) => {
-                  const treeApi = treeApiRef.current;
-                  if (isEmpty(nodes) || !treeApi) return;
-                  const firstNode = nodes[0];
-                  for (let i = 1; i < nodes.length; i++) {
-                    const node = nodes[i];
-                    if (node.level !== firstNode.level) {
-                      node.deselect();
-                    }
-                  }
-                }}
-                onContextMenu={(e) => {
-                  if (!(e?.target instanceof HTMLElement)) return;
-                  const $node = e.target.closest("[data-node-id]");
-                  const treeApi = treeApiRef.current;
-                  if (!treeApi || !$node) return;
-                  const id = $node.getAttribute("data-node-id");
-                  if (!id) return;
-                  const selectedIds = treeApi.selectedIds;
+                }
+              }}
+              onContextMenu={(e) => {
+                if (!(e?.target instanceof HTMLElement)) return;
+                const $node = e.target.closest("[data-node-id]");
+                const treeApi = treeApiRef.current;
+                if (!treeApi || !$node) return;
+                const id = $node.getAttribute("data-node-id");
+                if (!id) return;
+                const selectedIds = treeApi.selectedIds;
 
-                  // select the node if it's not selected
-                  if (!selectedIds.has(id)) {
-                    const visibleNodes = treeApi.visibleNodes;
-                    const node = visibleNodes.find((node) => node.id === id);
-                    if (!node) return;
-                    treeApi.select(node, { focus: true });
-                  }
-                  if (isEmpty(treeApi.selectedNodes)) return;
+                // select the node if it's not selected
+                if (!selectedIds.has(id)) {
+                  const visibleNodes = treeApi.visibleNodes;
+                  const node = visibleNodes.find((node) => node.id === id);
+                  if (!node) return;
+                  treeApi.select(node, { focus: true });
+                }
+                if (isEmpty(treeApi.selectedNodes)) return;
 
-                  const selectedKind =
-                    treeApi.selectedNodes[0].data.nodeProps.kind;
-                  const isOnlyOneSelected = treeApi.selectedNodes.length === 1;
+                const selectedKind =
+                  treeApi.selectedNodes[0].data.nodeProps.kind;
+                const isOnlyOneSelected = treeApi.selectedNodes.length === 1;
 
-                  if (selectedKind === "bin") {
-                    const selectedNodes = treeApi.selectedNodes as NodeApi<
-                      tTreeNodeData<tBinNodeData>
-                    >[];
-                    const firstFolder = selectedNodes[0];
-                    const isOpened = selectedNodes.every((node) => node.isOpen);
-                    const isOversizedSelected = firstFolder.id === "oversized";
-                    const toggleOpenedState = () => {
-                      for (const node of selectedNodes) {
-                        if (isOpened) {
-                          node.close();
-                        } else {
-                          node.open();
-                        }
+                if (selectedKind === "bin") {
+                  const selectedNodes = treeApi.selectedNodes as NodeApi<
+                    tTreeNodeData<tBinNodeData>
+                  >[];
+                  const firstFolder = selectedNodes[0];
+                  const isOpened = selectedNodes.every((node) => node.isOpen);
+                  const isOversizedSelected = firstFolder.id === "oversized";
+                  const toggleOpenedState = () => {
+                    for (const node of selectedNodes) {
+                      if (isOpened) {
+                        node.close();
+                      } else {
+                        node.open();
                       }
-                    };
-                    openContextMenu({
-                      event: e,
-                      items: [
-                        isOnlyOneSelected &&
-                          !isOversizedSelected && {
-                            id: "focus_bin",
-                            title: t("focus"),
-                            onClick: () => focusBin(Number(firstFolder.id)),
-                          },
-                        {
-                          id: "clear_bin",
-                          title: t("clear_packed_bin"),
-                          onClick: () => clearBinNodes(selectedNodes),
-                        },
-                        {
-                          id: "toggle",
-                          title: t(
-                            `folders.${isOpened ? "close_folder" : "open_folder"}`,
-                          ),
-                          onClick: toggleOpenedState,
-                        },
-                      ].filter(isDefined),
-                    });
-                  } else if (selectedKind === "item") {
-                    const selectedNodes = treeApi.selectedNodes as NodeApi<
-                      tTreeNodeData<tItemNodeData>
-                    >[];
-                    const firstItem =
-                      selectedNodes[0].data.nodeProps.props.item;
-                    openContextMenu({
-                      event: e,
-                      items: [
-                        isOnlyOneSelected && {
-                          id: "focus",
+                    }
+                  };
+                  openContextMenu({
+                    event: e,
+                    items: [
+                      isOnlyOneSelected &&
+                        !isOversizedSelected && {
+                          id: "focus_bin",
                           title: t("focus"),
-                          onClick: () => focusSprite(firstItem.id),
+                          onClick: () => focusBin(Number(firstFolder.id)),
                         },
-                        isOnlyOneSelected && {
-                          id: "update",
-                          title: t("update"),
-                          onClick: () => openSpriteEditor(firstItem.id),
+                      {
+                        id: "clear_bin",
+                        title: t("clear_packed_bin"),
+                        onClick: () => clearBinNodes(selectedNodes),
+                      },
+                      {
+                        id: "toggle",
+                        title: t(
+                          `folders.${isOpened ? "close_folder" : "open_folder"}`,
+                        ),
+                        onClick: toggleOpenedState,
+                      },
+                    ].filter(isDefined),
+                  });
+                } else if (selectedKind === "item") {
+                  const selectedNodes = treeApi.selectedNodes as NodeApi<
+                    tTreeNodeData<tItemNodeData>
+                  >[];
+                  const firstItem = selectedNodes[0].data.nodeProps.props.item;
+                  openContextMenu({
+                    event: e,
+                    items: [
+                      isOnlyOneSelected && {
+                        id: "focus",
+                        title: t("focus"),
+                        onClick: () => focusSprite(firstItem.id),
+                      },
+                      isOnlyOneSelected && {
+                        id: "update",
+                        title: t("update"),
+                        onClick: () => openSpriteEditor(firstItem.id),
+                      },
+                      {
+                        id: "delete",
+                        title: t("remove"),
+                        onClick: () => {
+                          removeItemNodes(selectedNodes);
                         },
-                        {
-                          id: "delete",
-                          title: t("remove"),
-                          onClick: () => {
-                            removeItemNodes(selectedNodes);
-                          },
-                        },
-                      ].filter(isDefined),
-                    });
-                  }
-                }}
-              >
-                {Node}
-              </Tree>
-            )}
-          </div>
+                      },
+                    ].filter(isDefined),
+                  });
+                }
+              }}
+            >
+              {Node}
+            </Tree>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
@@ -371,7 +374,7 @@ const Bin = forwardRef<any, tBinProps>(
   ({ title, style, isOversized, itemsCount }, ref) => {
     const iconSize = 20;
     return (
-      <div style={style} ref={ref} aria-label={title} className={styles.bin}>
+      <div style={style} ref={ref} className={styles.bin}>
         {isOversized ? (
           <PackageFailIcon size={iconSize} className={styles.binIcon} />
         ) : (

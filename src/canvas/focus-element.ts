@@ -13,7 +13,7 @@ export const focusElement = ({
   const el = app.stage.getChildByLabel(name, true);
   if (!el) return;
   const elGlobalPos = el.getGlobalPosition();
-  if (isNaN(elGlobalPos.x) || isNaN(elGlobalPos.y)) {
+  if (Number.isNaN(elGlobalPos.x) || Number.isNaN(elGlobalPos.y)) {
     return;
   }
   const pos = viewport.toLocal(elGlobalPos);

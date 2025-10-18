@@ -15,8 +15,8 @@ import {
 } from "#config";
 import { isNumber } from "#utils/is-number";
 import { isBoolean } from "#utils/is-boolean";
-import { tPackerSettings } from "@/packer/types";
-import { tOutputSettings } from "@/output/types";
+import type { tPackerSettings } from "@/packer/types";
+import type { tOutputSettings } from "@/output/types";
 
 export const persistedToProject = (
   project: tPersistedProjectWithThumb,

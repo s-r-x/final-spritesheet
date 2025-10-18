@@ -1,4 +1,4 @@
-import { Command } from "@/common/commands/command";
+import type { Command } from "@/common/commands/command";
 import { atom } from "jotai";
 import { isEmpty } from "#utils/is-empty";
 import { unique } from "#utils/unique";

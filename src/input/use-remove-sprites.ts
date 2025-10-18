@@ -6,9 +6,9 @@ import { RemoveSpritesCommand } from "./remove-sprites.command";
 import { useHistoryManager } from "@/history/use-history-manager";
 import { useCreateUpdateFoldersCommand } from "@/folders/use-update-folders";
 import { foldersAtom } from "@/folders/folders.atom";
-import { tUpdateFoldersArg } from "@/folders/types";
+import type { tUpdateFoldersArg } from "@/folders/types";
 import { isEmpty } from "#utils/is-empty";
-import { Command } from "@/common/commands/command";
+import type { Command } from "@/common/commands/command";
 
 export const useCreateRemoveSpritesCommand = () => {
   const atomsStore = useStore();
