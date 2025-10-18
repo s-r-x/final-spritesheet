@@ -79,6 +79,7 @@ const ProjectEditor = ({
         } else {
           navigate({
             to: "/projects/{-$projectId}",
+            replace: true,
             params: {
               projectId: id,
             },
