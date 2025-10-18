@@ -14,7 +14,16 @@ import { CanvasRefsProvider } from "@/canvas/canvas-refs";
 import SpriteEditor from "@/input/sprite-editor.component";
 import ProjectEditor from "@/projects/project-editor.component";
 import FolderEditor from "@/folders/folder-editor.component";
-import { List, Center, Title, Button, Stack, Mark, Tabs, Accordion } from "@mantine/core";
+import {
+  List,
+  Center,
+  Title,
+  Button,
+  Stack,
+  Mark,
+  Tabs,
+  Accordion,
+} from "@mantine/core";
 import { useHandleSpritesPasteEvent } from "@/input/use-handle-sprites-paste-event";
 import { atomsStore } from "@/common/atoms/atoms-store";
 import { setSpritesAtom } from "@/input/sprites.atom";
@@ -54,6 +63,7 @@ import PackedSpritesList from "@/packer/packed-sprites-list.component";
 import PackerSettings from "@/packer/packer-settings.component";
 import OutputSettings from "@/output/output-settings.component";
 import type { CSSProperties } from "react";
+import { useOpenProjectEditor } from "@/projects/use-project-editor";
 
 export const Route = createFileRoute("/projects/{-$projectId}")({
   component: Project,
@@ -171,57 +181,47 @@ function ProjectNotFound() {
   const { projectId } = Route.useParams();
   const projects = useProjectsList();
   const hasProjects = isEmpty(projects);
-  const navigate = useNavigate();
-  const createProject = useCreateProject();
-  const createProjectMut = useMutation(createProject, {
-    showLoadingBar: true,
-    onSuccess({ project }) {
-      navigate({
-        to: "/projects/{-$projectId}",
-        params: {
-          projectId: project.id,
-        },
-      });
-    },
-  });
+  const openProjectEditor = useOpenProjectEditor();
   return (
-    <Center mih={"100dvh"} miw={"100dvw"}>
-      <Stack gap="lg" align="flex-start">
-        <Title order={1} size={"h2"}>
-          <Translation
-            i18nKey={i18nNs + "message"}
-            values={{ project: projectId }}
-            components={{ 1: <Mark color="red" /> }}
-          />
-        </Title>
-        {!hasProjects && (
-          <Stack gap="xs">
-            <Title order={2} size="h4">
-              {t(i18nNs + "projects_list")}
-            </Title>
-            <List spacing="xs" size="md" center>
-              {projects.map((project) => (
-                <List.Item key={project.id}>
-                  <Link
-                    to="/projects/{-$projectId}"
-                    params={{ projectId: project.id }}
-                  >
-                    {project.name}
-                  </Link>
-                </List.Item>
-              ))}
-            </List>
-          </Stack>
-        )}
-        <Button
-          leftSection={<PlusIcon />}
-          disabled={createProjectMut.isLoading}
-          onClick={() => createProjectMut.mutate({})}
-        >
-          {t(i18nNs + "new_project")}
-        </Button>
-      </Stack>
-    </Center>
+    <>
+      <ProjectEditor />
+      <Center mih={"100dvh"} miw={"100dvw"}>
+        <Stack gap="lg" align="flex-start">
+          <Title order={1} size={"h2"}>
+            <Translation
+              i18nKey={i18nNs + "message"}
+              values={{ project: projectId }}
+              components={{ 1: <Mark color="red" /> }}
+            />
+          </Title>
+          {!hasProjects && (
+            <Stack gap="xs">
+              <Title order={2} size="h4">
+                {t(i18nNs + "projects_list")}
+              </Title>
+              <List spacing="xs" size="md" center>
+                {projects.map((project) => (
+                  <List.Item key={project.id}>
+                    <Link
+                      to="/projects/{-$projectId}"
+                      params={{ projectId: project.id }}
+                    >
+                      {project.name}
+                    </Link>
+                  </List.Item>
+                ))}
+              </List>
+            </Stack>
+          )}
+          <Button
+            leftSection={<PlusIcon />}
+            onClick={() => openProjectEditor("new")}
+          >
+            {t(i18nNs + "new_project")}
+          </Button>
+        </Stack>
+      </Center>
+    </>
   );
 }
 
