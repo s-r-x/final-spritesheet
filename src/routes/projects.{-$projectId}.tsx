@@ -4,7 +4,6 @@ import {
   notFound,
   redirect,
   useBlocker,
-  useNavigate,
 } from "@tanstack/react-router";
 import Layout from "@/layout/layout.component";
 import Canvas from "@/canvas/canvas.component";
@@ -39,7 +38,6 @@ import { isEmpty } from "#utils/is-empty";
 import { persistedToProject } from "@/projects/projects.mapper";
 import { useProjectsList } from "@/projects/use-projects-list";
 import { Plus as PlusIcon } from "lucide-react";
-import { useCreateProject } from "@/projects/use-create-project";
 import { useTranslation } from "@/i18n/use-translation";
 import { useDocumentTitle } from "@mantine/hooks";
 import { useActiveProjectName } from "@/projects/use-active-project-name";
@@ -51,7 +49,6 @@ import {
   useHasUnsavedChanges,
   useIsPersisting,
 } from "@/persistence/use-persistence";
-import { useMutation } from "#hooks/use-mutation";
 import { foldersAtom } from "@/folders/folders.atom";
 import {
   Package as PackedSpritesIcon,
