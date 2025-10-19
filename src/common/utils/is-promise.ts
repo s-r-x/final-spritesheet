@@ -1,0 +1,1 @@
+export { isPromise } from "radash";
