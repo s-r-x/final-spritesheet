@@ -30,7 +30,9 @@ import {
   assertCanUndo,
 } from "./assertions/history";
 
-test("it should update, undo and redo packer settings", async ({ page }) => {
+test("should update, undo and redo packer settings", async ({ page }) => {
+  await navigateTo(page);
+
   type tHistoryEntry = {
     sheet: string;
     padding: string;
@@ -86,7 +88,6 @@ test("it should update, undo and redo packer settings", async ({ page }) => {
     const entry = getLastHistoryEntry();
     await assertFormValues(entry);
   };
-  await navigateTo(page);
   await assertCannotUndo(page);
   await assertCannotRedo(page);
 
