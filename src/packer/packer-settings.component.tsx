@@ -1,4 +1,4 @@
-import { Select, NumberInput, Checkbox, Stack } from "@mantine/core";
+import { NativeSelect, NumberInput, Checkbox, Stack } from "@mantine/core";
 import { useTranslation } from "@/i18n/use-translation";
 import { useForm } from "@mantine/form";
 import * as z from "zod";
@@ -100,9 +100,8 @@ const PackerSettings = ({ getCurrentSettings }: tProps) => {
       onSubmit={form.onSubmit(onValuesChange)}
     >
       <Stack gap="sm">
-        <Select
+        <NativeSelect
           label={t("packer_opts.max_size")}
-          searchable={false}
           data={PACKER_SUPPORTED_SHEET_SIZES.map(String)}
           key={form.key("sheetMaxSize")}
           {...normalizeInputProps({
