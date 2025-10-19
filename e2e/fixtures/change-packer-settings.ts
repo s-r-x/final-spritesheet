@@ -45,8 +45,7 @@ export const togglePackerPot = async (page: Page) => {
 
 export const changePackerSheetSize = async (page: Page, size: number) => {
   const label = packerSheetSizeLocator(page);
-  await label.click();
-  await page.getByRole("option", { name: String(size) }).click();
+  await label.selectOption(String(size));
 };
 
 export const changePackerSpritePadding = async (
