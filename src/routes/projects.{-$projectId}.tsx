@@ -4,6 +4,7 @@ import {
   notFound,
   redirect,
   useBlocker,
+  useRouter,
 } from "@tanstack/react-router";
 import Layout from "@/layout/layout.component";
 import Canvas from "@/canvas/canvas.component";
@@ -59,8 +60,11 @@ import FoldersList from "@/folders/folders-list.component";
 import PackedSpritesList from "@/packer/packed-sprites-list.component";
 import PackerSettings from "@/packer/packer-settings.component";
 import OutputSettings from "@/output/output-settings.component";
-import type { CSSProperties } from "react";
+import type { CSSProperties, PropsWithChildren } from "react";
 import { useOpenProjectEditor } from "@/projects/use-project-editor";
+import BaseErrorBoundary from "#components/error-boundary";
+import { useCanUndo, useUndo } from "@/history/use-undo";
+import { useCanRedo, useRedo } from "@/history/use-redo";
 
 export const Route = createFileRoute("/projects/{-$projectId}")({
   component: Project,
@@ -154,10 +158,6 @@ export const Route = createFileRoute("/projects/{-$projectId}")({
       label: "spritesAndFoldersLoaded",
     });
     const normalizedSprites = await Promise.all(sprites.map(persistedToSprite));
-    logger?.debug({
-      layer: "router",
-      label: "spritesNormalized",
-    });
     atomsStore.set(activeProjectIdAtom, projectId);
     atomsStore.set(setSpritesAtom, normalizedSprites);
     atomsStore.set(foldersAtom, folders);
@@ -226,25 +226,27 @@ function Project() {
   useHandleSpritesPasteEvent();
   const { t } = useTranslation();
   return (
-    <CanvasRefsProvider>
-      <RouteSideEffects />
-      <Layout
-        rightPanelLabel={t("settings")}
-        appBarSlot={<PackerAppBar />}
-        leftPanelSlot={<PackedSpritesAndFolders />}
-        mainSlot={
-          <>
-            <Canvas />
-            <CanvasDropzone />
-          </>
-        }
-        rightPanelSlot={<PackerAndOutputSettings />}
-        toolbarSlot={<Toolbar />}
-      />
-      <SpriteEditor />
-      <ProjectEditor />
-      <FolderEditor />
-    </CanvasRefsProvider>
+    <SharedErrorBoundary isCentered>
+      <CanvasRefsProvider>
+        <RouteSideEffects />
+        <Layout
+          rightPanelLabel={t("settings")}
+          appBarSlot={<PackerAppBar />}
+          leftPanelSlot={<PackedSpritesAndFolders />}
+          mainSlot={
+            <SharedErrorBoundary>
+              <Canvas />
+              <CanvasDropzone />
+            </SharedErrorBoundary>
+          }
+          rightPanelSlot={<PackerAndOutputSettings />}
+          toolbarSlot={<Toolbar />}
+        />
+        <SpriteEditor />
+        <ProjectEditor />
+        <FolderEditor />
+      </CanvasRefsProvider>
+    </SharedErrorBoundary>
   );
 }
 const PackedSpritesAndFolders = () => {
@@ -293,10 +295,14 @@ const PackedSpritesAndFolders = () => {
         </Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="folders" style={panelStyles}>
-        <FoldersList />
+        <SharedErrorBoundary>
+          <FoldersList />
+        </SharedErrorBoundary>
       </Tabs.Panel>
       <Tabs.Panel value="bins" style={panelStyles}>
-        <PackedSpritesList />
+        <SharedErrorBoundary>
+          <PackedSpritesList />
+        </SharedErrorBoundary>
       </Tabs.Panel>
     </Tabs>
   );
@@ -313,16 +319,45 @@ const PackerAndOutputSettings = () => {
       <Accordion.Item value="packer">
         <Accordion.Control>{t("packer_opts.form_name")}</Accordion.Control>
         <Accordion.Panel>
-          <PackerSettings />
+          <SharedErrorBoundary>
+            <PackerSettings />
+          </SharedErrorBoundary>
         </Accordion.Panel>
       </Accordion.Item>
       <Accordion.Item value="output">
         <Accordion.Control>{t("output_opts.form_name")}</Accordion.Control>
         <Accordion.Panel>
-          <OutputSettings />
+          <SharedErrorBoundary>
+            <OutputSettings />
+          </SharedErrorBoundary>
         </Accordion.Panel>
       </Accordion.Item>
     </Accordion>
+  );
+};
+const SharedErrorBoundary = (
+  props: PropsWithChildren<{ isCentered?: boolean }>,
+) => {
+  const undo = useUndo();
+  const redo = useRedo();
+  const canUndo = useCanUndo();
+  const canRedo = useCanRedo();
+  const router = useRouter();
+  return (
+    <BaseErrorBoundary
+      centerFallbackInViewport={props.isCentered}
+      onReset={async () => {
+        if (canUndo) {
+          await undo();
+        } else if (canRedo) {
+          await redo();
+        } else {
+          await router.invalidate();
+        }
+      }}
+    >
+      {props.children}
+    </BaseErrorBoundary>
   );
 };
 

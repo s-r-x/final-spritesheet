@@ -7,6 +7,7 @@ import { zod4Resolver } from "mantine-form-zod-resolver";
 import { useEditableSprite, useCloseSpriteEditor } from "./use-sprite-editor";
 import { useUpdateSprite } from "./use-update-sprite";
 import { useMutation } from "#hooks/use-mutation";
+import ErrorBoundary from "#components/error-boundary";
 
 const i18nNs = "sprite_editor.";
 const SpriteEditorModal = () => {
@@ -23,7 +24,7 @@ const SpriteEditorModal = () => {
       onClose={close}
       title={t(i18nNs + "editor_title")}
     >
-      {renderEditor()}
+      <ErrorBoundary onReset={close}>{renderEditor()}</ErrorBoundary>
     </Modal>
   );
 };

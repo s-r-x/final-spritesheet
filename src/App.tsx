@@ -18,6 +18,7 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { tLogger } from "./logger/types";
 import { loggerAtom } from "./logger/logger.atom";
+import ErrorBoundary from "#components/error-boundary";
 
 type tProps = {
   dbQueries: tDbQueries;
@@ -58,7 +59,14 @@ const AppWithProviders = (props: tProps) => {
       <QueryClientProvider client={queryClient}>
         <AtomsProvider>
           <UiFrameworkProvider>
-            <App {...props} />
+            <ErrorBoundary
+              centerFallbackInViewport
+              onReset={() => {
+                alert("Unfortunately, there is nothing to do");
+              }}
+            >
+              <App {...props} />
+            </ErrorBoundary>
           </UiFrameworkProvider>
         </AtomsProvider>
       </QueryClientProvider>

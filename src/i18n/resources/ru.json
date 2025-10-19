@@ -19,6 +19,8 @@
     "unsaved_changes_warn": "Есть несохраненные изменения. Если вы покинете страницу сейчас, то они будут утеряны.",
     "error": "Ошибка",
     "generic_error_desc": "Во время операции произошла ошибка. Полный текст ошибки можно посмотреть в консоли.",
+    "fatal_error_boundary_message": "Что-то пошло не так. Нажмите кнопку ниже, чтобы восстановить состояние.",
+    "fatal_error_boundary_restore": "Восстановить",
     "packed_sprites_list_sect_name": "Спрайты",
     "packed_bin_with_id": "Контейнер {{id}}",
     "folders_list_sect_name": "Папки",

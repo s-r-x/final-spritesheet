@@ -14,6 +14,7 @@ import { useCreateProject } from "./use-create-project";
 import { useNavigate } from "@tanstack/react-router";
 import { Dices as RandomNameIcon } from "lucide-react";
 import { generateUniqueName } from "#utils/generate-unique-name";
+import ErrorBoundary from "#components/error-boundary";
 
 const i18nNs = "project_editor.";
 const ProjectEditorModal = () => {
@@ -41,7 +42,7 @@ const ProjectEditorModal = () => {
           (editableProject === "new" ? "editor_title_new" : "editor_title"),
       )}
     >
-      {renderEditor()}
+      <ErrorBoundary onReset={close}>{renderEditor()}</ErrorBoundary>
     </Modal>
   );
 };

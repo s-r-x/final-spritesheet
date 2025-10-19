@@ -18,6 +18,7 @@ import { useAddFolder } from "./use-add-folder";
 import { useActiveProjectId } from "@/projects/use-active-project-id";
 import { generateUniqueName } from "#utils/generate-unique-name";
 import { Dices as RandomNameIcon } from "lucide-react";
+import ErrorBoundary from "#components/error-boundary";
 
 const i18nNs = "folder_editor.";
 const FolderEditorModal = () => {
@@ -39,7 +40,7 @@ const FolderEditorModal = () => {
       onClose={close}
       title={t(i18nNs + "editor_title")}
     >
-      {renderEditor()}
+      <ErrorBoundary onReset={close}>{renderEditor()}</ErrorBoundary>
     </Modal>
   );
 };
