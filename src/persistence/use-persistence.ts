@@ -6,6 +6,7 @@ import {
   persistenceCommandsAtom,
 } from "./persistence.atom";
 import { useCallback } from "react";
+import { useLogger } from "@/logger/use-logger";
 
 export const useIsPersisting = () => {
   return useAtomValue(isPersistingAtom);
@@ -15,7 +16,9 @@ export const useHasUnsavedChanges = () => {
 };
 export const usePersistChanges = () => {
   const atomsStore = useStore();
+  const logger = useLogger();
   return useCallback(async () => {
+    if (atomsStore.get(isPersistingAtom)) return;
     atomsStore.set(isPersistingAtom, true);
     const commands = atomsStore.get(persistenceCommandsAtom);
     try {
@@ -30,5 +33,9 @@ export const usePersistChanges = () => {
       atomsStore.set(isPersistingAtom, false);
     }
     atomsStore.set(clearPersistenceCommandsAtom);
-  }, [atomsStore]);
+    logger?.debug({
+      layer: "app",
+      label: "allChangesPersisted",
+    });
+  }, [atomsStore, logger]);
 };
