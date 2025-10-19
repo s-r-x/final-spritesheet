@@ -74,19 +74,23 @@ test("it should update, undo and redo packer settings", async ({ page }) => {
       ...values,
     });
   };
-  const assertCurrentFormValues = async () => {
-    const entry = getLastHistoryEntry();
+
+  const assertFormValues = async (entry: tHistoryEntry) => {
     await assertPackerSheetSizeValue(page, entry.sheet);
     await assertPackerSpritePaddingValue(page, entry.padding);
     await assertPackerEdgeSpacingValue(page, entry.edge);
     await assertPackerPotValue(page, entry.pot);
     await assertPackerAllowRotValue(page, entry.allowRot);
   };
+  const assertLastHistoryEntryValues = async () => {
+    const entry = getLastHistoryEntry();
+    await assertFormValues(entry);
+  };
   await navigateTo(page);
   await assertCannotUndo(page);
   await assertCannotRedo(page);
 
-  await assertCurrentFormValues();
+  await assertLastHistoryEntryValues();
 
   const sheetUpdatedValue = "256";
   const paddingUpdatedValue = "10";
@@ -100,22 +104,24 @@ test("it should update, undo and redo packer settings", async ({ page }) => {
   await addHistoryEntry({ pot: potUpdatedValue });
   await addHistoryEntry({ allowRot: allowRotUpdatedValue });
 
-  await assertCurrentFormValues();
+  await assertLastHistoryEntryValues();
 
   // x fields have been changed, therefore x history entries
   const numberOfMutations = 5;
   for (const _ of Array.from(Array(numberOfMutations))) {
     await undo(page);
     history.pop();
-    await assertCurrentFormValues();
+    await assertLastHistoryEntryValues();
   }
   await assertCannotUndo(page);
   await assertCanRedo(page);
-  await assertPackerSheetSizeValue(page, sheetInitialValue);
-  await assertPackerSpritePaddingValue(page, paddingInitialValue);
-  await assertPackerEdgeSpacingValue(page, edgeSpacingInitialValue);
-  await assertPackerPotValue(page, potInitialValue);
-  await assertPackerAllowRotValue(page, allowRotInitialValue);
+  await assertFormValues({
+    sheet: sheetInitialValue,
+    padding: paddingInitialValue,
+    edge: edgeSpacingInitialValue,
+    pot: potInitialValue,
+    allowRot: allowRotInitialValue,
+  });
 
   for (const _ of Array.from(Array(numberOfMutations))) {
     await redo(page);
@@ -123,9 +129,11 @@ test("it should update, undo and redo packer settings", async ({ page }) => {
 
   await assertCannotRedo(page);
   await assertCanUndo(page);
-  await assertPackerSheetSizeValue(page, sheetUpdatedValue);
-  await assertPackerSpritePaddingValue(page, paddingUpdatedValue);
-  await assertPackerEdgeSpacingValue(page, edgeUpdatedValue);
-  await assertPackerPotValue(page, potUpdatedValue);
-  await assertPackerAllowRotValue(page, allowRotUpdatedValue);
+  await assertFormValues({
+    sheet: sheetUpdatedValue,
+    padding: paddingUpdatedValue,
+    edge: edgeUpdatedValue,
+    pot: potUpdatedValue,
+    allowRot: allowRotUpdatedValue,
+  });
 });
