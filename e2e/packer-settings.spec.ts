@@ -1,13 +1,5 @@
-import { expect, type Locator, test } from "@playwright/test";
+import { test } from "@playwright/test";
 import { navigateTo } from "./fixtures/navigate-to";
-import { changePackerSheetSize } from "./fixtures/change-packer-sheet-size";
-import {
-  packerEdgeSpacingLocator,
-  packerPotLocator,
-  packerRotationLocator,
-  packerSheetSizeLocator,
-  packerSpritePaddingLocator,
-} from "./locators/packer-settings-form";
 import { undo } from "./fixtures/undo";
 import {
   PACKER_DEFAULT_ALLOW_ROTATION,
@@ -17,17 +9,28 @@ import {
   PACKER_DEFAULT_SPRITE_PADDING,
 } from "../src/config";
 import { redo } from "./fixtures/redo";
-import { undoButtonLocator } from "./locators/undo-button";
-import { redoButtonLocator } from "./locators/redo-button";
-import { changePackerSpritePadding } from "./fixtures/change-packer-sprite-padding";
-import { changePackerEdgeSpacing } from "./fixtures/change-packer-edge-spacing";
+import {
+  changePackerAllowRot,
+  changePackerEdgeSpacing,
+  changePackerPot,
+  changePackerSheetSize,
+  changePackerSpritePadding,
+} from "./fixtures/change-packer-settings";
+import {
+  assertPackerAllowRotValue,
+  assertPackerEdgeSpacingValue,
+  assertPackerPotValue,
+  assertPackerSheetSizeValue,
+  assertPackerSpritePaddingValue,
+} from "./assertions/packer-settings";
+import {
+  assertCannotRedo,
+  assertCannotUndo,
+  assertCanRedo,
+  assertCanUndo,
+} from "./assertions/history";
 
 test("it should update, undo and redo packer settings", async ({ page }) => {
-  const sheetSize = packerSheetSizeLocator(page);
-  const padding = packerSpritePaddingLocator(page);
-  const edgeSpacing = packerEdgeSpacingLocator(page);
-  const pot = packerPotLocator(page);
-  const allowRot = packerRotationLocator(page);
   type tHistoryEntry = {
     sheet: string;
     padding: string;
@@ -61,46 +64,29 @@ test("it should update, undo and redo packer settings", async ({ page }) => {
       await changePackerEdgeSpacing(page, Number(values.edge));
     }
     if (typeof values.allowRot === "boolean") {
-      if (values.allowRot) {
-        await allowRot.check();
-      } else {
-        await allowRot.uncheck();
-      }
+      await changePackerAllowRot(page, values.allowRot);
     }
     if (typeof values.pot === "boolean") {
-      if (values.allowRot) {
-        await pot.check();
-      } else {
-        await pot.uncheck();
-      }
+      await changePackerPot(page, values.pot);
     }
     history.push({
       ...getLastHistoryEntry(),
       ...values,
     });
   };
-  const assertCheckboxValue = async (loc: Locator, value: boolean) => {
-    if (value) {
-      await expect(loc).toBeChecked();
-    } else {
-      await expect(loc).not.toBeChecked();
-    }
-  };
-  const assertValues = async () => {
+  const assertCurrentFormValues = async () => {
     const entry = getLastHistoryEntry();
-    await expect(sheetSize).toHaveValue(entry.sheet);
-    await expect(padding).toHaveValue(entry.padding);
-    await expect(edgeSpacing).toHaveValue(entry.edge);
-    await assertCheckboxValue(pot, entry.pot);
-    await assertCheckboxValue(allowRot, entry.allowRot);
+    await assertPackerSheetSizeValue(page, entry.sheet);
+    await assertPackerSpritePaddingValue(page, entry.padding);
+    await assertPackerEdgeSpacingValue(page, entry.edge);
+    await assertPackerPotValue(page, entry.pot);
+    await assertPackerAllowRotValue(page, entry.allowRot);
   };
   await navigateTo(page);
-  const undoBtn = undoButtonLocator(page);
-  const redoBtn = redoButtonLocator(page);
-  await expect(undoBtn).toBeDisabled();
-  await expect(redoBtn).toBeDisabled();
+  await assertCannotUndo(page);
+  await assertCannotRedo(page);
 
-  await assertValues();
+  await assertCurrentFormValues();
 
   const sheetUpdatedValue = "256";
   const paddingUpdatedValue = "10";
@@ -114,31 +100,32 @@ test("it should update, undo and redo packer settings", async ({ page }) => {
   await addHistoryEntry({ pot: potUpdatedValue });
   await addHistoryEntry({ allowRot: allowRotUpdatedValue });
 
-  await assertValues();
+  await assertCurrentFormValues();
 
   // x fields have been changed, therefore x history entries
   const numberOfMutations = 5;
   for (const _ of Array.from(Array(numberOfMutations))) {
     await undo(page);
     history.pop();
-    await assertValues();
+    await assertCurrentFormValues();
   }
-  await expect(undoBtn).toBeDisabled();
-  await expect(redoBtn).toBeEnabled();
-  await expect(sheetSize).toHaveValue(sheetInitialValue);
-  await expect(padding).toHaveValue(paddingInitialValue);
-  await expect(edgeSpacing).toHaveValue(edgeSpacingInitialValue);
-  await assertCheckboxValue(pot, potInitialValue);
-  await assertCheckboxValue(allowRot, allowRotInitialValue);
+  await assertCannotUndo(page);
+  await assertCanRedo(page);
+  await assertPackerSheetSizeValue(page, sheetInitialValue);
+  await assertPackerSpritePaddingValue(page, paddingInitialValue);
+  await assertPackerEdgeSpacingValue(page, edgeSpacingInitialValue);
+  await assertPackerPotValue(page, potInitialValue);
+  await assertPackerAllowRotValue(page, allowRotInitialValue);
 
   for (const _ of Array.from(Array(numberOfMutations))) {
     await redo(page);
   }
-  await expect(redoBtn).toBeDisabled();
-  await expect(undoBtn).toBeEnabled();
-  await expect(sheetSize).toHaveValue(sheetUpdatedValue);
-  await expect(padding).toHaveValue(paddingUpdatedValue);
-  await expect(edgeSpacing).toHaveValue(edgeUpdatedValue);
-  await assertCheckboxValue(pot, potUpdatedValue);
-  await assertCheckboxValue(allowRot, allowRotUpdatedValue);
+
+  await assertCannotRedo(page);
+  await assertCanUndo(page);
+  await assertPackerSheetSizeValue(page, sheetUpdatedValue);
+  await assertPackerSpritePaddingValue(page, paddingUpdatedValue);
+  await assertPackerEdgeSpacingValue(page, edgeUpdatedValue);
+  await assertPackerPotValue(page, potUpdatedValue);
+  await assertPackerAllowRotValue(page, allowRotUpdatedValue);
 });
