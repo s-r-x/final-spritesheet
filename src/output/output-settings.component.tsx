@@ -53,7 +53,6 @@ const OutputSettings = ({
   const updateSettingsMut = useMutation(updateSettings);
   const onValuesChange = () => {
     const values = form.getValues();
-    console.log(values);
     const result = schema.safeParse(values);
     if (!result.success) return;
     const isChanged = !isEqual(getCurrentSettings(), result.data);

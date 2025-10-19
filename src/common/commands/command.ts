@@ -7,6 +7,9 @@ import type { tLogger } from "@/logger/types";
 export type tExecArgs = {
   isRedo?: boolean;
 };
+export type tPersistArgs = {
+  dryRun?: boolean;
+};
 export abstract class Command<TPayload = unknown> {
   private static _id: number = 0;
   public abstract readonly isUndoable: boolean;
@@ -99,7 +102,7 @@ export abstract class Command<TPayload = unknown> {
       },
     });
   }
-  public async persist() {
+  public async persist({ dryRun }: tPersistArgs = {}) {
     if (this.isPersisted) {
       this._logger?.warn({
         layer: "app",
@@ -108,43 +111,63 @@ export abstract class Command<TPayload = unknown> {
       });
       return;
     }
-    if (this.isUndone) {
+    if (dryRun) {
       this._logger?.debug({
         layer: "app",
-        label: "cmdUndoPersistenceStarted",
+        label: this.isUndone
+          ? "cmdUndoPersistenceStartedDryRun"
+          : "cmdPersistenceDryRun",
         data: {
           label: this.label,
           id: this.id,
         },
       });
-      await this._undoPersist();
+    }
+    if (this.isUndone) {
+      if (!dryRun) {
+        this._logger?.debug({
+          layer: "app",
+          label: "cmdUndoPersistenceStarted",
+          data: {
+            label: this.label,
+            id: this.id,
+          },
+        });
+        await this._undoPersist();
+      }
       this._isExecPersistedUndone = true;
       this._isExecPersisted = false;
-      this._logger?.debug({
-        layer: "app",
-        label: "cmdUndoPersisted",
-        data: {
-          label: this.label,
-          id: this.id,
-        },
-      });
+      if (!dryRun) {
+        this._logger?.debug({
+          layer: "app",
+          label: "cmdUndoPersisted",
+          data: {
+            label: this.label,
+            id: this.id,
+          },
+        });
+      }
     } else {
-      this._logger?.debug({
-        layer: "app",
-        label: "cmdPersistenceStarted",
-        data: { data: { label: this.label, id: this.id } },
-      });
-      await this._persist();
+      if (!dryRun) {
+        this._logger?.debug({
+          layer: "app",
+          label: "cmdPersistenceStarted",
+          data: { data: { label: this.label, id: this.id } },
+        });
+        await this._persist();
+      }
       this._isExecPersisted = true;
       this._isExecPersistedUndone = false;
-      this._logger?.debug({
-        layer: "app",
-        label: "cmdPersisted",
-        data: {
-          label: this.label,
-          id: this.id,
-        },
-      });
+      if (!dryRun) {
+        this._logger?.debug({
+          layer: "app",
+          label: "cmdPersisted",
+          data: {
+            label: this.label,
+            id: this.id,
+          },
+        });
+      }
     }
   }
   protected abstract _exec(args: tExecArgs): Promise<void>;
