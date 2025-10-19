@@ -7,6 +7,7 @@ import {
   PACKER_DEFAULT_POT,
   PACKER_DEFAULT_SHEET_SIZE,
   PACKER_DEFAULT_SPRITE_PADDING,
+  PACKER_SUPPORTED_SHEET_SIZES,
 } from "../src/config";
 import { redo } from "./fixtures/redo";
 import {
@@ -93,7 +94,11 @@ test("should update, undo and redo packer settings", async ({ page }) => {
 
   await assertLastHistoryEntryValues();
 
-  const sheetUpdatedValue = "256";
+  const sheetUpdatedValue = String(
+    PACKER_SUPPORTED_SHEET_SIZES.find(
+      (size) => size !== Number(sheetInitialValue),
+    )!,
+  );
   const paddingUpdatedValue = "10";
   const edgeUpdatedValue = "5";
   const potUpdatedValue = !potInitialValue;

@@ -119,6 +119,7 @@ const Toolbar = () => {
       <ActionIcon
         disabled={!canPersist}
         aria-label={t("save")}
+        data-persisted={!canPersist && !isPersisting}
         onClick={() => persistChangesMut.mutate()}
         loading={isPersisting}
         variant="light"

@@ -22,7 +22,7 @@ export const togglePackerAllowRot = async (page: Page) => {
 
 export const changePackerEdgeSpacing = async (
   page: Page,
-  edgeSpacing: number,
+  edgeSpacing: number | string,
 ) => {
   const label = packerEdgeSpacingLocator(page);
   await label.fill(String(edgeSpacing));
@@ -43,14 +43,14 @@ export const togglePackerPot = async (page: Page) => {
   await el.click();
 };
 
-export const changePackerSheetSize = async (page: Page, size: number) => {
+export const changePackerSheetSize = async (page: Page, size: number | string) => {
   const label = packerSheetSizeLocator(page);
   await label.selectOption(String(size));
 };
 
 export const changePackerSpritePadding = async (
   page: Page,
-  padding: number,
+  padding: number | string,
 ) => {
   const label = packerSpritePaddingLocator(page);
   await label.fill(String(padding));
