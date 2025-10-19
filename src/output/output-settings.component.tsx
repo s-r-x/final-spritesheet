@@ -1,5 +1,5 @@
 import { useTranslation } from "@/i18n/use-translation";
-import { NumberInput, Select, Stack, TextInput } from "@mantine/core";
+import { NumberInput, NativeSelect, Stack, TextInput } from "@mantine/core";
 import {
   OUTPUT_ENABLE_PNG_COMPRESSION,
   OUTPUT_MAX_DATA_FILE_NAME_LENGTH,
@@ -53,6 +53,7 @@ const OutputSettings = ({
   const updateSettingsMut = useMutation(updateSettings);
   const onValuesChange = () => {
     const values = form.getValues();
+    console.log(values);
     const result = schema.safeParse(values);
     if (!result.success) return;
     const isChanged = !isEqual(getCurrentSettings(), result.data);
@@ -109,7 +110,7 @@ const OutputSettings = ({
   const renderPngCompressionInput = () => {
     if (!OUTPUT_ENABLE_PNG_COMPRESSION) return null;
     return (
-      <Select
+      <NativeSelect
         label={t(i18nNs + "png_compression")}
         data={[
           {
@@ -156,10 +157,12 @@ const OutputSettings = ({
     );
   };
   return (
-    <form onSubmit={form.onSubmit(onValuesChange)}>
+    <form
+      data-testid="output-settings-form"
+      onSubmit={form.onSubmit(onValuesChange)}
+    >
       <Stack gap="xs">
-        <Select
-          allowDeselect={false}
+        <NativeSelect
           label={t(i18nNs + "framework")}
           data={SUPPORTED_FRAMEWORKS}
           key={form.key("framework")}
@@ -168,8 +171,7 @@ const OutputSettings = ({
           })}
         />
         {renderFrameworkInfo()}
-        <Select
-          allowDeselect={false}
+        <NativeSelect
           label={t(i18nNs + "texture_format")}
           data={SUPPORTED_OUTPUT_IMAGE_FORMATS}
           key={form.key("textureFormat")}
