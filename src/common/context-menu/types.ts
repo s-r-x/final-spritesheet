@@ -1,8 +1,14 @@
 import type { MouseEvent } from "react";
-export type tContextMenuItem = {
+export type tSingleContextMenuItem = {
   id: string | number;
   title: string;
   onClick: () => any;
+};
+export type tContextMenuItem = {
+  id: string | number;
+  title: string;
+  onClick?: () => any;
+  children?: tContextMenuItem[];
 };
 export type tContextMenuState = {
   isOpen: boolean;
