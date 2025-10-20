@@ -100,7 +100,9 @@
       "open_folder": "Открыть",
       "close_folder": "Закрыть",
       "mark_as_animation": "Пометить как анимацию",
-      "unmark_as_animation": "Убрать анимацию"
+      "unmark_as_animation": "Убрать анимацию",
+      "apply_sort": "Сортировать",
+      "sort_opt_name": "Имя"
     }
   }
 }

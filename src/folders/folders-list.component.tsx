@@ -32,6 +32,7 @@ import { useMutation } from "#hooks/use-mutation";
 import { SUPPORTED_SPRITE_MIME_TYPES } from "#config";
 import { useMeasure } from "#hooks/use-measure";
 import { useOpenFolderEditor } from "./use-folder-editor";
+import { sortBy } from "#utils/sort-by";
 
 type tItemNodeData = {
   kind: "item";
@@ -279,7 +280,7 @@ const FoldersList = () => {
 
                 if (isRootFolder(targetFolder)) {
                   // dropped to the default folder which doesn't have ordering
-                  // we need only to remove from the old folders which is already done
+                  // we only have to remove from the old folders which is already done
                   updateFoldersWithAccumulatedUpdates();
                   return;
                 }
@@ -358,8 +359,16 @@ const FoldersList = () => {
                   >[];
                   const firstFolder =
                     selectedNodes[0].data.nodeProps.props.folder;
+                  const isRootSelected = selectedNodes.some((node) =>
+                    isRootFolder(node.data.nodeProps.props.folder),
+                  );
                   const isOnlyRootSelected =
-                    isOnlyOneSelected && isRootFolder(firstFolder);
+                    isOnlyOneSelected && isRootSelected;
+                  const isMarkedAsAnimation = selectedNodes.every(
+                    (node) => node.data.nodeProps.props.folder.isAnimation,
+                  );
+                  const isOpened = selectedNodes.every((node) => node.isOpen);
+
                   const updateSelectedFolders = (data: tUpdateFolderData) => {
                     if (isEmpty(data)) return;
                     const updates: tUpdateFoldersArg = {};
@@ -376,10 +385,6 @@ const FoldersList = () => {
                   const updateAnimationState = (isAnimation: boolean) => {
                     updateSelectedFolders({ isAnimation });
                   };
-                  const isMarkedAsAnimation = selectedNodes.every(
-                    (node) => node.data.nodeProps.props.folder.isAnimation,
-                  );
-                  const isOpened = selectedNodes.every((node) => node.isOpen);
                   const toggleOpenedState = () => {
                     for (const node of selectedNodes) {
                       if (isOpened) {
@@ -389,10 +394,45 @@ const FoldersList = () => {
                       }
                     }
                   };
+                  const applyItemsSort = (
+                    field: "name",
+                    order: "asc" | "desc",
+                  ) => {
+                    const updates: tUpdateFoldersArg = {};
+                    for (const node of selectedNodes) {
+                      const items = node.data.nodeProps.items;
+                      if (isEmpty(items)) continue;
+                      const { folder } = node.data.nodeProps.props;
+                      const sortedItems = sortBy(
+                        items,
+                        (item) => item[field],
+                        order,
+                      );
+                      updates[folder.id] = {
+                        folder,
+                        data: {
+                          itemIds: sortedItems.map((item) => item.id),
+                        },
+                      };
+                    }
+                    updateFolders(updates);
+                  };
+
+                  const canUnmarkAsAnimation =
+                    !isOnlyRootSelected && isMarkedAsAnimation;
+                  const canMarkAsAnimation =
+                    !isOnlyRootSelected && !isMarkedAsAnimation;
+                  const canUpdate = isOnlyOneSelected && !isOnlyRootSelected;
+                  const canApplySort =
+                    !isRootSelected &&
+                    selectedNodes.some((node) => !isEmpty(node.data.children));
+                  const canAddSprites = isOnlyOneSelected;
+                  const sortAscSymbol = "⬇️";
+                  const sortDescSymbol = "⬆️";
                   openContextMenu({
                     event: e,
                     items: [
-                      isOnlyOneSelected && {
+                      canAddSprites && {
                         id: "add_sprites",
                         title: t("add_sprites"),
                         onClick: () => {
@@ -401,24 +441,39 @@ const FoldersList = () => {
                           fileDialog.open();
                         },
                       },
-                      isOnlyOneSelected &&
-                        !isOnlyRootSelected && {
-                          id: "update_folder",
-                          title: t("update"),
-                          onClick: () => openFolderEditor(firstFolder.id),
-                        },
-                      !isOnlyRootSelected &&
-                        !isMarkedAsAnimation && {
-                          id: "animation",
-                          title: t("folders.mark_as_animation") + " (WIP)",
-                          onClick: () => updateAnimationState(true),
-                        },
-                      !isOnlyRootSelected &&
-                        isMarkedAsAnimation && {
-                          id: "animation",
-                          title: t("folders.unmark_as_animation") + " (WIP)",
-                          onClick: () => updateAnimationState(false),
-                        },
+                      canUpdate && {
+                        id: "update_folder",
+                        title: t("update"),
+                        onClick: () => openFolderEditor(firstFolder.id),
+                      },
+                      canMarkAsAnimation && {
+                        id: "animation",
+                        title: t("folders.mark_as_animation") + " (WIP)",
+                        onClick: () => updateAnimationState(true),
+                      },
+                      canApplySort && {
+                        id: "apply_sort",
+                        title: t("folders.apply_sort"),
+                        children: [
+                          {
+                            id: "items_sort_name_asc",
+                            title:
+                              t("folders.sort_opt_name") + " " + sortAscSymbol,
+                            onClick: () => applyItemsSort("name", "asc"),
+                          },
+                          {
+                            id: "items_sort_name_desc",
+                            title:
+                              t("folders.sort_opt_name") + " " + sortDescSymbol,
+                            onClick: () => applyItemsSort("name", "desc"),
+                          },
+                        ],
+                      },
+                      canUnmarkAsAnimation && {
+                        id: "animation",
+                        title: t("folders.unmark_as_animation") + " (WIP)",
+                        onClick: () => updateAnimationState(false),
+                      },
                       {
                         id: "delete",
                         title: t("remove"),
@@ -454,9 +509,7 @@ const FoldersList = () => {
                       {
                         id: "delete",
                         title: t("remove"),
-                        onClick: () => {
-                          removeItemNodes(selectedNodes);
-                        },
+                        onClick: () => removeItemNodes(selectedNodes),
                       },
                     ].filter(isDefined),
                   });

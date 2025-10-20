@@ -100,7 +100,9 @@
       "open_folder": "Open",
       "close_folder": "Close",
       "mark_as_animation": "Mark as animation",
-      "unmark_as_animation": "Unmark as animation"
+      "unmark_as_animation": "Unmark as animation",
+      "apply_sort": "Apply sort",
+      "sort_opt_name": "Name"
     }
   }
 }
