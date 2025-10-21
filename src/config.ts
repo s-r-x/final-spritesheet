@@ -33,6 +33,9 @@ export const PACKER_DEFAULT_SPRITE_PADDING = 0;
 export const PACKER_DEFAULT_EDGE_SPACING = 0;
 export const PACKER_DEFAULT_ALLOW_ROTATION = false;
 export const PACKER_DEFAULT_POT = true;
+export const PACKER_SUPPORTED_ALGORITHMS = ["maxRects", "grid"] as const;
+export type tPackerAlgorithm = (typeof PACKER_SUPPORTED_ALGORITHMS)[number];
+export const PACKER_DEFAULT_ALGORITHM: tPackerAlgorithm = "maxRects";
 
 export const SUPPORTED_OUTPUT_IMAGE_FORMATS = ["png", "jpeg", "webp"];
 export const OUTPUT_DEFAULT_PNG_COMPRESSION = 0;

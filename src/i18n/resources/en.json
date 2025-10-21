@@ -32,6 +32,7 @@
     },
     "packer_opts": {
       "form_name": "Packer",
+      "packer_algorithm": "Packer",
       "max_size": "Max sheet size",
       "sprite_padding": "Sprite padding",
       "edge_spacing": "Edge spacing",

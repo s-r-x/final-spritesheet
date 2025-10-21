@@ -1,6 +1,8 @@
 import type { tSprite } from "@/input/types";
 import type { packerSpriteExcerptFields } from "./config";
+import type { tPackerAlgorithm } from "#config";
 
+export type { tPackerAlgorithm };
 export type tPackerSpriteExcerptField =
   (typeof packerSpriteExcerptFields)[number];
 
@@ -22,7 +24,6 @@ export type tPackedBin = {
   height: number;
 };
 
-export type tPackerAlgorithm = "grid" | "maxRects";
 export type tPackerSettings = {
   packerAlgorithm: tPackerAlgorithm;
   sheetMaxSize: number;
@@ -30,4 +31,21 @@ export type tPackerSettings = {
   edgeSpacing: number;
   pot: boolean;
   allowRotation: boolean;
+};
+
+export type tPackerOptions = {
+  sprites: tPackerSpriteExcerpt[];
+  size: number;
+  padding?: number;
+  edgeSpacing?: number;
+  pot?: boolean;
+  allowRotation?: boolean;
+  tags?: Record<string, string>;
+};
+export type tPackerReturnValue = {
+  bins: tPackedBin[];
+  oversizedSprites: string[];
+};
+export type tPacker = {
+  pack: (options: tPackerOptions) => tPackerReturnValue;
 };

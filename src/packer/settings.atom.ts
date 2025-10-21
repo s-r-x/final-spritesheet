@@ -1,6 +1,7 @@
 import { atom } from "jotai";
 import type { tPackerAlgorithm, tPackerSettings } from "./types";
 import {
+  PACKER_DEFAULT_ALGORITHM,
   PACKER_DEFAULT_ALLOW_ROTATION,
   PACKER_DEFAULT_EDGE_SPACING,
   PACKER_DEFAULT_POT,
@@ -12,7 +13,7 @@ import { activeProjectAtom, updateProjectAtom } from "@/projects/projects.atom";
 import { outputSettingsAtom } from "@/output/output-settings.atom";
 
 const defaultSettings: tPackerSettings = {
-  packerAlgorithm: "grid",
+  packerAlgorithm: PACKER_DEFAULT_ALGORITHM,
   sheetMaxSize: PACKER_DEFAULT_SHEET_SIZE,
   spritePadding: PACKER_DEFAULT_SPRITE_PADDING,
   edgeSpacing: PACKER_DEFAULT_EDGE_SPACING,
@@ -39,7 +40,11 @@ export const packerSettingsAtom = atom<
 
 export const rotationSupportabilityAtom = atom((get) => {
   const framework = get(outputSettingsAtom).framework;
-  return PACKER_ROTATION_SUPPORTED_FRAMEWORKS.has(framework);
+  const algorithm = get(packerAlgorithmSettingAtom);
+  return (
+    algorithm === "maxRects" &&
+    PACKER_ROTATION_SUPPORTED_FRAMEWORKS.has(framework)
+  );
 });
 export const packerAlgorithmSettingAtom = atom(
   (get) => get(packerSettingsAtom).packerAlgorithm,

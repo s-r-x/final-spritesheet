@@ -8,6 +8,7 @@ import {
   PACKER_DEFAULT_SPRITE_PADDING,
   PACKER_MAX_EDGE_SPACING,
   PACKER_MAX_SPRITE_PADDING,
+  PACKER_SUPPORTED_ALGORITHMS,
   PACKER_SUPPORTED_SHEET_SIZES,
 } from "#config";
 import { useActiveProjectId } from "@/projects/use-active-project-id";
@@ -19,20 +20,32 @@ import {
 } from "./use-packer-settings";
 import { useMutation } from "#hooks/use-mutation";
 import { memo } from "react";
-import type { tPackerSettings } from "./types";
+import type { tPackerAlgorithm, tPackerSettings } from "./types";
 import { isEqual } from "#utils/is-equal";
 
+const algorithmOptions: { value: tPackerAlgorithm; label: string }[] = [
+  {
+    value: "maxRects",
+    label: "Max rects",
+  },
+
+  {
+    value: "grid",
+    label: "Grid",
+  },
+];
 const schema = z.object({
   sheetMaxSize: z.coerce.number<string>(),
   spritePadding: z.coerce.number().min(0).max(PACKER_MAX_SPRITE_PADDING),
   edgeSpacing: z.coerce.number().min(0).max(PACKER_MAX_EDGE_SPACING),
   pot: z.boolean(),
   allowRotation: z.boolean(),
+  packerAlgorithm: z.enum(PACKER_SUPPORTED_ALGORITHMS),
 });
 type tForm = z.input<typeof schema>;
 
 type tProps = {
-  getCurrentSettings: () => Omit<tPackerSettings, "packerAlgorithm">;
+  getCurrentSettings: () => tPackerSettings;
 };
 const PackerSettings = ({ getCurrentSettings }: tProps) => {
   const isRotationSupported = useIsRotationSupported();
@@ -101,6 +114,14 @@ const PackerSettings = ({ getCurrentSettings }: tProps) => {
     >
       <Stack gap="sm">
         <NativeSelect
+          label={t("packer_opts.packer_algorithm")}
+          data={algorithmOptions}
+          key={form.key("packerAlgorithm")}
+          {...normalizeInputProps({
+            props: form.getInputProps("packerAlgorithm"),
+          })}
+        />
+        <NativeSelect
           label={t("packer_opts.max_size")}
           data={PACKER_SUPPORTED_SHEET_SIZES.map(String)}
           key={form.key("sheetMaxSize")}
@@ -108,19 +129,6 @@ const PackerSettings = ({ getCurrentSettings }: tProps) => {
             props: form.getInputProps("sheetMaxSize"),
           })}
         />
-        {/*
-      <Select
-        label="Packer algorithm"
-        value={packerAlgorithm}
-        onChange={(v) => {
-          if (v) {
-            setPackerAlgorithm(v as tPackerAlgorithm);
-          }
-        }}
-        searchable={false}
-        data={["grid", "maxRects"]}
-      />
-			*/}
         <NumberInput
           allowDecimal={false}
           allowNegative={false}
@@ -180,11 +188,7 @@ const PackerSettings = ({ getCurrentSettings }: tProps) => {
 };
 const PackerSettingsRoot = () => {
   const projectId = useActiveProjectId();
-  const getPackerSettings_ = useGetPackerSettings();
-  const getPackerSettings = () => {
-    const { packerAlgorithm: _, ...settings } = getPackerSettings_();
-    return settings;
-  };
+  const getPackerSettings = useGetPackerSettings();
   const formVersion = usePackerSettingsFormVersion();
   if (!projectId) return null;
   return (

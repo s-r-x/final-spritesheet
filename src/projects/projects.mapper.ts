@@ -7,6 +7,7 @@ import {
   OUTPUT_DEFAULT_PNG_COMPRESSION,
   OUTPUT_DEFAULT_TEXTURE_FILE_NAME,
   OUTPUT_DEFAULT_TEXTURE_FORMAT,
+  PACKER_DEFAULT_ALGORITHM,
   PACKER_DEFAULT_ALLOW_ROTATION,
   PACKER_DEFAULT_EDGE_SPACING,
   PACKER_DEFAULT_POT,
@@ -37,7 +38,7 @@ export const persistedToProject = (
 const persistedToPackerSettings = (
   project: tPersistedProjectWithThumb,
 ): tPackerSettings => ({
-  packerAlgorithm: project.packerAlgorithm || "grid",
+  packerAlgorithm: project.packerAlgorithm || PACKER_DEFAULT_ALGORITHM,
   sheetMaxSize: isNumber(project.sheetMaxSize)
     ? project.sheetMaxSize
     : PACKER_DEFAULT_SHEET_SIZE,

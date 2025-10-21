@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import {
-  //packerAlgorithmSettingAtom,
+  packerAlgorithmSettingAtom,
   sheetMaxSizeSettingAtom,
   potSettingAtom,
   allowRotationSettingAtom,
@@ -8,11 +8,13 @@ import {
   edgeSpacingSettingAtom,
 } from "./settings.atom";
 import { spritesAtom } from "@/input/sprites.atom";
-import { packMaxRects } from "./packer-max-rects";
+import { maxRectsPacker } from "./max-rects.packer";
 import { isEmpty } from "#utils/is-empty";
 import { itemIdToFolderIdMapAtom } from "@/folders/folders.atom";
 import { selectAtom } from "jotai/utils";
 import { packerSpriteExcerptFields } from "./config";
+import { gridPacker } from "./grid.packer";
+import type { tPackerOptions } from "./types";
 
 export const spritesForPackerAtom = selectAtom(
   spritesAtom,
@@ -30,7 +32,7 @@ export const spritesForPackerAtom = selectAtom(
   },
 );
 export const packedSpritesAtom = atom((get) => {
-  //const algorithm = get(packerAlgorithmSettingAtom);
+  const algorithm = get(packerAlgorithmSettingAtom);
   const size = get(sheetMaxSizeSettingAtom);
   const pot = get(potSettingAtom);
   const allowRotation = get(allowRotationSettingAtom);
@@ -38,7 +40,7 @@ export const packedSpritesAtom = atom((get) => {
   const sprites = get(spritesForPackerAtom);
   const edgeSpacing = get(edgeSpacingSettingAtom);
   const itemIdToFolderIdMap = get(itemIdToFolderIdMapAtom);
-  return packMaxRects({
+  const options: tPackerOptions = {
     sprites,
     size,
     padding,
@@ -46,7 +48,15 @@ export const packedSpritesAtom = atom((get) => {
     pot,
     allowRotation,
     tags: itemIdToFolderIdMap,
-  });
+  };
+  switch (algorithm) {
+    case "maxRects":
+      return maxRectsPacker.pack(options);
+    case "grid":
+      return gridPacker.pack(options);
+    default:
+      return maxRectsPacker.pack(options);
+  }
 });
 export const hasAnyPackedSpritesAtom = atom((get) => {
   return !isEmpty(get(packedSpritesAtom).bins);
