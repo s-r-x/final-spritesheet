@@ -5,6 +5,7 @@ import type { tSprite } from "@/input/types";
 import { SPRITES_ROOT_FOLDER_ID } from "#config";
 import { activeProjectIdAtom } from "@/projects/projects.atom";
 import { isEmpty } from "#utils/is-empty";
+import { selectAtom } from "jotai/utils";
 
 export const foldersAtom = atom<tFolder[]>([]);
 
@@ -45,6 +46,28 @@ export const itemIdToFolderIdMapAtom = atom((get) => {
       for (const itemId of folder.itemIds) {
         acc[itemId] = folder.id;
       }
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+});
+
+const foldersListForFolderIdToNameMapSelectAtom = selectAtom(
+  foldersAtom,
+  (folders) => folders.map((folder) => ({ id: folder.id, name: folder.name })),
+  (a, b) => {
+    if (a === b) return true;
+    if (a.length !== b.length) return false;
+    return a.every((folder, i) => {
+      return folder.id === b[i].id && folder.name === b[i].name;
+    });
+  },
+);
+export const folderIdToNameMapAtom = atom((get) => {
+  const folders = get(foldersListForFolderIdToNameMapSelectAtom);
+  return folders.reduce(
+    (acc, folder) => {
+      acc[folder.id] = folder.name;
       return acc;
     },
     {} as Record<string, string>,
