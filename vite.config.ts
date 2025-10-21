@@ -7,16 +7,17 @@ import { VitePWA } from "vite-plugin-pwa";
 export const PORT = 5173;
 export const BASE_URL = "/final-spritesheet";
 const srcPath = path.join(import.meta.dirname, "src");
+export const alias = {
+  "#config": path.join(srcPath, "config.ts"),
+  "#utils": path.join(srcPath, "common", "utils"),
+  "#components": path.join(srcPath, "common", "components"),
+  "#hooks": path.join(srcPath, "common", "hooks"),
+  "@": srcPath,
+};
 export default defineConfig({
   base: BASE_URL,
   resolve: {
-    alias: {
-      "#config": path.join(srcPath, "config.ts"),
-      "#utils": path.join(srcPath, "common", "utils"),
-      "#components": path.join(srcPath, "common", "components"),
-      "#hooks": path.join(srcPath, "common", "hooks"),
-      "@": srcPath,
-    },
+    alias,
   },
   build: {
     sourcemap: true,
