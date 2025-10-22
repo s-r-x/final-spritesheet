@@ -1,4 +1,4 @@
-export function invariant(condition: any, message?: string) {
+export function invariant(condition: any, message?: string): asserts condition {
   if (condition) return;
   const error = new Error(message || "Unspecified error");
 
