@@ -1,0 +1,418 @@
+import { basicPacker } from "@/packer/basic.packer";
+import type { tPackerReturnValue, tPackerSpriteExcerpt } from "@/packer/types";
+import { describe, expect, test } from "vitest";
+
+describe("basic packer", () => {
+  testPacker({
+    size: 10,
+    binCount: 1,
+    sprites: generateSprites(1, 10, 10),
+    firstBinWidth: 10,
+    firstBinHeight: 10,
+    extraTests({ bins }) {
+      const sprite = bins[0].sprites[0];
+      expect(sprite.x).toEqual(0);
+      expect(sprite.y).toEqual(0);
+    },
+  });
+  {
+    const cell1Width = 10;
+    const cell2Width = 5;
+    const cellHeight = 10;
+    testPacker({
+      size: 15,
+      binCount: 1,
+      sprites: [
+        {
+          id: "1",
+          width: cell1Width,
+          height: cellHeight,
+        },
+        {
+          id: "2",
+          width: cell2Width,
+          height: cellHeight,
+        },
+      ],
+      firstBinWidth: 15,
+      firstBinHeight: 10,
+      extraTests({ bins }) {
+        const [sprite1, sprite2] = bins[0].sprites;
+        expect(sprite1.x).toEqual(0);
+        expect(sprite1.y).toEqual(0);
+        expect(sprite2.x).toEqual(cell1Width);
+        expect(sprite2.y).toEqual(0);
+      },
+    });
+  }
+  {
+    const cellSize = 10;
+    testPacker({
+      binCount: 1,
+      size: 20,
+      sprites: generateSprites(4, cellSize, cellSize),
+      firstBinWidth: 20,
+      firstBinHeight: 20,
+      extraTests({ bins }) {
+        const [sprite1, sprite2, sprite3, sprite4] = bins[0].sprites;
+        expect(sprite1.x).toEqual(0);
+        expect(sprite1.y).toEqual(0);
+        expect(sprite2.x).toEqual(cellSize);
+        expect(sprite2.y).toEqual(0);
+        expect(sprite3.x).toEqual(0);
+        expect(sprite3.y).toEqual(cellSize);
+        expect(sprite4.x).toEqual(cellSize);
+        expect(sprite3.y).toEqual(cellSize);
+      },
+    });
+  }
+  {
+    const cellSize = 10;
+    testPacker({
+      size: 20,
+      sprites: generateSprites(5, 10, 10),
+      binCount: 2,
+      firstBinWidth: 20,
+      firstBinHeight: 20,
+      extraTests({ bins }) {
+        const [bin1, bin2] = bins;
+        const [sprite1, sprite2, sprite3, sprite4] = bin1.sprites;
+        expect(sprite1.x).toEqual(0);
+        expect(sprite1.y).toEqual(0);
+        expect(sprite2.x).toEqual(cellSize);
+        expect(sprite2.y).toEqual(0);
+        expect(sprite3.x).toEqual(0);
+        expect(sprite3.y).toEqual(cellSize);
+        expect(sprite4.x).toEqual(cellSize);
+        expect(sprite3.y).toEqual(cellSize);
+        expect(bin2.sprites[0].x).toEqual(0);
+        expect(bin2.sprites[0].y).toEqual(0);
+      },
+    });
+  }
+
+  {
+    const cellWidth = 5;
+    const cellHeight = 10;
+    const padding = 1;
+    testPacker({
+      size: 11,
+      binCount: 1,
+      padding: 1,
+      sprites: generateSprites(2, cellWidth, cellHeight),
+      firstBinWidth: 11,
+      firstBinHeight: 10,
+      extraTests({ bins }) {
+        const [sprite1, sprite2] = bins[0].sprites;
+        expect(sprite1.x).toEqual(0);
+        expect(sprite1.y).toEqual(0);
+        expect(sprite2.x).toEqual(padding + cellWidth);
+        expect(sprite2.y).toEqual(0);
+      },
+    });
+  }
+
+  {
+    const cellWidth = 5;
+    const cellHeight = 5;
+    const padding = 1;
+    testPacker({
+      size: 11,
+      sprites: generateSprites(4, cellWidth, cellHeight),
+      binCount: 1,
+      padding: 1,
+      firstBinWidth: 11,
+      firstBinHeight: 11,
+      extraTests({ bins }) {
+        const [sprite1, sprite2, sprite3, sprite4] = bins[0].sprites;
+        expect(sprite1.x).toEqual(0);
+        expect(sprite1.y).toEqual(0);
+        expect(sprite2.x).toEqual(padding + cellWidth);
+        expect(sprite2.y).toEqual(0);
+        expect(sprite3.x).toEqual(0);
+        expect(sprite3.y).toEqual(padding + cellHeight);
+        expect(sprite4.x).toEqual(padding + cellWidth);
+        expect(sprite4.y).toEqual(padding + cellHeight);
+      },
+    });
+  }
+  {
+    const cellSize = 5;
+    testPacker({
+      size: 10,
+      sprites: generateSprites(2, cellSize, cellSize),
+      padding: 1,
+      binCount: 2,
+      firstBinWidth: 5,
+      firstBinHeight: 5,
+      extraTests({ bins }) {
+        const [bin1, bin2] = bins;
+        expect(bin1.sprites).toHaveLength(1);
+        expect(bin2.sprites).toHaveLength(1);
+        const [sprite1] = bin1.sprites;
+        const [sprite2] = bin2.sprites;
+        expect(sprite1.x).toEqual(0);
+        expect(sprite1.y).toEqual(0);
+        expect(sprite2.x).toEqual(0);
+        expect(sprite2.y).toEqual(0);
+      },
+    });
+  }
+  {
+    const cellSize = 5;
+    const edgeSpacing = 1;
+    testPacker({
+      size: 7,
+      sprites: generateSprites(1, cellSize, cellSize),
+      binCount: 1,
+      edgeSpacing,
+      firstBinWidth: 7,
+      firstBinHeight: 7,
+      extraTests({ bins }) {
+        const [sprite] = bins[0].sprites;
+        expect(sprite.x).toEqual(edgeSpacing);
+        expect(sprite.y).toEqual(edgeSpacing);
+      },
+    });
+  }
+  {
+    const cellWidth = 5;
+    const cellHeight = 10;
+    const edgeSpacing = 1;
+    const padding = 2;
+    testPacker({
+      size: 14,
+      sprites: generateSprites(2, cellWidth, cellHeight),
+      binCount: 1,
+      edgeSpacing,
+      padding,
+      firstBinWidth: 14,
+      firstBinHeight: 12,
+      extraTests({ bins }) {
+        const [sprite, sprite2] = bins[0].sprites;
+        expect(sprite.x).toEqual(edgeSpacing);
+        expect(sprite.y).toEqual(edgeSpacing);
+        expect(sprite2.x).toEqual(cellWidth + edgeSpacing + padding);
+        expect(sprite2.y).toEqual(edgeSpacing);
+      },
+    });
+  }
+  {
+    const cellHeight = 10;
+    const edgeSpacing = 1;
+    const padding = 2;
+    testPacker({
+      size: 18,
+      sprites: [
+        {
+          id: "100",
+          width: 10,
+          height: cellHeight,
+        },
+        ...generateSprites(2, 1, cellHeight),
+      ],
+      binCount: 1,
+      edgeSpacing,
+      padding,
+      firstBinWidth: 18,
+      firstBinHeight: 12,
+      extraTests({ bins }) {
+        const [sprite1, sprite2, sprite3] = bins[0].sprites;
+        expect(sprite1.x).toEqual(edgeSpacing);
+        expect(sprite1.y).toEqual(edgeSpacing);
+        expect(sprite2.x).toEqual(10 + edgeSpacing + padding);
+        expect(sprite2.y).toEqual(edgeSpacing);
+        expect(sprite3.x).toEqual(11 + edgeSpacing + padding * 2);
+        expect(sprite3.y).toEqual(edgeSpacing);
+      },
+    });
+  }
+  testPacker({
+    size: 20,
+    sprites: [
+      {
+        id: "1",
+        width: 10,
+        height: 10,
+      },
+      {
+        id: "2",
+        width: 5,
+        height: 9,
+      },
+      {
+        id: "3",
+        width: 3,
+        height: 8,
+      },
+      {
+        id: "4",
+        width: 4,
+        height: 3,
+      },
+      {
+        id: "5",
+        width: 5,
+        height: 2,
+      },
+      {
+        id: "6",
+        width: 10,
+        height: 1,
+      },
+    ],
+    binCount: 1,
+    firstBinWidth: 19,
+    firstBinHeight: 13,
+    extraTests({ bins }) {
+      const [bin] = bins;
+      const [sprite1, sprite2, sprite3, sprite4, sprite5, sprite6] =
+        bin.sprites;
+      expect(sprite1.x).toEqual(0);
+      expect(sprite1.y).toEqual(0);
+      expect(sprite2.x).toEqual(10);
+      expect(sprite2.y).toEqual(0);
+      expect(sprite3.x).toEqual(15);
+      expect(sprite3.y).toEqual(0);
+      expect(sprite4.x).toEqual(0);
+      expect(sprite4.y).toEqual(10);
+      expect(sprite5.x).toEqual(4);
+      expect(sprite5.y).toEqual(10);
+      expect(sprite6.x).toEqual(9);
+      expect(sprite6.y).toEqual(10);
+    },
+  });
+  testPacker({
+    size: 10,
+    sprites: [
+      {
+        id: "1",
+        width: 5,
+        height: 1,
+      },
+      {
+        id: "2",
+        width: 6,
+        height: 4,
+      },
+      {
+        id: "3",
+        width: 8,
+        height: 2,
+      },
+    ],
+    binCount: 1,
+    firstBinHeight: 7,
+    firstBinWidth: 8,
+  });
+  testPacker({
+    size: 10,
+    sprites: generateSprites(1, 11, 11),
+    oversizedCount: 1,
+  });
+  testPacker({
+    size: 11,
+    sprites: generateSprites(1, 10, 10),
+    edgeSpacing: 1,
+    oversizedCount: 1,
+  });
+  testPacker({
+    size: 10,
+    sprites: generateSprites(1, 10, 11),
+    edgeSpacing: 1,
+    oversizedCount: 1,
+  });
+  testPacker({
+    size: 10,
+    sprites: generateSprites(1, 11, 10),
+    oversizedCount: 1,
+  });
+  testPacker({
+    size: 10,
+    sprites: [
+      {
+        id: "1",
+        width: 11,
+        height: 11,
+      },
+      {
+        id: "2",
+        width: 5,
+        height: 5,
+      },
+      {
+        id: "3",
+        width: 4,
+        height: 4,
+      },
+    ],
+    oversizedCount: 1,
+    binCount: 1,
+    extraTests({ bins }) {
+      expect(bins[0].sprites).toHaveLength(2);
+    },
+  });
+});
+
+function testPacker({
+  sprites,
+  size,
+  binCount = 0,
+  oversizedCount = 0,
+  edgeSpacing = 0,
+  padding = 0,
+  extraTests,
+  firstBinWidth,
+  firstBinHeight,
+}: {
+  sprites: tPackerSpriteExcerpt[];
+  binCount?: number;
+  size: number;
+  oversizedCount?: number;
+  padding?: number;
+  edgeSpacing?: number;
+  extraTests?: (value: tPackerReturnValue) => any;
+  firstBinWidth?: number;
+  firstBinHeight?: number;
+}): tPackerReturnValue {
+  const parts: string[] = [];
+  parts.push(
+    "[" +
+      sprites.map(({ width, height }) => `${width}x${height}`).join(", ") +
+      "]",
+  );
+  const result = basicPacker.pack({
+    size,
+    sprites,
+    padding,
+    edgeSpacing,
+  });
+  parts.push(`${size}x${size}`);
+  if (padding || edgeSpacing) {
+    parts.push(`{ padding: ${padding}, edgeSpacing: ${edgeSpacing} } :`);
+  }
+  if (binCount) {
+    parts.push(`should pack into ${binCount} bins`);
+  }
+  if (oversizedCount) {
+    parts.push(`should have ${oversizedCount} oversized sprites`);
+  }
+  test(parts.join(" "), () => {
+    expect(result.bins).toHaveLength(binCount);
+    expect(result.oversizedSprites).toHaveLength(oversizedCount);
+    if (firstBinWidth) {
+      expect(result.bins[0].width).toEqual(firstBinWidth);
+      expect(result.bins[0].height).toEqual(firstBinHeight);
+    }
+    extraTests?.(result);
+  });
+  return result;
+}
+
+function generateSprites(count: number, width: number, height: number) {
+  return Array.from(Array(count)).map((_, i) => ({
+    id: String(i),
+    width,
+    height,
+  }));
+}

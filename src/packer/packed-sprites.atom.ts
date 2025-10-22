@@ -15,6 +15,7 @@ import { selectAtom } from "jotai/utils";
 import { packerSpriteExcerptFields } from "./config";
 import { gridPacker } from "./grid.packer";
 import type { tPackerOptions } from "./types";
+import { basicPacker } from "./basic.packer";
 
 export const spritesForPackerAtom = selectAtom(
   spritesAtom,
@@ -54,6 +55,8 @@ export const packedSpritesAtom = atom((get) => {
       return maxRectsPacker.pack(options);
     case "grid":
       return gridPacker.pack(options);
+    case "basic":
+      return basicPacker.pack(options);
     default:
       return maxRectsPacker.pack(options);
   }

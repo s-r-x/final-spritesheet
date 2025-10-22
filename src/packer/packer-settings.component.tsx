@@ -28,10 +28,13 @@ const algorithmOptions: { value: tPackerAlgorithm; label: string }[] = [
     value: "maxRects",
     label: "Max rects",
   },
-
   {
     value: "grid",
     label: "Grid",
+  },
+  {
+    value: "basic",
+    label: "Basic",
   },
 ];
 const schema = z.object({

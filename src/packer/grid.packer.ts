@@ -26,8 +26,8 @@ export const gridPacker: tPacker = {
 
     if (!cellWidth || !cellHeight) return defaultReturnValue;
     const isTooWide = cellWidth + doubleEdgeSpacing > size;
-    const isTooHigh = cellHeight + doubleEdgeSpacing > size;
-    if (isTooWide || isTooHigh) {
+    const isTooTall = cellHeight + doubleEdgeSpacing > size;
+    if (isTooWide || isTooTall) {
       return {
         oversizedSprites: sprites.map((sprite) => sprite.id),
         bins: [],
