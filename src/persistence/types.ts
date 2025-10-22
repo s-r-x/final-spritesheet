@@ -1,3 +1,4 @@
+import type { tOutputFramework } from "#config";
 import type { tPackerAlgorithm } from "@/packer/types";
 import type Dexie from "dexie";
 import type { EntityTable } from "dexie";
@@ -16,7 +17,7 @@ export type tPersistedProject = {
   edgeSpacing?: number;
   pot?: boolean;
   allowRotation?: boolean;
-  framework?: string;
+  framework?: tOutputFramework;
   textureFormat?: string;
   dataFileName?: string;
   textureFileName?: string;

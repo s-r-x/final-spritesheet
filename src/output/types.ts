@@ -1,5 +1,7 @@
+import type { tOutputFramework } from "#config";
+export type { tOutputFramework };
 export type tOutputSettings = {
-  framework: string;
+  framework: tOutputFramework;
   pngCompression: number;
   imageQuality: number;
   textureFormat: string;

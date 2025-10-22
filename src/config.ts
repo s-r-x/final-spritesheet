@@ -18,13 +18,10 @@ export const SUPPORTED_LANGUAGES: { value: string; label: string }[] = [
   },
 ];
 
-export const SUPPORTED_FRAMEWORKS: { value: string; label: string }[] = [
-  { value: "pixi", label: "PixiJS" },
-  { value: "phaser", label: "Phaser" },
-  { value: "godot", label: "Godot" },
-];
-export const PACKER_ROTATION_SUPPORTED_FRAMEWORKS = new Set(["pixi", "phaser"]);
-
+export const PACKER_ROTATION_SUPPORTED_FRAMEWORKS = new Set<tOutputFramework>([
+  "pixi",
+  "phaser",
+]);
 export const PACKER_SUPPORTED_SHEET_SIZES = [256, 128, 512, 1024, 2048, 4096];
 export const PACKER_MAX_SPRITE_PADDING = 100;
 export const PACKER_MAX_EDGE_SPACING = 100;
@@ -37,12 +34,14 @@ export const PACKER_SUPPORTED_ALGORITHMS = ["maxRects", "grid"] as const;
 export type tPackerAlgorithm = (typeof PACKER_SUPPORTED_ALGORITHMS)[number];
 export const PACKER_DEFAULT_ALGORITHM: tPackerAlgorithm = "maxRects";
 
+export const SUPPORTED_OUTPUT_FRAMEWORKS = ["pixi", "phaser", "godot"] as const;
+export type tOutputFramework = (typeof SUPPORTED_OUTPUT_FRAMEWORKS)[number];
 export const SUPPORTED_OUTPUT_IMAGE_FORMATS = ["png", "jpeg", "webp"];
 export const OUTPUT_DEFAULT_PNG_COMPRESSION = 0;
 export const OUTPUT_DEFAULT_IMAGE_QUALITY = 100;
 export const OUTPUT_DEFAULT_TEXTURE_FORMAT = "png";
 export const OUTPUT_DEFAULT_TEXTURE_FILE_NAME = "texture";
-export const OUTPUT_DEFAULT_FRAMEWORK = SUPPORTED_FRAMEWORKS[0].value;
+export const OUTPUT_DEFAULT_FRAMEWORK: tOutputFramework = "pixi";
 export const OUTPUT_DEFAULT_DATA_FILE_NAME = "data";
 export const OUTPUT_MAX_DATA_FILE_NAME_LENGTH = 256;
 export const OUTPUT_MAX_TEXTURE_FILE_NAME_LENGTH = 256;

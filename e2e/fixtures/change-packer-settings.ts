@@ -43,7 +43,10 @@ export const togglePackerPot = async (page: Page) => {
   await el.click();
 };
 
-export const changePackerSheetSize = async (page: Page, size: number | string) => {
+export const changePackerSheetSize = async (
+  page: Page,
+  size: number | string,
+) => {
   const label = packerSheetSizeLocator(page);
   await label.selectOption(String(size));
 };

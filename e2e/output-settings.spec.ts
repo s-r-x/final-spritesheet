@@ -7,7 +7,7 @@ import {
   OUTPUT_DEFAULT_IMAGE_QUALITY,
   OUTPUT_DEFAULT_TEXTURE_FILE_NAME,
   OUTPUT_DEFAULT_TEXTURE_FORMAT,
-  SUPPORTED_FRAMEWORKS,
+  SUPPORTED_OUTPUT_FRAMEWORKS,
   SUPPORTED_OUTPUT_IMAGE_FORMATS,
 } from "../src/config";
 import { redo } from "./fixtures/redo";
@@ -88,17 +88,17 @@ test("should update, undo and redo output settings", async ({ page }) => {
 
   await assertLastHistoryEntryValues();
 
-  const frameworkUpdatedValue = SUPPORTED_FRAMEWORKS.find(
-    ({ value }) => value !== frameworkInitialValue,
-  )?.value!;
-  const textureFormatUpdateValue = SUPPORTED_OUTPUT_IMAGE_FORMATS.find(
+  const frameworkUpdatedValue = SUPPORTED_OUTPUT_FRAMEWORKS.find(
+    (framework) => framework !== frameworkInitialValue,
+  )!;
+  const textureFormatUpdatedValue = SUPPORTED_OUTPUT_IMAGE_FORMATS.find(
     (format) => format !== textureFormatInitialValue,
   )!;
   const dataFileNameUpdatedValue = "new data file name";
   const textureFileNameUpdatedValue = "new texture file name";
 
   await addHistoryEntry({ framework: frameworkUpdatedValue });
-  await addHistoryEntry({ textureFormat: textureFormatUpdateValue });
+  await addHistoryEntry({ textureFormat: textureFormatUpdatedValue });
   await addHistoryEntry({ dataFile: dataFileNameUpdatedValue });
   await addHistoryEntry({ textureFile: textureFileNameUpdatedValue });
 
@@ -128,7 +128,7 @@ test("should update, undo and redo output settings", async ({ page }) => {
   await assertCanUndo(page);
   await assertFormValues({
     framework: frameworkUpdatedValue,
-    textureFormat: textureFormatUpdateValue,
+    textureFormat: textureFormatUpdatedValue,
     dataFile: dataFileNameUpdatedValue,
     textureFile: textureFileNameUpdatedValue,
   });

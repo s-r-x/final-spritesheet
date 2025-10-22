@@ -4,7 +4,7 @@ import {
   OUTPUT_ENABLE_PNG_COMPRESSION,
   OUTPUT_MAX_DATA_FILE_NAME_LENGTH,
   OUTPUT_MAX_TEXTURE_FILE_NAME_LENGTH,
-  SUPPORTED_FRAMEWORKS,
+  SUPPORTED_OUTPUT_FRAMEWORKS,
   SUPPORTED_OUTPUT_IMAGE_FORMATS,
 } from "#config";
 import * as z from "zod";
@@ -19,13 +19,18 @@ import {
 import CloseableMessage from "#components/closeable-message.component";
 import { useMutation } from "#hooks/use-mutation";
 import { memo } from "react";
-import type { tOutputSettings } from "./types";
+import type { tOutputFramework, tOutputSettings } from "./types";
 import { isEqual } from "#utils/is-equal";
 
 const i18nNs = "output_opts.";
 
+const frameworkOptions: { value: tOutputFramework; label: string }[] = [
+  { value: "pixi", label: "PixiJS" },
+  { value: "phaser", label: "Phaser" },
+  { value: "godot", label: "Godot" },
+];
 const schema = z.object({
-  framework: z.string(),
+  framework: z.enum(SUPPORTED_OUTPUT_FRAMEWORKS),
   textureFormat: z.string(),
   dataFileName: z.string().trim().min(1).max(OUTPUT_MAX_DATA_FILE_NAME_LENGTH),
   textureFileName: z
@@ -163,7 +168,7 @@ const OutputSettings = ({
       <Stack gap="xs">
         <NativeSelect
           label={t(i18nNs + "framework")}
-          data={SUPPORTED_FRAMEWORKS}
+          data={frameworkOptions}
           key={form.key("framework")}
           {...normalizeInputProps({
             props: form.getInputProps("framework"),
