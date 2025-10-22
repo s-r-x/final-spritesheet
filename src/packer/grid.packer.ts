@@ -1,3 +1,4 @@
+import { invariant } from "#utils/invariant";
 import { isEmpty } from "#utils/is-empty";
 import { maxBy } from "#utils/max-by";
 import type {
@@ -5,7 +6,11 @@ import type {
   tPackedSprite,
   tPacker,
   tPackerReturnValue,
+  tPackerSpriteExcerpt,
 } from "./types";
+
+const MAX_ITERATIONS = 1000;
+const MAX_ITERATIONS_ERR_MESSAGE = "Too many iterations in grid packer";
 
 const defaultReturnValue: tPackerReturnValue = {
   oversizedSprites: [],
@@ -29,60 +34,61 @@ export const gridPacker: tPacker = {
       };
     }
 
-    const numberOfCols = Math.floor(
-      (size + padding - doubleEdgeSpacing) / (cellWidth + padding),
-    );
-    let packedSprites: tPackedSprite[] = [];
-    const bins: tPackedBin[] = [];
-    let i = 0;
-    const binWidth =
-      doubleEdgeSpacing +
-      numberOfCols * cellWidth +
-      (padding ? padding * (numberOfCols - 1) : 0);
-    let binHeight = 0;
-
-    for (const sprite of sprites) {
-      const row = Math.floor(i / numberOfCols);
-      const col = i % numberOfCols;
-      const x = edgeSpacing + col * (cellWidth + padding);
-      const y = edgeSpacing + row * (cellHeight + padding);
-      const newBinHeight = y + cellHeight + edgeSpacing;
-      if (newBinHeight > size) {
-        // the current bin is packed
-        bins.push({
-          width: binWidth,
-          maxWidth: size,
-          maxHeight: size,
-          height: binHeight,
-          sprites: packedSprites,
-        });
-        // starting a new one
-        packedSprites = [
-          {
-            x: edgeSpacing,
-            y: edgeSpacing,
-            id: sprite.id,
-          },
-        ];
-        // assume that's the last packed sprite in the bin
-        // if it's not the height will be overriden on the next iteration
-        binHeight = cellHeight + doubleEdgeSpacing;
-        i = 1;
-      } else {
-        binHeight = newBinHeight;
-        packedSprites.push({ id: sprite.id, x, y });
-        i++;
+    const packBin = (
+      spritesInput: tPackerSpriteExcerpt[],
+    ): Maybe<tPackedBin> => {
+      const numberOfCols = Math.floor(
+        (size + padding - doubleEdgeSpacing) / (cellWidth + padding),
+      );
+      const binWidth =
+        doubleEdgeSpacing +
+        numberOfCols * cellWidth +
+        (padding ? padding * (numberOfCols - 1) : 0);
+      let i = 0;
+      let binHeight = 0;
+      const packedSprites: tPackedSprite[] = [];
+      while (spritesInput.length) {
+        invariant(i < MAX_ITERATIONS, MAX_ITERATIONS_ERR_MESSAGE);
+        const row = Math.floor(i / numberOfCols);
+        const col = i % numberOfCols;
+        const x = edgeSpacing + col * (cellWidth + padding);
+        const y = edgeSpacing + row * (cellHeight + padding);
+        const newBinHeight = y + cellHeight + edgeSpacing;
+        if (newBinHeight > size) {
+          break;
+        } else {
+          binHeight = newBinHeight;
+          const spriteToPack = spritesInput.shift();
+          if (spriteToPack) {
+            packedSprites.push({ id: spriteToPack.id, x, y });
+            i++;
+          } else {
+            break;
+          }
+        }
       }
-    }
-
-    if (!isEmpty(packedSprites)) {
-      bins.push({
-        width: binWidth,
+      if (isEmpty(packedSprites)) return null;
+      return {
         maxWidth: size,
         maxHeight: size,
+        width: binWidth,
         height: binHeight,
         sprites: packedSprites,
-      });
+      };
+    };
+
+    const bins: tPackedBin[] = [];
+    const spritesToPack = [...sprites];
+    let i = 0;
+    while (spritesToPack.length) {
+      invariant(i < MAX_ITERATIONS, MAX_ITERATIONS_ERR_MESSAGE);
+      const bin = packBin(spritesToPack);
+      if (bin) {
+        bins.push(bin);
+        i++;
+      } else {
+        break;
+      }
     }
     return {
       oversizedSprites: [],
