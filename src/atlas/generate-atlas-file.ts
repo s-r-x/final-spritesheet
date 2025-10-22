@@ -13,6 +13,7 @@ export const generateAtlasFile = (
       return generatePhaserAtlasFile(data);
     case "godot":
       return generateGodotAtlasFile(data);
+    default:
+      return generatePixiAtlasFile(data);
   }
-  throw new Error("unknown framework");
 };

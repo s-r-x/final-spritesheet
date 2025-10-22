@@ -34,13 +34,15 @@
       },
       "suspicious": {
         "noExplicitAny": "off",
-        "noArrayIndexKey": "off"
+        "noArrayIndexKey": "off",
+        "useDefaultSwitchClauseLast": "error"
       },
       "style": {
         "noNonNullAssertion": "off",
         "noNamespace": "off",
         "useTemplate": "off",
-        "useExponentiationOperator": "off"
+        "useExponentiationOperator": "off",
+        "useDefaultSwitchClause": "error"
       },
       "complexity": {
         "noImportantStyles": "off",
