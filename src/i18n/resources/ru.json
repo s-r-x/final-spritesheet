@@ -37,7 +37,10 @@
       "sprite_padding": "Отступы спрайтов",
       "edge_spacing": "Отступы от краев",
       "pot": "POT",
-      "allow_rot": "Разрешить поворот"
+      "allow_rot": "Разрешить поворот",
+      "multipack": "Мульти-упаковка",
+      "multipack_opt_off": "Отключено",
+      "multipack_opt_auto": "Авто"
     },
     "output_opts": {
       "form_name": "Вывод",

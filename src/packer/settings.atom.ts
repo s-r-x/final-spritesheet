@@ -1,9 +1,14 @@
 import { atom } from "jotai";
-import type { tPackerAlgorithm, tPackerSettings } from "./types";
+import type {
+  tPackerAlgorithm,
+  tPackerMultipackMode,
+  tPackerSettings,
+} from "./types";
 import {
   PACKER_DEFAULT_ALGORITHM,
   PACKER_DEFAULT_ALLOW_ROTATION,
   PACKER_DEFAULT_EDGE_SPACING,
+  PACKER_DEFAULT_MULTIPACK_MODE,
   PACKER_DEFAULT_POT,
   PACKER_DEFAULT_SHEET_SIZE,
   PACKER_DEFAULT_SPRITE_PADDING,
@@ -19,6 +24,7 @@ const defaultSettings: tPackerSettings = {
   edgeSpacing: PACKER_DEFAULT_EDGE_SPACING,
   pot: PACKER_DEFAULT_POT,
   allowRotation: PACKER_DEFAULT_ALLOW_ROTATION,
+  multipack: PACKER_DEFAULT_MULTIPACK_MODE,
 };
 export const packerSettingsAtom = atom<
   tPackerSettings,
@@ -85,6 +91,14 @@ export const allowRotationSettingAtom = atom(
   },
   (_get, set, allowRotation: boolean) => {
     set(packerSettingsAtom, { allowRotation });
+  },
+);
+export const multipackSettingAtom = atom(
+  (get) => {
+    return get(packerSettingsAtom).multipack;
+  },
+  (_get, set, multipack: tPackerMultipackMode) => {
+    set(packerSettingsAtom, { multipack });
   },
 );
 

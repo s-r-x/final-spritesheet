@@ -1,4 +1,8 @@
-import { MaxRectsPacker, Rectangle } from "maxrects-packer";
+import {
+  type Bin as MaxRectsBin,
+  MaxRectsPacker,
+  Rectangle,
+} from "maxrects-packer";
 import type {
   tPackerSpriteExcerpt,
   tPackedBin,
@@ -21,7 +25,7 @@ export const maxRectsPacker: tPacker = {
     edgeSpacing = 0,
     pot,
     allowRotation,
-    tags,
+    forceSingleBin,
   }) {
     if (isEmpty(sprites)) return defaultReturnValue;
     const { oversized: oversizedSprites, ok: okSprites } = sprites.reduce(
@@ -45,38 +49,53 @@ export const maxRectsPacker: tPacker = {
       border: edgeSpacing,
       pot,
       allowRotation,
-      tag: true,
-      exclusiveTag: true,
+      tag: false,
+      exclusiveTag: false,
     });
     packer.addArray(
       okSprites.map((s) => {
         const rect = new Rectangle(s.width, s.height);
-        rect.data = { sprite: s, tag: tags?.[s.id] };
+        rect.data = { sprite: s };
         return rect;
       }),
     );
-    const bins: tPackedBin[] = packer.bins.map((bin) => {
-      return {
-        maxWidth: bin.maxWidth,
-        maxHeight: bin.maxHeight,
-        width: bin.width,
-        height: bin.height,
-        tag: bin.tag,
-        sprites: bin.rects.map((rect) => {
-          const packedSprite: tPackedSprite = {
-            id: (rect.data.sprite as tPackerSpriteExcerpt).id,
-            x: rect.x,
-            y: rect.y,
-            rotated: rect.rot,
-            oversized: rect.oversized,
-          };
-          return packedSprite;
-        }),
-      };
-    });
+    let bins: tPackedBin[];
+    if (forceSingleBin && packer.bins.length > 1) {
+      const [firstBin, ...restBins] = packer.bins;
+      bins = [normalizeBin(firstBin)];
+      oversizedSprites.push(
+        ...restBins.flatMap((bin) =>
+          bin.rects.map(
+            (rect) => (rect.data.sprite as tPackerSpriteExcerpt).id,
+          ),
+        ),
+      );
+    } else {
+      bins = packer.bins.map(normalizeBin);
+    }
     return {
       bins,
       oversizedSprites,
     };
   },
 };
+
+function normalizeBin(bin: MaxRectsBin<Rectangle>): tPackedBin {
+  return {
+    maxWidth: bin.maxWidth,
+    maxHeight: bin.maxHeight,
+    width: bin.width,
+    height: bin.height,
+    tag: bin.tag,
+    sprites: bin.rects.map((rect) => {
+      const packedSprite: tPackedSprite = {
+        id: (rect.data.sprite as tPackerSpriteExcerpt).id,
+        x: rect.x,
+        y: rect.y,
+        rotated: rect.rot,
+        oversized: rect.oversized,
+      };
+      return packedSprite;
+    }),
+  };
+}

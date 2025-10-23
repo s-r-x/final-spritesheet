@@ -10,6 +10,7 @@ import {
   PACKER_DEFAULT_ALGORITHM,
   PACKER_DEFAULT_ALLOW_ROTATION,
   PACKER_DEFAULT_EDGE_SPACING,
+  PACKER_DEFAULT_MULTIPACK_MODE,
   PACKER_DEFAULT_POT,
   PACKER_DEFAULT_SHEET_SIZE,
   PACKER_DEFAULT_SPRITE_PADDING,
@@ -52,6 +53,7 @@ const persistedToPackerSettings = (
     ? project.allowRotation
     : PACKER_DEFAULT_ALLOW_ROTATION,
   pot: isBoolean(project.pot) ? project.pot : PACKER_DEFAULT_POT,
+  multipack: project.multipack || PACKER_DEFAULT_MULTIPACK_MODE,
 });
 
 const persistedToOutputSettings = (

@@ -352,6 +352,15 @@ describe("basic packer", () => {
       expect(bins[0].sprites).toHaveLength(2);
     },
   });
+  test("should pack into 1 bin, and drop other sprites if forceSingleBin is true", () => {
+    const { bins, oversizedSprites } = basicPacker.pack({
+      size: 10,
+      forceSingleBin: true,
+      sprites: generateSprites(2, 10, 10),
+    });
+    expect(bins).toHaveLength(1);
+    expect(oversizedSprites).toHaveLength(1);
+  });
 });
 
 function testPacker({

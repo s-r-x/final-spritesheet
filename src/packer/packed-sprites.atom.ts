@@ -6,15 +6,21 @@ import {
   allowRotationSettingAtom,
   spritePaddingSettingAtom,
   edgeSpacingSettingAtom,
+  multipackSettingAtom,
 } from "./settings.atom";
 import { spritesAtom } from "@/input/sprites.atom";
-import { maxRectsPacker } from "./max-rects.packer";
 import { isEmpty } from "#utils/is-empty";
 import { itemIdToFolderIdMapAtom } from "@/folders/folders.atom";
 import { selectAtom } from "jotai/utils";
 import { packerSpriteExcerptFields } from "./config";
+import type {
+  tPacker,
+  tPackerAlgorithm,
+  tPackerOptions,
+  tPackerReturnValue,
+} from "./types";
+import { maxRectsPacker } from "./max-rects.packer";
 import { gridPacker } from "./grid.packer";
-import type { tPackerOptions } from "./types";
 import { basicPacker } from "./basic.packer";
 
 export const spritesForPackerAtom = selectAtom(
@@ -32,7 +38,7 @@ export const spritesForPackerAtom = selectAtom(
     });
   },
 );
-export const packedSpritesAtom = atom((get) => {
+export const packedSpritesAtom = atom((get): tPackerReturnValue => {
   const algorithm = get(packerAlgorithmSettingAtom);
   const size = get(sheetMaxSizeSettingAtom);
   const pot = get(potSettingAtom);
@@ -41,6 +47,7 @@ export const packedSpritesAtom = atom((get) => {
   const sprites = get(spritesForPackerAtom);
   const edgeSpacing = get(edgeSpacingSettingAtom);
   const itemIdToFolderIdMap = get(itemIdToFolderIdMapAtom);
+  const multipack = get(multipackSettingAtom);
   const options: tPackerOptions = {
     sprites,
     size,
@@ -49,18 +56,23 @@ export const packedSpritesAtom = atom((get) => {
     pot,
     allowRotation,
     tags: itemIdToFolderIdMap,
+    forceSingleBin: multipack === "off",
   };
+  const packer = getPacker(algorithm);
+  return packer.pack(options);
+});
+const getPacker = (algorithm: tPackerAlgorithm): tPacker => {
   switch (algorithm) {
     case "maxRects":
-      return maxRectsPacker.pack(options);
+      return maxRectsPacker;
     case "grid":
-      return gridPacker.pack(options);
+      return gridPacker;
     case "basic":
-      return basicPacker.pack(options);
+      return basicPacker;
     default:
-      return maxRectsPacker.pack(options);
+      return maxRectsPacker;
   }
-});
+};
 export const hasAnyPackedSpritesAtom = atom((get) => {
   return !isEmpty(get(packedSpritesAtom).bins);
 });

@@ -333,6 +333,15 @@ describe("grid packer", () => {
       oversizedCount: 1,
     });
   }
+  test("should pack into 1 bin, and drop other sprites if forceSingleBin is true", () => {
+    const { bins, oversizedSprites } = gridPacker.pack({
+      size: 10,
+      forceSingleBin: true,
+      sprites: generateSprites(2, 10, 10),
+    });
+    expect(bins).toHaveLength(1);
+    expect(oversizedSprites).toHaveLength(1);
+  });
 });
 
 function testPacker({

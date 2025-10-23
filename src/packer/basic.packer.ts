@@ -17,7 +17,13 @@ const defaultReturnValue: tPackerReturnValue = {
   bins: [],
 };
 export const basicPacker: tPacker = {
-  pack({ size, sprites: baseSprites, padding = 0, edgeSpacing = 0 }) {
+  pack({
+    size,
+    sprites: baseSprites,
+    padding = 0,
+    edgeSpacing = 0,
+    forceSingleBin,
+  }) {
     if (isEmpty(baseSprites)) return defaultReturnValue;
     const sortedSprites = sortBy(
       baseSprites,
@@ -114,6 +120,11 @@ export const basicPacker: tPacker = {
       if (bin) {
         bins.push(bin);
       } else {
+        break;
+      }
+      if (forceSingleBin) {
+        oversizedSprites.push(...spritesToPack.map((sprite) => sprite.id));
+
         break;
       }
     }

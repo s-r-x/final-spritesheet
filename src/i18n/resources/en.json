@@ -37,7 +37,10 @@
       "sprite_padding": "Sprite padding",
       "edge_spacing": "Edge spacing",
       "pot": "POT",
-      "allow_rot": "Allow rotation"
+      "allow_rot": "Allow rotation",
+      "multipack": "Multipack",
+      "multipack_opt_off": "Off",
+      "multipack_opt_auto": "Auto"
     },
     "output_opts": {
       "form_name": "Output",

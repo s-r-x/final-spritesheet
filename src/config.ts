@@ -37,6 +37,10 @@ export const PACKER_SUPPORTED_ALGORITHMS = [
 ] as const;
 export type tPackerAlgorithm = (typeof PACKER_SUPPORTED_ALGORITHMS)[number];
 export const PACKER_DEFAULT_ALGORITHM: tPackerAlgorithm = "maxRects";
+export const PACKER_SUPPORTED_MULTIPACK_MODES = ["off", "auto"] as const;
+export type tPackerMultipackMode =
+  (typeof PACKER_SUPPORTED_MULTIPACK_MODES)[number];
+export const PACKER_DEFAULT_MULTIPACK_MODE: tPackerMultipackMode = "auto";
 
 export const SUPPORTED_OUTPUT_FRAMEWORKS = ["pixi", "phaser", "godot"] as const;
 export type tOutputFramework = (typeof SUPPORTED_OUTPUT_FRAMEWORKS)[number];

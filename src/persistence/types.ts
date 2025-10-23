@@ -1,5 +1,8 @@
-import type { tOutputFramework } from "#config";
-import type { tPackerAlgorithm } from "@/packer/types";
+import type {
+  tOutputFramework,
+  tPackerAlgorithm,
+  tPackerMultipackMode,
+} from "#config";
 import type Dexie from "dexie";
 import type { EntityTable } from "dexie";
 
@@ -18,6 +21,7 @@ export type tPersistedProject = {
   pot?: boolean;
   allowRotation?: boolean;
   framework?: tOutputFramework;
+  multipack?: tPackerMultipackMode;
   textureFormat?: string;
   dataFileName?: string;
   textureFileName?: string;
@@ -74,6 +78,7 @@ export type tUpdateProjectData = Partial<
     | "textureFileName"
     | "pngCompression"
     | "imageQuality"
+    | "multipack"
   > & {
     thumb: {
       data: Blob;

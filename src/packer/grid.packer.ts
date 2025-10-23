@@ -17,7 +17,7 @@ const defaultReturnValue: tPackerReturnValue = {
   bins: [],
 };
 export const gridPacker: tPacker = {
-  pack({ size, sprites, padding = 0, edgeSpacing = 0 }) {
+  pack({ size, sprites, padding = 0, edgeSpacing = 0, forceSingleBin }) {
     if (isEmpty(sprites)) return defaultReturnValue;
 
     const doubleEdgeSpacing = edgeSpacing * 2;
@@ -80,18 +80,22 @@ export const gridPacker: tPacker = {
     const bins: tPackedBin[] = [];
     const spritesToPack = [...sprites];
     let i = 0;
+    const oversizedSprites: string[] = [];
     while (spritesToPack.length) {
-      invariant(i < MAX_ITERATIONS, MAX_ITERATIONS_ERR_MESSAGE);
+      invariant(i++ < MAX_ITERATIONS, MAX_ITERATIONS_ERR_MESSAGE);
       const bin = packBin(spritesToPack);
       if (bin) {
         bins.push(bin);
-        i++;
       } else {
+        break;
+      }
+      if (forceSingleBin) {
+        oversizedSprites.push(...spritesToPack.map((sprite) => sprite.id));
         break;
       }
     }
     return {
-      oversizedSprites: [],
+      oversizedSprites: oversizedSprites,
       bins,
     };
   },

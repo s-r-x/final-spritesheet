@@ -10,6 +10,7 @@ import {
   PACKER_MAX_SPRITE_PADDING,
   PACKER_SUPPORTED_ALGORITHMS,
   PACKER_SUPPORTED_SHEET_SIZES,
+  PACKER_SUPPORTED_MULTIPACK_MODES,
 } from "#config";
 import { useActiveProjectId } from "@/projects/use-active-project-id";
 import { useUpdatePackerSettings } from "./use-update-packer-settings";
@@ -20,7 +21,11 @@ import {
 } from "./use-packer-settings";
 import { useMutation } from "#hooks/use-mutation";
 import { memo } from "react";
-import type { tPackerAlgorithm, tPackerSettings } from "./types";
+import type {
+  tPackerAlgorithm,
+  tPackerMultipackMode,
+  tPackerSettings,
+} from "./types";
 import { isEqual } from "#utils/is-equal";
 
 const algorithmOptions: { value: tPackerAlgorithm; label: string }[] = [
@@ -44,6 +49,7 @@ const schema = z.object({
   pot: z.boolean(),
   allowRotation: z.boolean(),
   packerAlgorithm: z.enum(PACKER_SUPPORTED_ALGORITHMS),
+  multipack: z.enum(PACKER_SUPPORTED_MULTIPACK_MODES),
 });
 type tForm = z.input<typeof schema>;
 
@@ -51,6 +57,13 @@ type tProps = {
   getCurrentSettings: () => tPackerSettings;
 };
 const PackerSettings = ({ getCurrentSettings }: tProps) => {
+  const { t } = useTranslation();
+
+  const multipackOptions: { value: tPackerMultipackMode; label: string }[] =
+    PACKER_SUPPORTED_MULTIPACK_MODES.map((mode) => ({
+      value: mode,
+      label: t(`packer_opts.multipack_opt_${mode}`),
+    }));
   const isRotationSupported = useIsRotationSupported();
   const updateSettings = useUpdatePackerSettings();
   const updateSettingsMut = useMutation(updateSettings);
@@ -77,7 +90,6 @@ const PackerSettings = ({ getCurrentSettings }: tProps) => {
     validateInputOnBlur: true,
     validate: zod4Resolver(schema),
   });
-  const { t } = useTranslation();
   type tGetInputPropsReturnType = ReturnType<typeof form.getInputProps>;
   function normalizeInputProps<TOnChangeData = any>({
     props,
@@ -122,6 +134,14 @@ const PackerSettings = ({ getCurrentSettings }: tProps) => {
           key={form.key("packerAlgorithm")}
           {...normalizeInputProps({
             props: form.getInputProps("packerAlgorithm"),
+          })}
+        />
+        <NativeSelect
+          label={t("packer_opts.multipack")}
+          data={multipackOptions}
+          key={form.key("multipack")}
+          {...normalizeInputProps({
+            props: form.getInputProps("multipack"),
           })}
         />
         <NativeSelect
