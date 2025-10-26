@@ -8,6 +8,7 @@ export const generatePixiAtlasFile = ({
   textureWidth,
   textureHeight,
   textureAtlasFilename,
+  animations,
 }: tGenerateAtlasFileArgs): tGenerateAtlasFileOutput => {
   const atlas = {
     frames: packedSprites.reduce(
@@ -31,6 +32,7 @@ export const generatePixiAtlasFile = ({
       },
       {} as Record<string, any>,
     ),
+    animations,
     meta: {
       scale: "1",
       image: textureAtlasFilename,

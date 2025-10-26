@@ -6,6 +6,7 @@ export type tGenerateAtlasFileArgs = {
   fileNamePostfix?: string;
   packedSprites: tPackedSprite[];
   spritesMap: tSpritesMap;
+  animations?: Record<string, string[]>;
   textureWidth: number;
   textureHeight: number;
   textureAtlasFilename: string;

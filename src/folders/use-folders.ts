@@ -11,6 +11,12 @@ import { useCallback } from "react";
 export const useFoldersList = () => {
   return useAtomValue(foldersAtom);
 };
+export const useGetFoldersList = () => {
+  const store = useStore();
+  return useCallback(() => {
+    return store.get(foldersAtom);
+  }, [store]);
+};
 export const useNormalizedFolders = () => {
   return useAtomValue(normalizedFoldersAtom);
 };

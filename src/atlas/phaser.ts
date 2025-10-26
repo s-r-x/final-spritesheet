@@ -8,6 +8,7 @@ export const generatePhaserAtlasFile = ({
   textureHeight,
   textureAtlasFilename,
   spritesMap,
+  animations,
 }: tGenerateAtlasFileArgs): tGenerateAtlasFileOutput => {
   const atlas = {
     frames: packedSprites.reduce(
@@ -31,6 +32,7 @@ export const generatePhaserAtlasFile = ({
       },
       {} as Record<string, any>,
     ),
+    animations,
     meta: {
       scale: "1",
       image: textureAtlasFilename,

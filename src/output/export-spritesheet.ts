@@ -6,6 +6,9 @@ import { convertBinToBlob } from "@/canvas/convert-bin-to-blob";
 import type { tPackedBin } from "@/packer/types";
 import type { tSpritesMap } from "@/input/types";
 
+// { binId: { myAnimation: ["1.png", "2.png"] } }
+export type tAnimationsMap = Record<string, Record<string, string[]>>;
+
 type tOptions = {
   framework: string;
   imageQuality: number;
@@ -15,6 +18,7 @@ type tOptions = {
   textureFileName: string;
   packedSprites: tPackedBin[];
   spritesMap: tSpritesMap;
+  animations?: tAnimationsMap;
   archiveName?: string;
 };
 
@@ -44,6 +48,7 @@ export const exportSpritesheet = async (opts: tOptions) => {
         textureHeight: packedBin.height,
         textureAtlasFilename: imageFilename,
         framework: opts.framework,
+        animations: opts.animations?.[packedBin.id],
       });
       for (const entry of atlasFileEntries) {
         archive.file(entry.fileName, entry.content);
