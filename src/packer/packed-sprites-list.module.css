@@ -6,11 +6,11 @@
   container-type: inline-size;
 }
 .stickyHead {
-  padding-bottom: var(--mantine-spacing-xs);
+  padding-bottom: var(--app-space-xs);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--mantine-spacing-xs);
+  gap: var(--app-space-xs);
 }
 
 .wideViewportButton {

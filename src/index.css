@@ -11,5 +11,15 @@ body {
 @layer mantine;
 
 :root {
-  --bprogress-color: var(--mantine-primary-color-filled);
+  --app-space-xs: var(--mantine-spacing-xs);
+  --app-color-body: var(--mantine-color-body);
+  --app-color-primary: var(--mantine-primary-color-filled);
+  --app-color-danger: var(--mantine-color-error);
+  --app-color-blue: var(--mantine-color-blue-9);
+  --app-color-blue-light: var(--mantine-color-blue-4);
+  --app-color-dimmed: var(--mantine-color-dimmed);
+  --app-border-radius: var(--mantine-radius-default);
+  --app-border-color: var(--mantine-color-default-border);
+  --app-text-color: var(--mantine-color-text);
+  --bprogress-color: var(--app-color-primary);
 }

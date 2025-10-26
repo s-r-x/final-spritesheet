@@ -1,7 +1,7 @@
 .root {
   display: flex;
   flex-direction: column;
-  --separator-color: var(--mantine-color-gray-1);
+  --separator-color: var(--app-border-color);
   --separator-size: 1px;
   --content-height: 100dvh;
   --header-height: 50px;
@@ -17,7 +17,7 @@
   justify-content: stretch;
   height: var(--header-height);
   border-bottom: var(--separator-size) solid var(--separator-color);
-  padding: var(--mantine-spacing-xs);
+  padding: var(--app-space-xs);
   > * {
     width: 100%;
   }
@@ -51,7 +51,7 @@
   width: 300px;
   height: var(--content-height);
   border-left: var(--separator-size) solid var(--separator-color);
-  padding: var(--mantine-spacing-xs);
+  padding: var(--app-space-xs);
   overflow-y: auto;
 }
 .separator {

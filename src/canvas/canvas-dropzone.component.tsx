@@ -39,13 +39,13 @@ const CanvasDropzone = () => {
           style={{ pointerEvents: "none" }}
         >
           <Dropzone.Accept>
-            <IconUpload size={52} color="var(--mantine-color-blue-6)" />
+            <IconUpload size={52} color="var(--app-color-blue-light)" />
           </Dropzone.Accept>
           <Dropzone.Reject>
-            <IconX size={52} color="var(--mantine-color-red-6)" />
+            <IconX size={52} color="var(--app-color-danger)" />
           </Dropzone.Reject>
           <Dropzone.Idle>
-            <IconPhoto size={52} color="var(--mantine-color-dimmed)" />
+            <IconPhoto size={52} color="var(--app-color-dimmed)" />
           </Dropzone.Idle>
 
           <div>

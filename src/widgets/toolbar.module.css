@@ -2,9 +2,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  color: var(--mantine-color-text);
-  background: var(--mantine-color-body);
-  border-radius: var(--mantine-radius-default);
-  border: 1px solid var(--mantine-color-default-border);
+  color: var(--app-text-color);
+  background: var(--app-color-body);
+  border-radius: var(--app-border-radius);
+  border: 1px solid var(--app-border-color);
   padding: 0.4rem;
 }

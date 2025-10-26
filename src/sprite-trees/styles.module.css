@@ -25,7 +25,7 @@
   user-select: none;
   display: flex;
   align-items: center;
-  gap: var(--mantine-spacing-xs);
+  gap: var(--app-space-xs);
 }
 .folderIcon {
   flex-shrink: 0;
@@ -36,15 +36,15 @@
   user-select: none;
   display: flex;
   align-items: center;
-  gap: var(--mantine-spacing-xs);
+  gap: var(--app-space-xs);
 }
 .treeRow {
   &[aria-selected="true"] {
-    background: var(--mantine-primary-color-filled);
+    background: var(--app-color-primary);
     color: white;
   }
   &.oversized[aria-selected="false"] {
-    color: var(--mantine-color-error);
+    color: var(--app-color-danger);
   }
 }
 .binIcon {
@@ -56,7 +56,7 @@
 }
 
 .item {
-  gap: var(--mantine-spacing-xs);
+  gap: var(--app-space-xs);
   user-select: none;
   max-width: 100%;
   display: flex;
