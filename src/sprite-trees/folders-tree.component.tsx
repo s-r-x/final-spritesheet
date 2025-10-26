@@ -16,12 +16,16 @@ import { TREE_ROW_HEIGHT } from "./config";
 import { useNodesDeleteHandler } from "./use-nodes-delete-handler";
 import { useContextMenuHandler } from "./use-context-menu-handler";
 import { useMoveItems } from "@/folders/use-move-items";
+import { usePackedSprites } from "@/packer/use-packed-sprites";
+import clsx from "clsx";
 
 const FoldersList = ({ width, height }: tTreeViewportProps) => {
   const { t } = useTranslation();
   const folders = useNormalizedFolders();
   const treeApiRef = useRef<tTreeApi | undefined>(undefined);
+  const { oversizedSprites } = usePackedSprites();
   const treeData: tTreeNodeData[] = useMemo(() => {
+    const oversizedSpritesSet = new Set(oversizedSprites);
     return folders.map(({ folder, items }) => {
       const name = isRootFolder(folder)
         ? t("folders.default_folder_name")
@@ -36,22 +40,22 @@ const FoldersList = ({ width, height }: tTreeViewportProps) => {
         name: name,
         nodeProps,
         children: items.map((item) => {
-          const nodeProps: tNodeData = {
-            kind: "item",
-            item,
-            folderId: folder.id,
-          };
           const data: tTreeNodeData = {
             name: item.name,
             id: item.id,
-            nodeProps,
+            nodeProps: {
+              kind: "item",
+              item,
+              isOversized: oversizedSpritesSet.has(item.id),
+              folderId: folder.id,
+            },
           };
           return data;
         }),
       };
       return data;
     });
-  }, [folders, t]);
+  }, [folders, t, oversizedSprites]);
   const moveItems = useMoveItems();
   const onSelect = useNodeSelectHandler(treeApiRef.current);
   const onDelete = useNodesDeleteHandler();
@@ -76,6 +80,10 @@ const FoldersList = ({ width, height }: tTreeViewportProps) => {
             data-node-id={args.node.id}
             ref={args.innerRef}
             onFocus={(e) => e.stopPropagation()}
+            className={clsx(
+              styles.treeRow,
+              args.node.data.nodeProps.isOversized && styles.oversized,
+            )}
             onClick={args.node.handleClick}
             aria-label={args.node.data.name}
             data-parent-folder={

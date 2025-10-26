@@ -14,10 +14,6 @@
   position: absolute;
   left: 0;
   right: 0;
-  & [aria-selected="true"] {
-    background: var(--mantine-primary-color-filled);
-    color: white;
-  }
 }
 
 .nodeTitle {
