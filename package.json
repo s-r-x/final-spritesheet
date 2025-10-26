@@ -48,7 +48,7 @@
     "react-dom": "^19.2.0",
     "react-error-boundary": "^6.0.0",
     "react-i18next": "^15.5.1",
-    "react-resizable-panels": "^3.0.5",
+    "react-resizable-panels": "^3.0.6",
     "unique-names-generator": "^4.7.1",
     "upng-js": "^2.1.0",
     "zod": "^4.0.10"
