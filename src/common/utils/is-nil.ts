@@ -1,2 +1,5 @@
-export const isNil = (value: any) =>
-  typeof value === "undefined" || value === null;
+export function isNil<T>(
+  value: T | null | undefined,
+): value is null | undefined {
+  return value === null || value === undefined;
+}
