@@ -24,6 +24,7 @@
       "#utils/*": ["./src/common/utils/*"],
       "#components/*": ["./src/common/components/*"],
       "#hooks/*": ["./src/common/hooks/*"],
+      "#custom-bins/*": ["./src/custom-bins/*"],
       "@/*": ["./src/*"]
     }
   },

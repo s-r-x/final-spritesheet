@@ -2,6 +2,7 @@ import { useAtomValue, useStore } from "jotai";
 import {
   hasAnyPackedSpritesAtom,
   packedSpritesAtom,
+  packerStatusAtom,
 } from "./packed-sprites.atom";
 import { useCallback } from "react";
 
@@ -18,4 +19,8 @@ export const useGetPackedSprites = () => {
 
 export const useHasAnyPackedSprites = () => {
   return useAtomValue(hasAnyPackedSpritesAtom);
+};
+
+export const usePackerStatus = () => {
+  return useAtomValue(packerStatusAtom);
 };

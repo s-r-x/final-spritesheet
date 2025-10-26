@@ -16,6 +16,7 @@ export const createDb = async ({
     blobs: "id, projectId",
     projects: "id",
     folders: "id, projectId",
+    customBins: "id, projectId",
   };
   db.version(1).stores(collections);
   await db.open();

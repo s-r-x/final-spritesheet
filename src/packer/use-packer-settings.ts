@@ -1,6 +1,7 @@
 import { useAtomValue, useStore } from "jotai";
 import { useCallback } from "react";
 import {
+  multipackSettingAtom,
   packerSettingsAtom,
   packerSettingsFormVersionAtom,
   rotationSupportabilityAtom,
@@ -23,4 +24,8 @@ export const useGetPackerSettings = () => {
 
 export const useIsRotationSupported = () => {
   return useAtomValue(rotationSupportabilityAtom);
+};
+
+export const usePackerMultipackMode = () => {
+  return useAtomValue(multipackSettingAtom);
 };

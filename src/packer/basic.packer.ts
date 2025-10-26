@@ -52,6 +52,7 @@ export const basicPacker: tPacker = {
 
     const packBin = (
       spritesInput: tPackerSpriteExcerpt[],
+      binIndex: number,
     ): Maybe<tPackedBin> => {
       let i = 0;
       let binWidth = 0;
@@ -103,6 +104,7 @@ export const basicPacker: tPacker = {
       }
       if (isEmpty(packedSprites)) return null;
       return {
+        id: String(binIndex),
         maxWidth: size,
         maxHeight: size,
         width: binWidth,
@@ -115,8 +117,8 @@ export const basicPacker: tPacker = {
     const spritesToPack = [...sprites];
     let i = 0;
     while (spritesToPack.length) {
-      invariant(i++ < MAX_ITERATIONS, MAX_ITERATIONS_ERR_MESSAGE);
-      const bin = packBin(spritesToPack);
+      invariant(i < MAX_ITERATIONS, MAX_ITERATIONS_ERR_MESSAGE);
+      const bin = packBin(spritesToPack, i);
       if (bin) {
         bins.push(bin);
       } else {
@@ -127,6 +129,7 @@ export const basicPacker: tPacker = {
 
         break;
       }
+      i++;
     }
     return {
       oversizedSprites: oversizedSprites,

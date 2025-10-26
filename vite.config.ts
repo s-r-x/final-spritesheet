@@ -12,6 +12,7 @@ export const alias = {
   "#utils": path.join(srcPath, "common", "utils"),
   "#components": path.join(srcPath, "common", "components"),
   "#hooks": path.join(srcPath, "common", "hooks"),
+  "#custom-bins": path.join(srcPath, "custom-bins"),
   "@": srcPath,
 };
 export default defineConfig({

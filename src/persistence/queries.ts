@@ -2,6 +2,7 @@ import type {
   tDb,
   tDbQueries,
   tNormalizedPersistedSprite,
+  tPersistedCustomBin,
   tPersistedFolder,
   tPersistedProjectWithThumb,
 } from "./types";
@@ -71,6 +72,20 @@ export class DbQueries implements tDbQueries {
     } catch (e) {
       this._logger?.error(e);
       return { folders: [] };
+    }
+  }
+  async getCustomBinsByProjectId(
+    id: string,
+  ): Promise<{ bins: tPersistedCustomBin[] }> {
+    try {
+      const bins = await this._db.customBins
+        .where("projectId")
+        .equals(id)
+        .toArray();
+      return { bins };
+    } catch (e) {
+      this._logger?.error(e);
+      return { bins: [] };
     }
   }
 }

@@ -10,61 +10,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-.treeRoot {
-  position: relative;
-  flex: 1;
-}
-.tree {
-  position: absolute;
-  left: 0;
-  right: 0;
-}
-.treeViewport {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-}
-
-.treeRow {
-  &[aria-selected="true"] {
-    background: var(--mantine-primary-color-filled);
-    color: white;
-  }
-  &.oversized[aria-selected="false"] {
-    color: var(--mantine-color-error);
-  }
-}
-
-.bin {
-  user-select: none;
-  display: flex;
-  align-items: center;
   gap: var(--mantine-spacing-xs);
-}
-
-.nodeTitle {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  text-wrap: nowrap;
-}
-.item {
-  gap: var(--mantine-spacing-xs);
-  user-select: none;
-  max-width: 100%;
-  display: flex;
-  align-items: center;
-}
-.binIcon {
-  flex-shrink: 0;
-  display: block;
-}
-
-.itemsCount {
-  flex-shrink: 0;
 }
 
 .wideViewportButton {
@@ -74,19 +20,6 @@
   display: none;
 }
 @container (width < 4.5rem) {
-  .nodeTitle {
-    display: none;
-  }
-  .item {
-    padding-left: 0 !important;
-  }
-  .itemsCount {
-    display: none;
-  }
-  .item,
-  .bin {
-    justify-content: center;
-  }
   .wideViewportButton {
     display: none;
   }

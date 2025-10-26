@@ -11,6 +11,11 @@ import type {
   tPersistedFolder,
   tUpdateMultipleFoldersArgs,
   tUpdateFolderData,
+  tPersistedCustomBin,
+  tAddFolderData,
+  tAddCustomBinData,
+  tUpdateCustomBinData,
+  tUpdateMultipleCustomBinsArgs,
 } from "./types";
 import { generateUniqueName } from "#utils/generate-unique-name";
 import type { tLogger } from "@/logger/types";
@@ -147,8 +152,7 @@ export class DbMutations implements tDbMutations {
     itemIds = [],
     createdAt = new Date().toISOString(),
     ...rest
-  }: Partial<Omit<tPersistedFolder, "projectId">> &
-    Pick<tPersistedFolder, "projectId">): Promise<{
+  }: tAddFolderData): Promise<{
     folder: tPersistedFolder;
   }> {
     const folderDoc: tPersistedFolder = {
@@ -217,6 +221,87 @@ export class DbMutations implements tDbMutations {
       this._logger?.warn({
         layer: "db",
         label: "folderRemoveSkipped",
+        data: { id, reason: "not found" },
+      });
+    }
+  }
+  async addCustomBin({
+    id = generateId(),
+    name = generateUniqueName(),
+    itemIds = [],
+    folderIds = [],
+    createdAt = new Date().toISOString(),
+    ...rest
+  }: tAddCustomBinData): Promise<{
+    bin: tPersistedCustomBin;
+  }> {
+    const binDoc: tPersistedCustomBin = {
+      id,
+      name,
+      itemIds,
+      folderIds,
+      createdAt,
+      ...rest,
+    };
+    this._logger?.debug({
+      layer: "db",
+      label: "customBinCreated",
+      data: { id, projectId: binDoc.projectId },
+    });
+    await this._db.customBins.put(binDoc);
+    return {
+      bin: binDoc,
+    };
+  }
+  async updateCustomBin(id: string, data: tUpdateCustomBinData) {
+    const numUpdated = await this._db.customBins.update(id, data);
+    if (!numUpdated) {
+      this._logger?.warn({
+        layer: "db",
+        label: "customBinUpdateSkipped",
+        data: { id },
+      });
+    } else {
+      this._logger?.debug({
+        layer: "db",
+        label: "customBinUpdated",
+        data: { id, data },
+      });
+    }
+  }
+  async updateCustomBins(args: tUpdateMultipleCustomBinsArgs) {
+    const numUpdated = await this._db.customBins.bulkUpdate(
+      args.map(({ id, data }) => ({ key: id, changes: data })),
+    );
+    if (numUpdated < args.length) {
+      this._logger?.warn({
+        layer: "db",
+        label: "customBinsUpdateSomeSkipped",
+        data: args,
+      });
+    } else {
+      this._logger?.debug({
+        layer: "db",
+        label: "customBinsUpdated",
+        data: args,
+      });
+    }
+  }
+  async removeCustomBin(id: string) {
+    const doc = await this._db.customBins.get(id);
+    if (doc) {
+      // TODO:: txn
+      await this._db.customBins.delete(id);
+      const spriteIds = doc.itemIds;
+      this._logger?.debug({
+        layer: "db",
+        label: "customBinRemoved",
+        data: { id, projectId: doc.projectId, items: spriteIds },
+      });
+    } else {
+      this._logger?.warn({
+        layer: "db",
+        label: "customBinRemoveSkipped",
         data: { id, reason: "not found" },
       });
     }

@@ -6,6 +6,7 @@
     "rename": "Rename",
     "remove": "Remove",
     "add_sprites": "Add sprites",
+    "add_custom_bin": "Add bin",
     "sprites_list": "List of sprites",
     "settings": "Settings",
     "export": "Export",
@@ -23,6 +24,7 @@
     "generic_error_desc": "There was an error during the operation. Check the console for details",
     "packed_sprites_list_sect_name": "Packed",
     "packed_bin_with_id": "Bin {{id}}",
+    "default_custom_bin_name": "Default bin",
     "folders_list_sect_name": "Folders",
     "generate_random_name": "Random name",
     "confirm_dialog": {
@@ -40,7 +42,8 @@
       "allow_rot": "Allow rotation",
       "multipack": "Multipack",
       "multipack_opt_off": "Off",
-      "multipack_opt_auto": "Auto"
+      "multipack_opt_auto": "Auto",
+      "multipack_opt_manual": "Manual"
     },
     "output_opts": {
       "form_name": "Output",
@@ -70,6 +73,12 @@
       "editor_title_new": "New project",
       "name": "Name",
       "name_placeholder": "Enter the project name"
+    },
+    "custom_bin_editor": {
+      "editor_title": "Edit bin",
+      "editor_title_new": "New bin",
+      "name": "Name",
+      "name_placeholder": "Enter the bin name"
     },
     "sprites_drop_zone": {
       "head": "Drop your sprites here",

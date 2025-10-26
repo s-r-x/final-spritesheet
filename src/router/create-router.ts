@@ -14,9 +14,7 @@ export const createRouter = () => {
     defaultGcTime: 0,
     history: hashHistory,
     context: {
-      loadSprites: undefined!,
-      loadProjects: undefined!,
-      loadFolders: undefined!,
+      dbQueries: undefined!,
       createNewProject: undefined!,
       logger: undefined,
     },

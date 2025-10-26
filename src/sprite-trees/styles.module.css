@@ -1,0 +1,86 @@
+.treeRoot {
+  position: relative;
+  flex: 1;
+}
+.treeViewport {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+.tree {
+  position: absolute;
+  left: 0;
+  right: 0;
+  & [aria-selected="true"] {
+    background: var(--mantine-primary-color-filled);
+    color: white;
+  }
+}
+
+.nodeTitle {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-wrap: nowrap;
+}
+.folder {
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+}
+.folderIcon {
+  flex-shrink: 0;
+  display: block;
+}
+
+.bin {
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+}
+.treeRow {
+  &[aria-selected="true"] {
+    background: var(--mantine-primary-color-filled);
+    color: white;
+  }
+  &.oversized[aria-selected="false"] {
+    color: var(--mantine-color-error);
+  }
+}
+.binIcon {
+  flex-shrink: 0;
+  display: block;
+}
+.itemsCount {
+  flex-shrink: 0;
+}
+
+.item {
+  gap: var(--mantine-spacing-xs);
+  user-select: none;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+@container (width < 4.5rem) {
+  .nodeTitle {
+    display: none;
+  }
+  .item,
+  .folder {
+    padding-left: 0 !important;
+  }
+  .item,
+  .folder,
+  .bin {
+    justify-content: center;
+  }
+  .itemsCount {
+    display: none;
+  }
+}

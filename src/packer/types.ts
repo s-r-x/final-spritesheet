@@ -15,6 +15,7 @@ export type tPackedSprite = {
   rotated?: boolean;
   oversized?: boolean;
 };
+
 export type tPackedBin = {
   tag?: string;
   sprites: tPackedSprite[];
@@ -22,6 +23,7 @@ export type tPackedBin = {
   maxHeight: number;
   width: number;
   height: number;
+  id: string;
 };
 
 export type tPackerSettings = {
@@ -42,12 +44,13 @@ export type tPackerOptions = {
   pot?: boolean;
   allowRotation?: boolean;
   forceSingleBin?: boolean;
-  tags?: Record<string, string>;
 };
 export type tPackerReturnValue = {
   bins: tPackedBin[];
   oversizedSprites: string[];
+  oversizedSpritesPerBin?: Record<string, string[]>;
 };
 export type tPacker = {
   pack: (options: tPackerOptions) => tPackerReturnValue;
 };
+export type tPackerStatus = "packed" | "partially_packed" | "idle" | "failed";

@@ -10,7 +10,6 @@ import {
 } from "./settings.atom";
 import { spritesAtom } from "@/input/sprites.atom";
 import { isEmpty } from "#utils/is-empty";
-import { itemIdToFolderIdMapAtom } from "@/folders/folders.atom";
 import { selectAtom } from "jotai/utils";
 import { packerSpriteExcerptFields } from "./config";
 import type {
@@ -18,14 +17,19 @@ import type {
   tPackerAlgorithm,
   tPackerOptions,
   tPackerReturnValue,
+  tPackerSpriteExcerpt,
+  tPackerStatus,
 } from "./types";
 import { maxRectsPacker } from "./max-rects.packer";
 import { gridPacker } from "./grid.packer";
 import { basicPacker } from "./basic.packer";
+import { normalizedCustomBinsAtom } from "#custom-bins/custom-bins.atom";
+import { pick } from "#utils/pick";
 
 export const spritesForPackerAtom = selectAtom(
   spritesAtom,
-  (sprites) => sprites,
+  (sprites): tPackerSpriteExcerpt[] =>
+    sprites.map((sprite) => pick(sprite, packerSpriteExcerptFields)),
   (a, b) => {
     if (a.length !== b.length) return false;
     return a.every((sprite, i) => {
@@ -44,22 +48,54 @@ export const packedSpritesAtom = atom((get): tPackerReturnValue => {
   const pot = get(potSettingAtom);
   const allowRotation = get(allowRotationSettingAtom);
   const padding = get(spritePaddingSettingAtom);
-  const sprites = get(spritesForPackerAtom);
   const edgeSpacing = get(edgeSpacingSettingAtom);
-  const itemIdToFolderIdMap = get(itemIdToFolderIdMapAtom);
   const multipack = get(multipackSettingAtom);
-  const options: tPackerOptions = {
-    sprites,
+  const partialOptions: Omit<tPackerOptions, "sprites"> = {
     size,
     padding,
     edgeSpacing,
     pot,
     allowRotation,
-    tags: itemIdToFolderIdMap,
-    forceSingleBin: multipack === "off",
+    forceSingleBin: multipack === "off" || multipack === "manual",
   };
   const packer = getPacker(algorithm);
-  return packer.pack(options);
+  if (multipack === "manual") {
+    const customBins = get(normalizedCustomBinsAtom);
+    return customBins.reduce(
+      (acc, customBin) => {
+        const sprites = customBin.items.concat(
+          customBin.folders.flatMap((folder) => folder.items),
+        );
+        const {
+          bins: [packedBin],
+          oversizedSprites,
+        } = packer.pack({
+          ...partialOptions,
+          sprites,
+        });
+        if (packedBin) {
+          packedBin.id = customBin.bin.id;
+          acc.bins.push(packedBin);
+        }
+        if (!isEmpty(oversizedSprites)) {
+          acc.oversizedSpritesPerBin[customBin.bin.id] = oversizedSprites;
+          acc.oversizedSprites.push(...oversizedSprites);
+        }
+        return acc;
+      },
+      {
+        bins: [],
+        oversizedSprites: [],
+        oversizedSpritesPerBin: {},
+      } as Required<tPackerReturnValue>,
+    );
+  } else {
+    const sprites = get(spritesForPackerAtom);
+    return packer.pack({
+      ...partialOptions,
+      sprites,
+    });
+  }
 });
 const getPacker = (algorithm: tPackerAlgorithm): tPacker => {
   switch (algorithm) {
@@ -75,4 +111,14 @@ const getPacker = (algorithm: tPackerAlgorithm): tPacker => {
 };
 export const hasAnyPackedSpritesAtom = atom((get) => {
   return !isEmpty(get(packedSpritesAtom).bins);
+});
+
+export const packerStatusAtom = atom((get): tPackerStatus => {
+  const packed = get(packedSpritesAtom);
+  const hasPacked = get(hasAnyPackedSpritesAtom);
+  const hasOversized = packed.oversizedSprites.length > 0;
+  if (hasPacked && hasOversized) return "partially_packed";
+  if (hasPacked && !hasOversized) return "packed";
+  if (!hasPacked && hasOversized) return "failed";
+  return "idle";
 });

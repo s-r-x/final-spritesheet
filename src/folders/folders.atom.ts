@@ -1,18 +1,42 @@
 import { atom } from "jotai";
-import type { tFolder, tFolderWithItems, tUpdateFolderData } from "./types";
+import type {
+  tFolder,
+  tFoldersMap,
+  tNormalizedFolder,
+  tUpdateFolderData,
+} from "./types";
 import { spritesMapAtom } from "@/input/sprites.atom";
 import type { tSprite } from "@/input/types";
 import { SPRITES_ROOT_FOLDER_ID } from "#config";
 import { activeProjectIdAtom } from "@/projects/projects.atom";
 import { isEmpty } from "#utils/is-empty";
 import { selectAtom } from "jotai/utils";
+import { sortBy } from "#utils/sort-by";
 
-export const foldersAtom = atom<tFolder[]>([]);
+const foldersAtom_ = atom<tFolder[]>([]);
+export const foldersAtom = atom(
+  (get) => {
+    return get(foldersAtom_);
+  },
+  (_get, set, folders: tFolder[]) => {
+    set(
+      foldersAtom_,
+      sortBy(folders, (folder) => folder.name, "asc"),
+    );
+  },
+);
 
-export const normalizedFoldersAtom = atom((get): tFolderWithItems[] => {
+export const foldersMapAtom = atom((get) => {
+  return get(foldersAtom).reduce((acc, folder) => {
+    acc[folder.id] = folder;
+    return acc;
+  }, {} as tFoldersMap);
+});
+
+export const normalizedFoldersAtom = atom((get): tNormalizedFolder[] => {
   const folders = get(foldersAtom);
   const itemsMap = new Map(Object.entries(get(spritesMapAtom)));
-  const normalizedFolders = folders.map((folder): tFolderWithItems => {
+  const normalizedFolders = folders.map((folder): tNormalizedFolder => {
     const items = folder.itemIds.reduce((acc, itemId) => {
       const item = itemsMap.get(itemId);
       if (item) {
@@ -24,7 +48,7 @@ export const normalizedFoldersAtom = atom((get): tFolderWithItems[] => {
     return { folder, items };
   });
   const itemsWithoutFolder = Array.from(itemsMap.values());
-  const emptyFolder: tFolderWithItems = {
+  const defaultFolder: tNormalizedFolder = {
     folder: {
       id: SPRITES_ROOT_FOLDER_ID,
       name: "root",
@@ -35,7 +59,7 @@ export const normalizedFoldersAtom = atom((get): tFolderWithItems[] => {
     },
     items: itemsWithoutFolder,
   };
-  normalizedFolders.unshift(emptyFolder);
+  normalizedFolders.unshift(defaultFolder);
   return normalizedFolders;
 });
 

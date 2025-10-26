@@ -37,7 +37,11 @@ export const PACKER_SUPPORTED_ALGORITHMS = [
 ] as const;
 export type tPackerAlgorithm = (typeof PACKER_SUPPORTED_ALGORITHMS)[number];
 export const PACKER_DEFAULT_ALGORITHM: tPackerAlgorithm = "maxRects";
-export const PACKER_SUPPORTED_MULTIPACK_MODES = ["off", "auto"] as const;
+export const PACKER_SUPPORTED_MULTIPACK_MODES = [
+  "off",
+  "auto",
+  "manual",
+] as const;
 export type tPackerMultipackMode =
   (typeof PACKER_SUPPORTED_MULTIPACK_MODES)[number];
 export const PACKER_DEFAULT_MULTIPACK_MODE: tPackerMultipackMode = "auto";
@@ -67,3 +71,4 @@ export const LOG_LEVELS: Set<tLogLevel> = new Set(
 );
 
 export const SPRITES_ROOT_FOLDER_ID = "__ROOT__";
+export const DEFAULT_CUSTOM_BIN_ID = "__DEFAULT_BIN__";

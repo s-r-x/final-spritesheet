@@ -40,10 +40,8 @@ const App = ({ dbQueries, dbMutations, dbImportExport, logger }: tProps) => {
     <RouterProvider
       router={router}
       context={{
-        loadProjects: dbQueries.getProjectsList.bind(dbQueries),
-        loadSprites: dbQueries.getSpritesByProjectId.bind(dbQueries),
+        dbQueries: dbQueries,
         createNewProject: createProject,
-        loadFolders: dbQueries.getFoldersByProjectId.bind(dbQueries),
         logger,
       }}
     />

@@ -14,6 +14,7 @@ import { CanvasRefsProvider } from "@/canvas/canvas-refs";
 import SpriteEditor from "@/input/sprite-editor.component";
 import ProjectEditor from "@/projects/project-editor.component";
 import FolderEditor from "@/folders/folder-editor.component";
+import CustomBinEditor from "#custom-bins/custom-bin-editor.component";
 import {
   List,
   Center,
@@ -23,6 +24,7 @@ import {
   Mark,
   Tabs,
   Accordion,
+  type MantineColor,
 } from "@mantine/core";
 import { useHandleSpritesPasteEvent } from "@/input/use-handle-sprites-paste-event";
 import { atomsStore } from "@/common/atoms/atoms-store";
@@ -38,7 +40,6 @@ import { persistedToSprite } from "@/input/sprites.mapper";
 import { isEmpty } from "#utils/is-empty";
 import { persistedToProject } from "@/projects/projects.mapper";
 import { useProjectsList } from "@/projects/use-projects-list";
-import { Plus as PlusIcon } from "lucide-react";
 import { useTranslation } from "@/i18n/use-translation";
 import { useDocumentTitle } from "@mantine/hooks";
 import { useActiveProjectName } from "@/projects/use-active-project-name";
@@ -52,7 +53,10 @@ import {
 } from "@/persistence/use-persistence";
 import { foldersAtom } from "@/folders/folders.atom";
 import {
+  Plus as PlusIcon,
   Package as PackedSpritesIcon,
+  PackageX as PackedSpritesFailIcon,
+  PackageCheck as PackedSpritesOkIcon,
   Folder as FoldersIcon,
 } from "lucide-react";
 import { usePersistedState } from "#hooks/use-persisted-state";
@@ -65,6 +69,9 @@ import { useOpenProjectEditor } from "@/projects/use-project-editor";
 import BaseErrorBoundary from "#components/error-boundary";
 import { useCanUndo, useUndo } from "@/history/use-undo";
 import { useCanRedo, useRedo } from "@/history/use-redo";
+import { customBinsAtom } from "#custom-bins/custom-bins.atom";
+import { persistedToCustomBin } from "#custom-bins/custom-bins.mapper";
+import { usePackerStatus } from "@/packer/use-packed-sprites";
 
 export const Route = createFileRoute("/projects/{-$projectId}")({
   component: Project,
@@ -82,7 +89,7 @@ export const Route = createFileRoute("/projects/{-$projectId}")({
     return false;
   },
   async loader(ctx) {
-    const { logger } = ctx.context;
+    const { logger, dbQueries } = ctx.context;
     const projectId = ctx.params.projectId;
     logger?.debug({
       layer: "router",
@@ -101,7 +108,7 @@ export const Route = createFileRoute("/projects/{-$projectId}")({
         layer: "router",
         label: "projectsLoadingStarted",
       });
-      const { projects } = await ctx.context.loadProjects();
+      const { projects } = await dbQueries.getProjectsList();
       logger?.debug({
         layer: "router",
         label: "projectsLoaded",
@@ -147,15 +154,18 @@ export const Route = createFileRoute("/projects/{-$projectId}")({
     }
     logger?.debug({
       layer: "router",
-      label: "spritesAndFoldersLoadingStarted",
+      label: "projectRelatedDataLoadingStarted",
     });
-    const [{ sprites }, { folders }] = await Promise.all([
-      ctx.context.loadSprites(projectId),
-      ctx.context.loadFolders(projectId),
+    const [{ sprites }, { folders }, bins] = await Promise.all([
+      dbQueries.getSpritesByProjectId(projectId),
+      dbQueries.getFoldersByProjectId(projectId),
+      dbQueries
+        .getCustomBinsByProjectId(projectId)
+        .then(({ bins }) => bins.map(persistedToCustomBin)),
     ]);
     logger?.debug({
       layer: "router",
-      label: "spritesAndFoldersLoaded",
+      label: "projectRelatedDataLoaded",
     });
     const normalizedSprites = await Promise.all(sprites.map(persistedToSprite));
     atomsStore.set(activeProjectIdAtom, projectId);
@@ -163,6 +173,7 @@ export const Route = createFileRoute("/projects/{-$projectId}")({
     atomsStore.set(foldersAtom, folders);
     atomsStore.set(resetHistoryStackAtom);
     atomsStore.set(clearPersistenceCommandsAtom);
+    atomsStore.set(customBinsAtom, bins);
     logger?.debug({
       layer: "router",
       label: "loaderCompleted",
@@ -245,6 +256,7 @@ function Project() {
         <SpriteEditor />
         <ProjectEditor />
         <FolderEditor />
+        <CustomBinEditor />
       </CanvasRefsProvider>
     </SharedErrorBoundary>
   );
@@ -264,6 +276,34 @@ const PackedSpritesAndFolders = () => {
     flexDirection: "column",
     flex: 1,
   };
+  const packerStatus = usePackerStatus();
+  const renderPackedIcon = () => {
+    let IconComponent: typeof PackedSpritesIcon;
+    switch (packerStatus) {
+      case "failed":
+      case "partially_packed":
+        IconComponent = PackedSpritesFailIcon;
+        break;
+      case "packed":
+        IconComponent = PackedSpritesOkIcon;
+        break;
+      case "idle":
+        IconComponent = PackedSpritesIcon;
+        break;
+      default:
+        IconComponent = PackedSpritesIcon;
+    }
+    return <IconComponent size={iconSize} />;
+  };
+  let packedColor: MantineColor | undefined;
+  switch (packerStatus) {
+    case "failed":
+    case "partially_packed":
+      packedColor = "red";
+      break;
+    default:
+      packedColor = undefined;
+  }
   return (
     <Tabs
       keepMounted={false}
@@ -281,7 +321,8 @@ const PackedSpritesAndFolders = () => {
       <Tabs.List>
         <Tabs.Tab
           aria-label={packedSpritesLabel}
-          leftSection={<PackedSpritesIcon size={iconSize} />}
+          leftSection={renderPackedIcon()}
+          color={packedColor}
           value="bins"
         >
           {packedSpritesLabel}

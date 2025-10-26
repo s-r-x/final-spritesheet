@@ -36,6 +36,7 @@ export const gridPacker: tPacker = {
 
     const packBin = (
       spritesInput: tPackerSpriteExcerpt[],
+      binIndex: number,
     ): Maybe<tPackedBin> => {
       const numberOfCols = Math.floor(
         (size + padding - doubleEdgeSpacing) / (cellWidth + padding),
@@ -74,6 +75,7 @@ export const gridPacker: tPacker = {
         width: binWidth,
         height: binHeight,
         sprites: packedSprites,
+        id: String(binIndex),
       };
     };
 
@@ -82,8 +84,8 @@ export const gridPacker: tPacker = {
     let i = 0;
     const oversizedSprites: string[] = [];
     while (spritesToPack.length) {
-      invariant(i++ < MAX_ITERATIONS, MAX_ITERATIONS_ERR_MESSAGE);
-      const bin = packBin(spritesToPack);
+      invariant(i < MAX_ITERATIONS, MAX_ITERATIONS_ERR_MESSAGE);
+      const bin = packBin(spritesToPack, i);
       if (bin) {
         bins.push(bin);
       } else {
@@ -93,6 +95,7 @@ export const gridPacker: tPacker = {
         oversizedSprites.push(...spritesToPack.map((sprite) => sprite.id));
         break;
       }
+      i++;
     }
     return {
       oversizedSprites: oversizedSprites,

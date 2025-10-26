@@ -62,7 +62,7 @@ export const maxRectsPacker: tPacker = {
     let bins: tPackedBin[];
     if (forceSingleBin && packer.bins.length > 1) {
       const [firstBin, ...restBins] = packer.bins;
-      bins = [normalizeBin(firstBin)];
+      bins = [normalizeBin(firstBin, 0)];
       oversizedSprites.push(
         ...restBins.flatMap((bin) =>
           bin.rects.map(
@@ -80,13 +80,17 @@ export const maxRectsPacker: tPacker = {
   },
 };
 
-function normalizeBin(bin: MaxRectsBin<Rectangle>): tPackedBin {
+function normalizeBin(
+  bin: MaxRectsBin<Rectangle>,
+  binIndex: number,
+): tPackedBin {
   return {
     maxWidth: bin.maxWidth,
     maxHeight: bin.maxHeight,
     width: bin.width,
     height: bin.height,
     tag: bin.tag,
+    id: String(binIndex),
     sprites: bin.rects.map((rect) => {
       const packedSprite: tPackedSprite = {
         id: (rect.data.sprite as tPackerSpriteExcerpt).id,

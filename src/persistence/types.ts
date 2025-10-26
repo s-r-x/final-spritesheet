@@ -54,11 +54,21 @@ export type tPersistedFolder = {
   createdAt: string;
 };
 
+export type tPersistedCustomBin = {
+  id: string;
+  name: string;
+  projectId: string;
+  folderIds: string[];
+  itemIds: string[];
+  createdAt: string;
+};
+
 export type tDbCollections = {
   blobs: EntityTable<tPersistedBlob, "id">;
   sprites: EntityTable<tPersistedSprite, "id">;
   projects: EntityTable<tPersistedProject, "id">;
   folders: EntityTable<tPersistedFolder, "id">;
+  customBins: EntityTable<tPersistedCustomBin, "id">;
 };
 export type tDb = Dexie & tDbCollections;
 
@@ -100,6 +110,19 @@ export type tUpdateMultipleFoldersArgs = {
   id: string;
   data: tUpdateFolderData;
 }[];
+
+export type tAddCustomBinData = Partial<
+  Omit<tPersistedCustomBin, "projectId">
+> &
+  Pick<tPersistedCustomBin, "projectId">;
+export type tUpdateCustomBinData = Partial<
+  Pick<tPersistedCustomBin, "itemIds" | "name" | "folderIds">
+>;
+export type tUpdateMultipleCustomBinsArgs = {
+  id: string;
+  data: tUpdateCustomBinData;
+}[];
+
 export type tDbMutations = {
   createNewProject: ({
     name,
@@ -118,6 +141,12 @@ export type tDbMutations = {
   updateFolder: (id: string, data: tUpdateFolderData) => Promise<void>;
   updateFolders: (args: tUpdateMultipleFoldersArgs) => Promise<void>;
   removeFolder: (id: string) => Promise<void>;
+  addCustomBin: (
+    bin: tAddCustomBinData,
+  ) => Promise<{ bin: tPersistedCustomBin }>;
+  updateCustomBin: (id: string, data: tUpdateCustomBinData) => Promise<void>;
+  updateCustomBins: (args: tUpdateMultipleCustomBinsArgs) => Promise<void>;
+  removeCustomBin: (id: string) => Promise<void>;
 
   clearDatabase: () => Promise<void>;
 };
@@ -130,6 +159,9 @@ export type tDbQueries = {
   getFoldersByProjectId: (
     id: string,
   ) => Promise<{ folders: tPersistedFolder[] }>;
+  getCustomBinsByProjectId: (
+    id: string,
+  ) => Promise<{ bins: tPersistedCustomBin[] }>;
 };
 
 export type tDbBackupFormat = Blob;

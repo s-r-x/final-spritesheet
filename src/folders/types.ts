@@ -8,10 +8,11 @@ export type tFolder = {
   isAnimation?: boolean;
   createdAt: string;
 };
-export type tFolderWithItems = {
+export type tNormalizedFolder = {
   folder: tFolder;
   items: tSprite[];
 };
+export type tFoldersMap = Record<string, tFolder>;
 
 export type tUpdateFolderData = Partial<
   Pick<tFolder, "name" | "itemIds" | "isAnimation">
