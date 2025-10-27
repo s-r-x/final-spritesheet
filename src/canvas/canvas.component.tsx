@@ -142,7 +142,7 @@ const Bin = ({ bin }: tBinProps) => {
   if (bin.name) {
     binName = isDefaultBin(bin.id) ? t("default_custom_bin_name") : bin.name;
   } else {
-    binName = t("packed_bin_with_id", { id: (Number(bin.id) || 0) + 1 });
+    binName = t("packed_bin_with_id", { id: bin.id });
   }
   return (
     <pixiContainer>

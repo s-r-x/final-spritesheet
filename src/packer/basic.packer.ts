@@ -104,7 +104,7 @@ export const basicPacker: tPacker = {
       }
       if (isEmpty(packedSprites)) return null;
       return {
-        id: String(binIndex),
+        id: String(binIndex + 1),
         maxWidth: size,
         maxHeight: size,
         width: binWidth,

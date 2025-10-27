@@ -90,7 +90,7 @@ function normalizeBin(
     width: bin.width,
     height: bin.height,
     tag: bin.tag,
-    id: String(binIndex),
+    id: String(binIndex + 1),
     sprites: bin.rects.map((rect) => {
       const packedSprite: tPackedSprite = {
         id: (rect.data.sprite as tPackerSpriteExcerpt).id,

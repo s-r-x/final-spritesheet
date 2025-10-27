@@ -27,14 +27,18 @@ const PackedSpritesTree = ({ width, height }: tTreeViewportProps) => {
     const generateNodeData = ({
       id,
       items,
+      name,
     }: {
       id: string;
       items: string[];
+      name?: string;
     }) => {
       const isOversized = id === "oversized";
-      const title = isOversized
-        ? t("oversized_sprites")
-        : t("packed_bin_with_id", { id: (Number(id) || 0) + 1 });
+      const title =
+        name ||
+        (isOversized
+          ? t("oversized_sprites")
+          : t("packed_bin_with_id", { id }));
       const nodeProps: tNodeData = {
         kind: "bin",
         itemIds: items,
@@ -66,6 +70,7 @@ const PackedSpritesTree = ({ width, height }: tTreeViewportProps) => {
       generateNodeData({
         id: bin.id,
         items: bin.sprites.map((sprite) => sprite.id),
+        name: bin.name,
       }),
     );
     if (!isEmpty(oversizedSprites)) {

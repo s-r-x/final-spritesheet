@@ -75,7 +75,7 @@ export const gridPacker: tPacker = {
         width: binWidth,
         height: binHeight,
         sprites: packedSprites,
-        id: String(binIndex),
+        id: String(binIndex + 1),
       };
     };
 
