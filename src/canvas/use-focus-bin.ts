@@ -4,9 +4,9 @@ import { useFocusElement } from "./use-focus-element";
 export const useFocusBin = () => {
   const focusElement = useFocusElement();
   return useCallback(
-    (index: number) => {
+    (id: string) => {
       focusElement({
-        name: "bin-" + index,
+        name: "bin-" + id,
       });
     },
     [focusElement],

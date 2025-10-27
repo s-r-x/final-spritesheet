@@ -23,6 +23,7 @@ export type tPackedBin = {
   maxHeight: number;
   width: number;
   height: number;
+  name?: string;
   id: string;
 };
 

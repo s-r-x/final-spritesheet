@@ -75,6 +75,7 @@ export const packedSpritesAtom = atom((get): tPackerReturnValue => {
         });
         if (packedBin) {
           packedBin.id = customBin.bin.id;
+          packedBin.name = customBin.bin.name;
           acc.bins.push(packedBin);
         }
         if (!isEmpty(oversizedSprites)) {

@@ -2,12 +2,12 @@ import { OUTPUT_ENABLE_PNG_COMPRESSION } from "#config";
 import { canvasRefs } from "./canvas-refs";
 
 export const convertBinToBlob = async ({
-  binIndex,
+  binId,
   mimeType,
   pngCompression,
   quality,
 }: {
-  binIndex: number;
+  binId: string;
   mimeType: string;
   pngCompression: number;
   quality: number;
@@ -15,7 +15,7 @@ export const convertBinToBlob = async ({
   const canvasApp = canvasRefs.app;
   if (!canvasApp) return null;
 
-  const canvasBin = canvasApp.stage.getChildByLabel(`bin-${binIndex}`, true);
+  const canvasBin = canvasApp.stage.getChildByLabel(`bin-${binId}`, true);
   if (!canvasBin) return null;
   let blob: Blob;
   if (mimeType === "image/png" && OUTPUT_ENABLE_PNG_COMPRESSION) {

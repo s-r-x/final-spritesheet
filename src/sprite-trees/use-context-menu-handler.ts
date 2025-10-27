@@ -269,7 +269,7 @@ export const useContextMenuHandler = (treeApi: tTreeApi | undefined) => {
             !isOversizedSelected && {
               id: "focus_bin",
               title: t("focus"),
-              onClick: () => focusBin(Number(firstBin.id)),
+              onClick: () => focusBin(firstBin.id),
             },
           {
             id: "clear_bin",
@@ -295,7 +295,12 @@ export const useContextMenuHandler = (treeApi: tTreeApi | undefined) => {
       openContextMenu({
         event: e,
         items: [
-          // TODO:: focus
+          isOnlyOneSelected && {
+            id: "focus_bin",
+            title: t("focus"),
+            onClick: () =>
+              focusBin(selectedNodes[0]!.data.nodeProps.bin.bin.id),
+          },
           isOnlyOneSelected &&
             !isRootSelected && {
               id: "update",

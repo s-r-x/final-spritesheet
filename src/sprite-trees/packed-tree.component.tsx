@@ -25,24 +25,23 @@ const PackedSpritesTree = ({ width, height }: tTreeViewportProps) => {
   const spritesMap = useSpritesMap();
   const treeData: tTreeNodeData[] = useMemo(() => {
     const generateNodeData = ({
-      index,
-      isOversized,
+      id,
       items,
     }: {
-      index?: number;
-      isOversized?: boolean;
+      id: string;
       items: string[];
     }) => {
+      const isOversized = id === "oversized";
       const title = isOversized
         ? t("oversized_sprites")
-        : t("packed_bin_with_id", { id: (index || 0) + 1 });
+        : t("packed_bin_with_id", { id: (Number(id) || 0) + 1 });
       const nodeProps: tNodeData = {
         kind: "bin",
         itemIds: items,
         isOversized,
       };
       const data: tTreeNodeData = {
-        id: isOversized ? "oversized" : String(index),
+        id,
         name: title,
         nodeProps,
         children: items.map((itemId) => {
@@ -51,6 +50,7 @@ const PackedSpritesTree = ({ width, height }: tTreeViewportProps) => {
             kind: "item",
             item: sprite,
             isOversized,
+            binId: id,
           };
           const data: tTreeNodeData = {
             name: sprite.name,
@@ -62,16 +62,18 @@ const PackedSpritesTree = ({ width, height }: tTreeViewportProps) => {
       };
       return data;
     };
-    const binsData = bins.map((bin, idx) =>
+    const binsData = bins.map((bin) =>
       generateNodeData({
-        index: idx,
+        id: bin.id,
         items: bin.sprites.map((sprite) => sprite.id),
-        isOversized: false,
       }),
     );
     if (!isEmpty(oversizedSprites)) {
       binsData.unshift(
-        generateNodeData({ isOversized: true, items: oversizedSprites }),
+        generateNodeData({
+          items: oversizedSprites,
+          id: "oversized",
+        }),
       );
     }
     return binsData;

@@ -33,7 +33,7 @@ export const exportSpritesheet = async (opts: tOptions) => {
       const textureAtlas = await convertBinToBlob({
         mimeType: imageMime,
         quality: opts.imageQuality,
-        binIndex: idx,
+        binId: packedBin.id,
         pngCompression: opts.pngCompression,
       });
       if (!textureAtlas) return archive;

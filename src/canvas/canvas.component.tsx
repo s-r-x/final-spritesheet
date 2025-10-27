@@ -12,6 +12,7 @@ import { useFocusProject } from "./use-focus-project";
 import { isEmpty } from "#utils/is-empty";
 import { useSpritesMap } from "@/input/use-sprites-map";
 import { useTranslation } from "@/i18n/use-translation";
+import { isDefaultBin } from "#custom-bins/is-default-bin";
 
 extend({
   Container,
@@ -92,10 +93,10 @@ const Bins = () => {
   if (!hasBins) return null;
   return (
     <pixiContainer label="bins-root">
-      {packedBins.map((bin, i) => {
+      {packedBins.map((bin) => {
         const jsx = (
-          <pixiContainer key={i} x={offsetX}>
-            <Bin index={i} bin={bin} />
+          <pixiContainer key={bin.id} x={offsetX}>
+            <Bin bin={bin} />
           </pixiContainer>
         );
         offsetX += bin.maxWidth + BIN_GAP;
@@ -107,11 +108,10 @@ const Bins = () => {
 
 type tBinProps = {
   bin: tPackedBin;
-  index: number;
 };
-const Bin = ({ bin, index }: tBinProps) => {
-  const { t } = useTranslation();
+const Bin = ({ bin }: tBinProps) => {
   const spritesMap = useSpritesMap();
+  const { t } = useTranslation();
   const { maxWidth, maxHeight, width, height } = bin;
   const bgColor = useMantineTheme().colors.gray[1];
   const drawBg = useCallback(
@@ -138,12 +138,17 @@ const Bin = ({ bin, index }: tBinProps) => {
     },
     [width, height],
   );
-
+  let binName: string;
+  if (bin.name) {
+    binName = isDefaultBin(bin.id) ? t("default_custom_bin_name") : bin.name;
+  } else {
+    binName = t("packed_bin_with_id", { id: (Number(bin.id) || 0) + 1 });
+  }
   return (
     <pixiContainer>
       <pixiGraphics draw={drawBg} />
-      <BinName name={t("packed_bin_with_id", { id: index + 1 })} />
-      <pixiContainer label={`bin-${index}`}>
+      <BinName name={binName} />
+      <pixiContainer label={`bin-${bin.id}`}>
         <pixiGraphics alpha={0} draw={drawDimensions} />
         {bin.sprites.map(({ id, x, y, rotated }) => {
           const sprite = spritesMap[id];
