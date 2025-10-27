@@ -43,7 +43,8 @@
       "multipack": "Multipack",
       "multipack_opt_off": "Off",
       "multipack_opt_auto": "Auto",
-      "multipack_opt_manual": "Manual"
+      "multipack_opt_manual": "Manual",
+      "multipack_opt_byFolder": "By folder"
     },
     "output_opts": {
       "form_name": "Output",

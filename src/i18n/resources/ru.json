@@ -40,10 +40,11 @@
       "edge_spacing": "Отступы от краев",
       "pot": "POT",
       "allow_rot": "Разрешить поворот",
-      "multipack": "Мульти-упаковка",
+      "multipack": "Разбиение",
       "multipack_opt_off": "Отключено",
       "multipack_opt_auto": "Авто",
-      "multipack_opt_manual": "Вручную"
+      "multipack_opt_manual": "Вручную",
+      "multipack_opt_byFolder": "По папке"
     },
     "output_opts": {
       "form_name": "Вывод",

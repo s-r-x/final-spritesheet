@@ -8,7 +8,7 @@ import {
   edgeSpacingSettingAtom,
   multipackSettingAtom,
 } from "./settings.atom";
-import { spritesAtom } from "@/input/sprites.atom";
+import { spritesAtom, spritesMapAtom } from "@/input/sprites.atom";
 import { isEmpty } from "#utils/is-empty";
 import { selectAtom } from "jotai/utils";
 import { packerSpriteExcerptFields } from "./config";
@@ -25,6 +25,8 @@ import { gridPacker } from "./grid.packer";
 import { basicPacker } from "./basic.packer";
 import { normalizedCustomBinsAtom } from "#custom-bins/custom-bins.atom";
 import { pick } from "#utils/pick";
+import { foldersAtom } from "@/folders/folders.atom";
+import { invariant } from "#utils/invariant";
 
 export const spritesForPackerAtom = selectAtom(
   spritesAtom,
@@ -56,7 +58,7 @@ export const packedSpritesAtom = atom((get): tPackerReturnValue => {
     edgeSpacing,
     pot,
     allowRotation,
-    forceSingleBin: multipack === "off" || multipack === "manual",
+    forceSingleBin: multipack !== "auto",
   };
   const packer = getPacker(algorithm);
   if (multipack === "manual") {
@@ -84,6 +86,41 @@ export const packedSpritesAtom = atom((get): tPackerReturnValue => {
         }
         return acc;
       },
+      {
+        bins: [],
+        oversizedSprites: [],
+        oversizedSpritesPerBin: {},
+      } as Required<tPackerReturnValue>,
+    );
+  } else if (multipack === "byFolder") {
+    const spritesMap = get(spritesMapAtom);
+    const folders = get(foldersAtom);
+    return folders.reduce(
+      (acc, folder) => {
+        if (isEmpty(folder.itemIds)) return acc;
+
+        const {
+          bins: [packedBin],
+          oversizedSprites,
+        } = packer.pack({
+          ...partialOptions,
+          sprites: folder.itemIds.map((id) => {
+            const sprite = spritesMap[id];
+            invariant(sprite, `Sprite ${id} is not in the sprites map`);
+            return sprite;
+          }),
+        });
+        if (packedBin) {
+          packedBin.name = folder.name;
+          packedBin.id = folder.id;
+          acc.bins.push(packedBin);
+        }
+        if (!isEmpty(oversizedSprites)) {
+          acc.oversizedSprites.push(...oversizedSprites);
+        }
+        return acc;
+      },
+
       {
         bins: [],
         oversizedSprites: [],

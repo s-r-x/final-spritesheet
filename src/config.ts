@@ -41,6 +41,7 @@ export const PACKER_SUPPORTED_MULTIPACK_MODES = [
   "off",
   "auto",
   "manual",
+  "byFolder",
 ] as const;
 export type tPackerMultipackMode =
   (typeof PACKER_SUPPORTED_MULTIPACK_MODES)[number];
