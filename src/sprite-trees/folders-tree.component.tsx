@@ -18,6 +18,7 @@ import { useContextMenuHandler } from "./use-context-menu-handler";
 import { useMoveItems } from "@/folders/use-move-items";
 import { usePackedSprites } from "@/packer/use-packed-sprites";
 import clsx from "clsx";
+import { useRowRenderer } from "./use-row-renderer";
 
 const FoldersList = ({ width, height }: tTreeViewportProps) => {
   const { t } = useTranslation();
@@ -56,6 +57,7 @@ const FoldersList = ({ width, height }: tTreeViewportProps) => {
       return data;
     });
   }, [folders, t, oversizedSprites]);
+  const renderRow = useRowRenderer();
   const moveItems = useMoveItems();
   const onSelect = useNodeSelectHandler(treeApiRef.current);
   const onDelete = useNodesDeleteHandler();
@@ -70,32 +72,7 @@ const FoldersList = ({ width, height }: tTreeViewportProps) => {
       data={treeData}
       width={width}
       height={height}
-      renderRow={(args) => {
-        return (
-          // biome-ignore lint/a11y/noStaticElementInteractions: <react-arborist>
-          // biome-ignore lint/a11y/useKeyWithClickEvents: <react-arborist>
-          // biome-ignore lint/a11y/useAriaPropsSupportedByRole: <react-arborist>
-          <div
-            {...args.attrs}
-            data-node-id={args.node.id}
-            ref={args.innerRef}
-            onFocus={(e) => e.stopPropagation()}
-            className={clsx(
-              styles.treeRow,
-              args.node.data.nodeProps.isOversized && styles.oversized,
-            )}
-            onClick={args.node.handleClick}
-            aria-label={args.node.data.name}
-            data-parent-folder={
-              args.node.data.nodeProps.kind === "item"
-                ? args.node.data.nodeProps.folderId
-                : undefined
-            }
-          >
-            {args.children}
-          </div>
-        );
-      }}
+      renderRow={renderRow}
       onSelect={onSelect}
       onDelete={onDelete}
       onContextMenu={onContextMenu}
