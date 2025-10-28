@@ -192,7 +192,7 @@ export const useContextMenuHandler = (treeApi: tTreeApi | undefined) => {
           },
           canMarkAsAnimation && {
             id: "animation",
-            title: t("folders.mark_as_animation") + " (WIP)",
+            title: t("folders.mark_as_animation"),
             onClick: () => updateAnimationState(true),
           },
           canApplySort && {
@@ -213,7 +213,7 @@ export const useContextMenuHandler = (treeApi: tTreeApi | undefined) => {
           },
           canUnmarkAsAnimation && {
             id: "animation",
-            title: t("folders.unmark_as_animation") + " (WIP)",
+            title: t("folders.unmark_as_animation"),
             onClick: () => updateAnimationState(false),
           },
           canRemove && {
