@@ -5,6 +5,12 @@ import {
   outputSettingsFormVersionAtom,
 } from "./output-settings.atom";
 
+export const useOutputSettings = () => {
+  return useAtomValue(outputSettingsAtom);
+};
+export const useOutputFramework = () => {
+  return useOutputSettings().framework;
+};
 export const useOutputSettingsFormVersion = () => {
   return useAtomValue(outputSettingsFormVersionAtom);
 };

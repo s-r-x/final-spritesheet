@@ -17,7 +17,6 @@ import { useNodesDeleteHandler } from "./use-nodes-delete-handler";
 import { useContextMenuHandler } from "./use-context-menu-handler";
 import { useMoveItems } from "@/folders/use-move-items";
 import { usePackedSprites } from "@/packer/use-packed-sprites";
-import clsx from "clsx";
 import { useRowRenderer } from "./use-row-renderer";
 
 const FoldersList = ({ width, height }: tTreeViewportProps) => {

@@ -60,6 +60,13 @@ export type tPersistedCustomBin = {
   projectId: string;
   folderIds: string[];
   itemIds: string[];
+  useGlobalPackerOptions?: boolean;
+  packerAlgorithm?: tPackerAlgorithm;
+  packerSheetMaxSize?: number;
+  packerSpritePadding?: number;
+  packerEdgeSpacing?: number;
+  packerPot?: boolean;
+  packerAllowRotation?: boolean;
   createdAt: string;
 };
 
@@ -116,7 +123,7 @@ export type tAddCustomBinData = Partial<
 > &
   Pick<tPersistedCustomBin, "projectId">;
 export type tUpdateCustomBinData = Partial<
-  Pick<tPersistedCustomBin, "itemIds" | "name" | "folderIds">
+  Omit<tPersistedCustomBin, "id" | "projectId" | " createdAt">
 >;
 export type tUpdateMultipleCustomBinsArgs = {
   id: string;

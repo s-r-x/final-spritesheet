@@ -75,6 +75,14 @@
       "name": "Название",
       "name_placeholder": "Введите название проекта"
     },
+    "custom_bin_editor": {
+      "editor_title": "Редактирование контейнера",
+      "editor_title_new": "Новый контейнер",
+      "name": "Имя",
+      "name_placeholder": "Введите имя контейнера",
+      "packer_sect": "Упаковщик",
+      "use_global_packer_settings": "Использовать глобальные настройки"
+    },
     "sprites_drop_zone": {
       "head": "Перетащите свои спрайты сюда",
       "desc": "Поддерживаемые форматы: {{supportedFormats}}"

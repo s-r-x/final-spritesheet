@@ -12,10 +12,10 @@ import {
   PACKER_DEFAULT_POT,
   PACKER_DEFAULT_SHEET_SIZE,
   PACKER_DEFAULT_SPRITE_PADDING,
-  PACKER_ROTATION_SUPPORTED_FRAMEWORKS,
 } from "#config";
 import { activeProjectAtom, updateProjectAtom } from "@/projects/projects.atom";
 import { outputSettingsAtom } from "@/output/output-settings.atom";
+import { checkPackerRotationSupport } from "./check-rotation-support";
 
 const defaultSettings: tPackerSettings = {
   packerAlgorithm: PACKER_DEFAULT_ALGORITHM,
@@ -47,10 +47,7 @@ export const packerSettingsAtom = atom<
 export const rotationSupportabilityAtom = atom((get) => {
   const framework = get(outputSettingsAtom).framework;
   const algorithm = get(packerAlgorithmSettingAtom);
-  return (
-    algorithm === "maxRects" &&
-    PACKER_ROTATION_SUPPORTED_FRAMEWORKS.has(framework)
-  );
+  return checkPackerRotationSupport({ framework, algorithm });
 });
 export const packerAlgorithmSettingAtom = atom(
   (get) => get(packerSettingsAtom).packerAlgorithm,

@@ -79,7 +79,9 @@
       "editor_title": "Edit bin",
       "editor_title_new": "New bin",
       "name": "Name",
-      "name_placeholder": "Enter the bin name"
+      "name_placeholder": "Enter the bin name",
+      "packer_sect": "Packer",
+      "use_global_packer_settings": "Use global settings"
     },
     "sprites_drop_zone": {
       "head": "Drop your sprites here",

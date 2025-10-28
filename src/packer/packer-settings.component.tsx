@@ -1,4 +1,11 @@
-import { NativeSelect, NumberInput, Checkbox, Stack } from "@mantine/core";
+import {
+  NativeSelect,
+  NumberInput,
+  Checkbox,
+  Stack,
+  type NativeSelectProps,
+  type NumberInputProps,
+} from "@mantine/core";
 import { useTranslation } from "@/i18n/use-translation";
 import { useForm } from "@mantine/form";
 import * as z from "zod";
@@ -20,7 +27,7 @@ import {
   usePackerSettingsFormVersion,
 } from "./use-packer-settings";
 import { useMutation } from "#hooks/use-mutation";
-import { memo } from "react";
+import { forwardRef, memo } from "react";
 import type {
   tPackerAlgorithm,
   tPackerMultipackMode,
@@ -28,27 +35,24 @@ import type {
 } from "./types";
 import { isEqual } from "#utils/is-equal";
 
-const algorithmOptions: { value: tPackerAlgorithm; label: string }[] = [
-  {
-    value: "maxRects",
-    label: "Max rects",
-  },
-  {
-    value: "grid",
-    label: "Grid",
-  },
-  {
-    value: "basic",
-    label: "Basic",
-  },
-];
+export const sheetMaxSizeSchema = z.coerce.number<string>();
+export const spritePaddingSchema = z.coerce
+  .number()
+  .min(0)
+  .max(PACKER_MAX_SPRITE_PADDING);
+export const edgeSpacingSchema = z.coerce
+  .number()
+  .min(0)
+  .max(PACKER_MAX_EDGE_SPACING);
+export const packerAlgorithmSchema = z.enum(PACKER_SUPPORTED_ALGORITHMS);
+
 const schema = z.object({
-  sheetMaxSize: z.coerce.number<string>(),
-  spritePadding: z.coerce.number().min(0).max(PACKER_MAX_SPRITE_PADDING),
-  edgeSpacing: z.coerce.number().min(0).max(PACKER_MAX_EDGE_SPACING),
+  sheetMaxSize: sheetMaxSizeSchema,
+  spritePadding: spritePaddingSchema,
+  edgeSpacing: edgeSpacingSchema,
   pot: z.boolean(),
   allowRotation: z.boolean(),
-  packerAlgorithm: z.enum(PACKER_SUPPORTED_ALGORITHMS),
+  packerAlgorithm: packerAlgorithmSchema,
   multipack: z.enum(PACKER_SUPPORTED_MULTIPACK_MODES),
 });
 type tForm = z.input<typeof schema>;
@@ -59,11 +63,6 @@ type tProps = {
 const PackerSettings = ({ getCurrentSettings }: tProps) => {
   const { t } = useTranslation();
 
-  const multipackOptions: { value: tPackerMultipackMode; label: string }[] =
-    PACKER_SUPPORTED_MULTIPACK_MODES.map((mode) => ({
-      value: mode,
-      label: t(`packer_opts.multipack_opt_${mode}`),
-    }));
   const isRotationSupported = useIsRotationSupported();
   const updateSettings = useUpdatePackerSettings();
   const updateSettingsMut = useMutation(updateSettings);
@@ -128,38 +127,25 @@ const PackerSettings = ({ getCurrentSettings }: tProps) => {
       onSubmit={form.onSubmit(onValuesChange)}
     >
       <Stack gap="sm">
-        <NativeSelect
-          label={t("packer_opts.packer_algorithm")}
-          data={algorithmOptions}
+        <PackerAlgorithmSelect
           key={form.key("packerAlgorithm")}
           {...normalizeInputProps({
             props: form.getInputProps("packerAlgorithm"),
           })}
         />
-        <NativeSelect
-          label={t("packer_opts.multipack")}
-          data={multipackOptions}
+        <PackerMultipackSelect
           key={form.key("multipack")}
           {...normalizeInputProps({
             props: form.getInputProps("multipack"),
           })}
         />
-        <NativeSelect
-          label={t("packer_opts.max_size")}
-          data={PACKER_SUPPORTED_SHEET_SIZES.map(String)}
+        <PackerSheetMaxSizeSelect
           key={form.key("sheetMaxSize")}
           {...normalizeInputProps({
             props: form.getInputProps("sheetMaxSize"),
           })}
         />
-        <NumberInput
-          allowDecimal={false}
-          allowNegative={false}
-          allowLeadingZeros={false}
-          clampBehavior="strict"
-          label={t("packer_opts.sprite_padding")}
-          min={0}
-          max={PACKER_MAX_SPRITE_PADDING}
+        <PackerSpritePaddingInput
           key={form.key("spritePadding")}
           {...spritePaddingInputProps}
           onBlur={(e) => {
@@ -172,14 +158,7 @@ const PackerSettings = ({ getCurrentSettings }: tProps) => {
             spritePaddingInputProps.onBlur?.(e);
           }}
         />
-        <NumberInput
-          allowDecimal={false}
-          allowNegative={false}
-          allowLeadingZeros={false}
-          clampBehavior="strict"
-          label={t("packer_opts.edge_spacing")}
-          min={0}
-          max={PACKER_MAX_EDGE_SPACING}
+        <PackerEdgeSpacingInput
           key={form.key("edgeSpacing")}
           {...edgeSpacingInputProps}
           onBlur={(e) => {
@@ -221,5 +200,105 @@ const PackerSettingsRoot = () => {
     />
   );
 };
+export const PackerAlgorithmSelect = forwardRef<
+  HTMLSelectElement,
+  NativeSelectProps
+>((props, ref) => {
+  const algorithmOptions: { value: tPackerAlgorithm; label: string }[] = [
+    {
+      value: "maxRects",
+      label: "Max rects",
+    },
+    {
+      value: "grid",
+      label: "Grid",
+    },
+    {
+      value: "basic",
+      label: "Basic",
+    },
+  ];
+  const { t } = useTranslation();
+
+  return (
+    <NativeSelect
+      ref={ref}
+      label={t("packer_opts.packer_algorithm")}
+      data={algorithmOptions}
+      {...props}
+    />
+  );
+});
+const PackerMultipackSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
+  (props, ref) => {
+    const { t } = useTranslation();
+    const multipackOptions: { value: tPackerMultipackMode; label: string }[] =
+      PACKER_SUPPORTED_MULTIPACK_MODES.map((mode) => ({
+        value: mode,
+        label: t(`packer_opts.multipack_opt_${mode}`),
+      }));
+
+    return (
+      <NativeSelect
+        label={t("packer_opts.multipack")}
+        ref={ref}
+        data={multipackOptions}
+        {...props}
+      />
+    );
+  },
+);
+export const PackerSheetMaxSizeSelect = forwardRef<
+  HTMLSelectElement,
+  NativeSelectProps
+>((props, ref) => {
+  const { t } = useTranslation();
+  return (
+    <NativeSelect
+      label={t("packer_opts.max_size")}
+      data={PACKER_SUPPORTED_SHEET_SIZES.map(String)}
+      ref={ref}
+      {...props}
+    />
+  );
+});
+export const PackerSpritePaddingInput = forwardRef<
+  HTMLInputElement,
+  NumberInputProps
+>((props, ref) => {
+  const { t } = useTranslation();
+  return (
+    <NumberInput
+      ref={ref}
+      allowDecimal={false}
+      allowNegative={false}
+      allowLeadingZeros={false}
+      clampBehavior="strict"
+      label={t("packer_opts.sprite_padding")}
+      min={0}
+      max={PACKER_MAX_SPRITE_PADDING}
+      {...props}
+    />
+  );
+});
+export const PackerEdgeSpacingInput = forwardRef<
+  HTMLInputElement,
+  NumberInputProps
+>((props, ref) => {
+  const { t } = useTranslation();
+  return (
+    <NumberInput
+      ref={ref}
+      allowDecimal={false}
+      allowNegative={false}
+      allowLeadingZeros={false}
+      clampBehavior="strict"
+      label={t("packer_opts.edge_spacing")}
+      min={0}
+      max={PACKER_MAX_EDGE_SPACING}
+      {...props}
+    />
+  );
+});
 
 export default memo(PackerSettingsRoot);

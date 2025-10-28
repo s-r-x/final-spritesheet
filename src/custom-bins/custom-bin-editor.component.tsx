@@ -1,4 +1,12 @@
-import { Button, Group, Modal, TextInput, Stack } from "@mantine/core";
+import {
+  Button,
+  Group,
+  Modal,
+  TextInput,
+  Stack,
+  Fieldset,
+  Checkbox,
+} from "@mantine/core";
 import { useTranslation } from "@/i18n/use-translation";
 import { useForm } from "@mantine/form";
 import * as z from "zod";
@@ -15,6 +23,24 @@ import { generateUniqueName } from "#utils/generate-unique-name";
 import { Dices as RandomNameIcon } from "lucide-react";
 import ErrorBoundary from "#components/error-boundary";
 import { useAddCustomBin } from "./use-add-custom-bin";
+import {
+  PACKER_DEFAULT_ALGORITHM,
+  PACKER_DEFAULT_ALLOW_ROTATION,
+  PACKER_DEFAULT_EDGE_SPACING,
+  PACKER_DEFAULT_SHEET_SIZE,
+  PACKER_DEFAULT_SPRITE_PADDING,
+} from "#config";
+import {
+  edgeSpacingSchema,
+  packerAlgorithmSchema,
+  PackerAlgorithmSelect,
+  PackerEdgeSpacingInput,
+  PackerSheetMaxSizeSelect,
+  PackerSpritePaddingInput,
+  spritePaddingSchema,
+} from "@/packer/packer-settings.component";
+import { useOutputFramework } from "@/output/use-output-settings";
+import { checkPackerRotationSupport } from "@/packer/check-rotation-support";
 
 const i18nNs = "custom_bin_editor.";
 const CustomBinEditorModal = () => {
@@ -45,9 +71,16 @@ const CustomBinEditorModal = () => {
 
 const schema = z.object({
   name: z.string().trim().min(1),
+  useGlobalPackerOptions: z.boolean(),
+  packerSheetMaxSize: z.coerce.number<string>().optional(),
+  packerSpritePadding: spritePaddingSchema.optional(),
+  packerEdgeSpacing: edgeSpacingSchema.optional(),
+  packerPot: z.boolean().optional(),
+  packerAllowRotation: z.boolean().optional(),
+  packerAlgorithm: packerAlgorithmSchema.optional(),
 });
 
-type tForm = z.infer<typeof schema>;
+type tForm = z.input<typeof schema>;
 const CustomBinEditor = ({
   bin,
   onClose,
@@ -60,17 +93,17 @@ const CustomBinEditor = ({
   const createBin = useAddCustomBin();
   const submitMut = useMutation(
     (form: tForm) => {
-      form = schema.parse(form);
+      const parsedForm = schema.parse(form);
       if (bin) {
         return updateBins({
           [bin.id]: {
             bin,
-            data: form,
+            data: parsedForm,
           },
         });
       } else {
         return createBin({
-          ...form,
+          ...parsedForm,
           projectId,
         });
       }
@@ -83,11 +116,29 @@ const CustomBinEditor = ({
   );
   const { t } = useTranslation();
   const form = useForm<tForm>({
-    mode: "uncontrolled",
+    mode: "controlled",
     initialValues: {
       name: bin?.name || "",
+      useGlobalPackerOptions: bin ? bin.useGlobalPackerOptions : true,
+      packerSheetMaxSize: String(
+        bin?.packerSheetMaxSize || PACKER_DEFAULT_SHEET_SIZE,
+      ),
+      packerEdgeSpacing: bin?.packerEdgeSpacing || PACKER_DEFAULT_EDGE_SPACING,
+      packerSpritePadding:
+        bin?.packerSpritePadding || PACKER_DEFAULT_SPRITE_PADDING,
+      packerPot: bin ? bin.packerPot : PACKER_DEFAULT_ALLOW_ROTATION,
+      packerAlgorithm: bin?.packerAlgorithm || PACKER_DEFAULT_ALGORITHM,
+      packerAllowRotation: bin
+        ? bin.packerAllowRotation
+        : PACKER_DEFAULT_ALLOW_ROTATION,
     },
     validate: zod4Resolver(schema),
+  });
+  const shouldUseGlobalSettings = form.values.useGlobalPackerOptions;
+  const outputFramework = useOutputFramework();
+  const isRotationSupported = checkPackerRotationSupport({
+    framework: outputFramework,
+    algorithm: form.values.packerAlgorithm || PACKER_DEFAULT_ALGORITHM,
   });
 
   return (
@@ -110,6 +161,50 @@ const CustomBinEditor = ({
             {t("generate_random_name")}
           </Button>
         )}
+        <Fieldset legend={t(i18nNs + "packer_sect")}>
+          <Stack gap="xs">
+            <Checkbox
+              label={t(i18nNs + "use_global_packer_settings")}
+              key={form.key("useGlobalPackerOptions")}
+              {...form.getInputProps("useGlobalPackerOptions", {
+                type: "checkbox",
+              })}
+            />
+            {!shouldUseGlobalSettings && (
+              <>
+                <PackerAlgorithmSelect
+                  key={form.key("packerAlgorithm")}
+                  {...form.getInputProps("packerAlgorithm")}
+                />
+                <PackerSheetMaxSizeSelect
+                  key={form.key("packerSheetMaxSize")}
+                  {...form.getInputProps("packerSheetMaxSize")}
+                />
+                <PackerSpritePaddingInput
+                  key={form.key("packerSpritePadding")}
+                  {...form.getInputProps("packerSpritePadding")}
+                />
+                <PackerEdgeSpacingInput
+                  key={form.key("packerEdgeSpacing")}
+                  {...form.getInputProps("packerEdgeSpacing")}
+                />
+                <Checkbox
+                  label={t("packer_opts.pot")}
+                  key={form.key("packerPot")}
+                  {...form.getInputProps("packerPot", { type: "checkbox" })}
+                />
+                <Checkbox
+                  disabled={!isRotationSupported}
+                  label={t("packer_opts.allow_rot")}
+                  key={form.key("packerAllowRotation")}
+                  {...form.getInputProps("packerAllowRotation", {
+                    type: "checkbox",
+                  })}
+                />
+              </>
+            )}
+          </Stack>
+        </Fieldset>
       </Stack>
       <Group justify="flex-end" mt="md">
         <Button type="submit" disabled={submitMut.isLoading}>

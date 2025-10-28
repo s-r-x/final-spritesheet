@@ -27,6 +27,8 @@ import { normalizedCustomBinsAtom } from "#custom-bins/custom-bins.atom";
 import { pick } from "#utils/pick";
 import { foldersAtom } from "@/folders/folders.atom";
 import { loggerAtom } from "@/logger/logger.atom";
+import { outputSettingsAtom } from "@/output/output-settings.atom";
+import { checkPackerRotationSupport } from "./check-rotation-support";
 
 export const spritesForPackerAtom = selectAtom(
   spritesAtom,
@@ -61,27 +63,42 @@ export const packedSpritesAtom = atom((get): tPackerReturnValue => {
     forceSingleBin: multipack !== "auto",
   };
   const packer = getPacker(algorithm);
+
   if (multipack === "manual") {
     const customBins = get(normalizedCustomBinsAtom);
     return customBins.reduce(
-      (acc, customBin) => {
-        const sprites = customBin.items.concat(
-          customBin.folders.flatMap((folder) => folder.items),
-        );
+      (acc, { bin: customBin, folders, items }) => {
+        const sprites = items.concat(folders.flatMap((folder) => folder.items));
+        const localPacker = customBin.useGlobalPackerOptions
+          ? packer
+          : getPacker(customBin.packerAlgorithm);
+        const options: tPackerOptions = customBin.useGlobalPackerOptions
+          ? { ...partialOptions, sprites }
+          : {
+              size: customBin.packerSheetMaxSize,
+              padding: customBin.packerSpritePadding,
+              edgeSpacing: customBin.packerEdgeSpacing,
+              pot: customBin.packerPot,
+              allowRotation: checkPackerRotationSupport({
+                framework: get(outputSettingsAtom).framework,
+                algorithm: customBin.packerAlgorithm,
+              })
+                ? customBin.packerAllowRotation
+                : false,
+              forceSingleBin: true,
+              sprites,
+            };
         const {
           bins: [packedBin],
           oversizedSprites,
-        } = packer.pack({
-          ...partialOptions,
-          sprites,
-        });
+        } = localPacker.pack(options);
         if (packedBin) {
-          packedBin.id = customBin.bin.id;
-          packedBin.name = customBin.bin.name;
+          packedBin.id = customBin.id;
+          packedBin.name = customBin.name;
           acc.bins.push(packedBin);
         }
         if (!isEmpty(oversizedSprites)) {
-          acc.oversizedSpritesPerBin[customBin.bin.id] = oversizedSprites;
+          acc.oversizedSpritesPerBin[customBin.id] = oversizedSprites;
           acc.oversizedSprites.push(...oversizedSprites);
         }
         return acc;

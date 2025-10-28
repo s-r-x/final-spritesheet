@@ -8,7 +8,15 @@ import type {
 import { isEmpty } from "#utils/is-empty";
 import { spritesMapAtom } from "@/input/sprites.atom";
 import { foldersMapAtom } from "@/folders/folders.atom";
-import { DEFAULT_CUSTOM_BIN_ID } from "#config";
+import {
+  DEFAULT_CUSTOM_BIN_ID,
+  PACKER_DEFAULT_ALGORITHM,
+  PACKER_DEFAULT_ALLOW_ROTATION,
+  PACKER_DEFAULT_EDGE_SPACING,
+  PACKER_DEFAULT_POT,
+  PACKER_DEFAULT_SHEET_SIZE,
+  PACKER_DEFAULT_SPRITE_PADDING,
+} from "#config";
 import { activeProjectIdAtom } from "@/projects/projects.atom";
 import type { tFolder } from "@/folders/types";
 import type { tSprite } from "@/input/types";
@@ -81,6 +89,13 @@ export const normalizedCustomBinsAtom = atom((get): tNormalizedCustomBin[] => {
       itemIds: itemsWithoutBin.map((item) => item.id),
       folderIds: normalizedFoldersWithoutBin.map(({ folder }) => folder.id),
       createdAt: "",
+      useGlobalPackerOptions: true,
+      packerAlgorithm: PACKER_DEFAULT_ALGORITHM,
+      packerAllowRotation: PACKER_DEFAULT_ALLOW_ROTATION,
+      packerSheetMaxSize: PACKER_DEFAULT_SHEET_SIZE,
+      packerEdgeSpacing: PACKER_DEFAULT_EDGE_SPACING,
+      packerPot: PACKER_DEFAULT_POT,
+      packerSpritePadding: PACKER_DEFAULT_SPRITE_PADDING,
     },
     folders: normalizedFoldersWithoutBin,
     items: itemsWithoutBin,

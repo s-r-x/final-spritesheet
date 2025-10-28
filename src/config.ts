@@ -46,6 +46,9 @@ export const PACKER_SUPPORTED_MULTIPACK_MODES = [
 export type tPackerMultipackMode =
   (typeof PACKER_SUPPORTED_MULTIPACK_MODES)[number];
 export const PACKER_DEFAULT_MULTIPACK_MODE: tPackerMultipackMode = "auto";
+export const PACKER_ROTATION_SUPPORTED_ALGORITHMS = new Set<tPackerAlgorithm>([
+  "maxRects",
+]);
 
 export const SUPPORTED_OUTPUT_FRAMEWORKS = ["pixi", "phaser", "godot"] as const;
 export type tOutputFramework = (typeof SUPPORTED_OUTPUT_FRAMEWORKS)[number];
