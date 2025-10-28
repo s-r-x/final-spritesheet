@@ -8,7 +8,7 @@ import {
   edgeSpacingSettingAtom,
   multipackSettingAtom,
 } from "./settings.atom";
-import { spritesAtom, spritesMapAtom } from "@/input/sprites.atom";
+import { spritesAtom } from "@/input/sprites.atom";
 import { isEmpty } from "#utils/is-empty";
 import { selectAtom } from "jotai/utils";
 import { packerSpriteExcerptFields } from "./config";
@@ -26,7 +26,7 @@ import { basicPacker } from "./basic.packer";
 import { normalizedCustomBinsAtom } from "#custom-bins/custom-bins.atom";
 import { pick } from "#utils/pick";
 import { foldersAtom } from "@/folders/folders.atom";
-import { invariant } from "#utils/invariant";
+import { loggerAtom } from "@/logger/logger.atom";
 
 export const spritesForPackerAtom = selectAtom(
   spritesAtom,
@@ -93,7 +93,15 @@ export const packedSpritesAtom = atom((get): tPackerReturnValue => {
       } as Required<tPackerReturnValue>,
     );
   } else if (multipack === "byFolder") {
-    const spritesMap = get(spritesMapAtom);
+    const logger = get(loggerAtom);
+    const sprites = get(spritesForPackerAtom);
+    const spritesMap = sprites.reduce(
+      (acc, sprite) => {
+        acc[sprite.id] = sprite;
+        return acc;
+      },
+      {} as Record<string, tPackerSpriteExcerpt>,
+    );
     const folders = get(foldersAtom);
     return folders.reduce(
       (acc, folder) => {
@@ -104,11 +112,21 @@ export const packedSpritesAtom = atom((get): tPackerReturnValue => {
           oversizedSprites,
         } = packer.pack({
           ...partialOptions,
-          sprites: folder.itemIds.map((id) => {
-            const sprite = spritesMap[id];
-            invariant(sprite, `Sprite ${id} is not in the sprites map`);
-            return sprite;
-          }),
+          sprites: folder.itemIds.reduce((acc, spriteId) => {
+            const sprite = spritesMap[spriteId];
+            if (sprite) {
+              acc.push(sprite);
+            } else {
+              logger?.warn({
+                layer: "app",
+                label: "missingSprite",
+                data: {
+                  message: `Cannot find sprite ${spriteId} in the sprites map`,
+                },
+              });
+            }
+            return acc;
+          }, [] as tPackerSpriteExcerpt[]),
         });
         if (packedBin) {
           packedBin.name = folder.name;
