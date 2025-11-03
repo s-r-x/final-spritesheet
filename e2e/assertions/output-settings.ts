@@ -6,6 +6,7 @@ import {
   outputTextureFileNameLocator,
   outputTextureFormatLocator,
 } from "../locators/output-settings";
+import type { tOutputFramework } from "../../src/config";
 
 export const assertOutputTextureFormatValue = async (
   page: Page,
@@ -34,6 +35,6 @@ export const assertOutputImageQualityValue = async (
   await expect(outputImageQualityLocator(page)).toHaveValue(value);
 };
 
-export const assertOutputFrameworkValue = async (page: Page, value: string) => {
+export const assertOutputFrameworkValue = async (page: Page, value: tOutputFramework) => {
   await expect(outputFrameworkLocator(page)).toHaveValue(value);
 };

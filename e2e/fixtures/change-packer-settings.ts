@@ -1,11 +1,14 @@
 import type { Page } from "@playwright/test";
 import {
+  packerAlgorithmLocator,
   packerAllowRotLocator,
   packerEdgeSpacingLocator,
+  packerMultipackModeLocator,
   packerPotLocator,
   packerSheetSizeLocator,
   packerSpritePaddingLocator,
 } from "../locators/packer-settings";
+import type { tPackerAlgorithm, tPackerMultipackMode } from "../../src/config";
 
 export const changePackerAllowRot = async (page: Page, allowRot: boolean) => {
   const el = packerAllowRotLocator(page);
@@ -58,4 +61,19 @@ export const changePackerSpritePadding = async (
   const label = packerSpritePaddingLocator(page);
   await label.fill(String(padding));
   await label.press("Enter");
+};
+
+export const changePackerMultipackMode = async (
+  page: Page,
+  mode: tPackerMultipackMode,
+) => {
+  const label = packerMultipackModeLocator(page);
+  await label.selectOption(mode);
+};
+export const changePackerAlgorithm = async (
+  page: Page,
+  algorithm: tPackerAlgorithm,
+) => {
+  const label = packerAlgorithmLocator(page);
+  await label.selectOption(algorithm);
 };

@@ -6,6 +6,7 @@ import {
   outputImageQualityLocator,
   outputDataFileNameLocator,
 } from "../locators/output-settings";
+import type { tOutputFramework } from "../../src/config";
 
 export const changeOutputTextureFormat = async (page: Page, value: string) => {
   const label = outputTextureFormatLocator(page);
@@ -30,7 +31,10 @@ export const changeOutputImageQuality = async (page: Page, value: string) => {
   await label.press("Enter");
 };
 
-export const changeOutputFramework = async (page: Page, value: string) => {
+export const changeOutputFramework = async (
+  page: Page,
+  value: tOutputFramework,
+) => {
   const label = outputFrameworkLocator(page);
   await label.selectOption(value);
 };

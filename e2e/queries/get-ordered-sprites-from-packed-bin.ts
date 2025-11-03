@@ -1,15 +1,14 @@
 import type { Page } from "@playwright/test";
-import { packedSpritesListLocator } from "../locators/packed-sprites-list";
+import { spritesInPackedListLocator } from "../locators/packed-sprites-list";
 
 export const getOrderedSpritesFromPackedBin = async (
   page: Page,
   name?: string,
 ): Promise<string[]> => {
-  const list = packedSpritesListLocator(page);
-  const locator = list.getByRole("treeitem", {
-    level: 2,
-    ...(name ? { name, exact: true } : {}),
-  });
+  let locator = spritesInPackedListLocator(page);
+  if (name) {
+    locator = locator.filter({ hasText: name });
+  }
   await locator.first().waitFor({ state: "visible" });
   return locator.allTextContents();
 };

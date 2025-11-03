@@ -4,7 +4,8 @@ import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import path from "node:path";
 import { VitePWA } from "vite-plugin-pwa";
 
-export const PORT = 5173;
+export const DEV_SERVER_PORT = 5173;
+export const PREVIEW_SERVER_PORT = 4173;
 export const BASE_URL = "/final-spritesheet";
 const srcPath = path.join(import.meta.dirname, "src");
 export const alias = {
@@ -25,7 +26,10 @@ export default defineConfig({
     chunkSizeWarningLimit: 99999,
   },
   server: {
-    port: PORT,
+    port: DEV_SERVER_PORT,
+  },
+  preview: {
+    port: PREVIEW_SERVER_PORT,
   },
   plugins: [
     react(),

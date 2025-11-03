@@ -15,10 +15,16 @@ export const useRowRenderer = () => {
         className={clsx(styles.treeRow, data.isOversized && styles.oversized)}
         data-node-id={args.node.id}
         data-kind={data.kind}
-        data-parent-bin={
-          (data.kind === "folder" || data.kind === "item") && data.binId
+        data-oversized={data.isOversized}
+        data-animation={
+          data.kind === "folder" ? data.folder.isAnimation : undefined
         }
-        data-parent-folder={data.kind === "item" && data.folderId}
+        data-parent-bin={
+          data.kind === "folder" || data.kind === "item"
+            ? data.binId
+            : undefined
+        }
+        data-parent-folder={data.kind === "item" ? data.folderId : undefined}
         aria-label={args.node.data.name}
         ref={args.innerRef}
         onFocus={(e) => e.stopPropagation()}

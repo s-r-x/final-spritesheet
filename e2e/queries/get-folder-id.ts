@@ -1,14 +1,9 @@
 import type { Page } from "@playwright/test";
-import { foldersListLocator } from "../locators/folders-list";
+import { foldersInFoldersListLocator } from "../locators/folders-list";
 
-export const getFolderIdByName = async (
-  page: Page,
-  name: string,
-): Promise<string | null> => {
-  const list = foldersListLocator(page);
-  const folderId = await list
-    .getByRole("treeitem", { level: 1 })
+export const getFolderId = (page: Page, name: string) => {
+  const id = foldersInFoldersListLocator(page)
     .filter({ hasText: name })
     .getAttribute("data-node-id");
-  return folderId;
+  return id;
 };

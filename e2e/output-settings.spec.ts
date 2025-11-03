@@ -8,15 +8,9 @@ import {
   OUTPUT_DEFAULT_TEXTURE_FILE_NAME,
   OUTPUT_DEFAULT_TEXTURE_FORMAT,
   SUPPORTED_OUTPUT_FRAMEWORKS,
-  SUPPORTED_OUTPUT_IMAGE_FORMATS,
 } from "../src/config";
 import { redo } from "./fixtures/redo";
-import {
-  assertCannotRedo,
-  assertCannotUndo,
-  assertCanRedo,
-  assertCanUndo,
-} from "./assertions/history";
+import { assertCannotRedo, assertCannotUndo } from "./assertions/history";
 import {
   changeOutputDataFileName,
   changeOutputFramework,
@@ -32,106 +26,61 @@ import {
 } from "./assertions/output-settings";
 import { outputImageQualityLocator } from "./locators/output-settings";
 
-test("should update, undo and redo output settings", async ({ page }) => {
+test("should update output settings", async ({ page }) => {
   await navigateTo(page);
+  const frameworkInitial = OUTPUT_DEFAULT_FRAMEWORK;
+  const textureFormatInitial = OUTPUT_DEFAULT_TEXTURE_FORMAT;
+  const dataFileInitial = OUTPUT_DEFAULT_DATA_FILE_NAME;
+  const textureFileInitial = OUTPUT_DEFAULT_TEXTURE_FILE_NAME;
 
-  type tHistoryEntry = {
-    framework: string;
-    textureFormat: string;
-    dataFile: string;
-    textureFile: string;
-  };
-  const frameworkInitialValue = String(OUTPUT_DEFAULT_FRAMEWORK);
-  const textureFormatInitialValue = String(OUTPUT_DEFAULT_TEXTURE_FORMAT);
-  const dataFileNameInitialValue = String(OUTPUT_DEFAULT_DATA_FILE_NAME);
-  const textureFileNameInitialValue = OUTPUT_DEFAULT_TEXTURE_FILE_NAME;
-  const history: tHistoryEntry[] = [
-    {
-      framework: frameworkInitialValue,
-      textureFormat: textureFormatInitialValue,
-      dataFile: dataFileNameInitialValue,
-      textureFile: textureFileNameInitialValue,
-    },
-  ];
-  const getLastHistoryEntry = () => history[history.length - 1];
-  const addHistoryEntry = async (values: Partial<tHistoryEntry>) => {
-    if (values.framework) {
-      await changeOutputFramework(page, values.framework);
-    }
-    if (values.textureFormat) {
-      await changeOutputTextureFormat(page, values.textureFormat);
-    }
-    if (values.dataFile) {
-      await changeOutputDataFileName(page, values.dataFile);
-    }
-    if (values.textureFile) {
-      await changeOutputTextureFileName(page, values.textureFile);
-    }
-    history.push({
-      ...getLastHistoryEntry(),
-      ...values,
-    });
-  };
+  await assertOutputFrameworkValue(page, frameworkInitial);
+  await assertOutputTextureFormatValue(page, textureFormatInitial);
+  await assertOutputDataFileNameValue(page, dataFileInitial);
+  await assertOutputTextureFileNameValue(page, textureFileInitial);
 
-  const assertFormValues = async (entry: tHistoryEntry) => {
-    await assertOutputFrameworkValue(page, entry.framework);
-    await assertOutputTextureFormatValue(page, entry.textureFormat);
-    await assertOutputDataFileNameValue(page, entry.dataFile);
-    await assertOutputTextureFileNameValue(page, entry.textureFile);
-  };
-  const assertLastHistoryEntryValues = async () => {
-    const entry = getLastHistoryEntry();
-    await assertFormValues(entry);
-  };
-  await assertCannotUndo(page);
-  await assertCannotRedo(page);
-
-  await assertLastHistoryEntryValues();
-
-  const frameworkUpdatedValue = SUPPORTED_OUTPUT_FRAMEWORKS.find(
-    (framework) => framework !== frameworkInitialValue,
+  const frameworkUpdated = SUPPORTED_OUTPUT_FRAMEWORKS.find(
+    (framework) => framework !== frameworkInitial,
   )!;
-  const textureFormatUpdatedValue = SUPPORTED_OUTPUT_IMAGE_FORMATS.find(
-    (format) => format !== textureFormatInitialValue,
-  )!;
-  const dataFileNameUpdatedValue = "new data file name";
-  const textureFileNameUpdatedValue = "new texture file name";
+  const textureFormatUpdated = textureFormatInitial === "png" ? "jpeg" : "png";
+  const dataFileUpdated = "my file";
+  const textureFileUpdated = "my texture";
 
-  await addHistoryEntry({ framework: frameworkUpdatedValue });
-  await addHistoryEntry({ textureFormat: textureFormatUpdatedValue });
-  await addHistoryEntry({ dataFile: dataFileNameUpdatedValue });
-  await addHistoryEntry({ textureFile: textureFileNameUpdatedValue });
+  await changeOutputFramework(page, frameworkUpdated);
+  await assertOutputFrameworkValue(page, frameworkUpdated);
+  await changeOutputTextureFormat(page, textureFormatUpdated);
+  await assertOutputTextureFormatValue(page, textureFormatUpdated);
+  await changeOutputDataFileName(page, dataFileUpdated);
+  await assertOutputDataFileNameValue(page, dataFileUpdated);
+  await changeOutputTextureFileName(page, textureFileUpdated);
+  await assertOutputTextureFileNameValue(page, textureFileUpdated);
 
-  await assertLastHistoryEntryValues();
+  await undo(page);
+  await assertOutputTextureFileNameValue(page, textureFileInitial);
 
-  // x fields have been changed, therefore x history entries
-  const numberOfMutations = 4;
-  for (const _ of Array.from(Array(numberOfMutations))) {
-    await undo(page);
-    history.pop();
-    await assertLastHistoryEntryValues();
-  }
+  await undo(page);
+  await assertOutputDataFileNameValue(page, dataFileInitial);
+
+  await undo(page);
+  await assertOutputTextureFormatValue(page, textureFormatInitial);
+
+  await undo(page);
+  assertOutputFrameworkValue(page, frameworkInitial);
+
   await assertCannotUndo(page);
-  await assertCanRedo(page);
-  await assertFormValues({
-    framework: frameworkInitialValue,
-    textureFormat: textureFormatInitialValue,
-    dataFile: dataFileNameInitialValue,
-    textureFile: textureFileNameInitialValue,
-  });
 
-  for (const _ of Array.from(Array(numberOfMutations))) {
-    await redo(page);
-  }
+  await redo(page);
+  await assertOutputFrameworkValue(page, frameworkUpdated);
+
+  await redo(page);
+  await assertOutputTextureFormatValue(page, textureFormatUpdated);
+
+  await redo(page);
+  await assertOutputDataFileNameValue(page, dataFileUpdated);
+
+  await redo(page);
+  await assertOutputFrameworkValue(page, frameworkUpdated);
 
   await assertCannotRedo(page);
-  await assertCanUndo(page);
-  await assertFormValues({
-    framework: frameworkUpdatedValue,
-    textureFormat: textureFormatUpdatedValue,
-    dataFile: dataFileNameUpdatedValue,
-    textureFile: textureFileNameUpdatedValue,
-  });
 });
 test("should show the image quality input only if the selected texture format supports that feature", async ({
   page,

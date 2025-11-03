@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
-import { PORT as APP_DEV_SERVER_PORT } from "./vite.config";
+import { DEV_SERVER_PORT, PREVIEW_SERVER_PORT } from "./vite.config";
 
+const PROD = process.env.NODE_ENV === "production";
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -13,9 +14,10 @@ import { PORT as APP_DEV_SERVER_PORT } from "./vite.config";
  * See https://playwright.dev/docs/test-configuration.
  */
 
-const DEV_SERVER_URL = `http://localhost:${APP_DEV_SERVER_PORT}`;
+const SERVER_URL = `http://localhost:${PROD ? PREVIEW_SERVER_PORT : DEV_SERVER_PORT}`;
 export default defineConfig({
   testDir: "./e2e",
+  globalSetup: "./e2e/setup.ts",
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -27,13 +29,18 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: "line",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  expect: {
+    timeout: 5000, // Expect assertions timeout (5 seconds)
+  },
   use: {
     locale: "en-US",
     /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: DEV_SERVER_URL,
+    baseURL: SERVER_URL,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
+    actionTimeout: 5000, // Actions like click, fill (10 seconds)
+    navigationTimeout: 10000, // Navigation timeouts (15 seconds)
   },
 
   /* Configure projects for major browsers */
@@ -75,9 +82,15 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: {
-    command: "npm run dev",
-    url: DEV_SERVER_URL,
-    reuseExistingServer: !process.env.CI,
-  },
+  webServer: PROD
+    ? {
+        command: "npm run preview",
+        url: SERVER_URL,
+        reuseExistingServer: !process.env.CI,
+      }
+    : {
+        command: "npm run dev",
+        url: SERVER_URL,
+        reuseExistingServer: !process.env.CI,
+      },
 });

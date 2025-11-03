@@ -12,6 +12,7 @@ dist
 dev-dist
 dist-ssr
 *.local
+e2e/assets
 
 # Editor directories and files
 .vscode/*
