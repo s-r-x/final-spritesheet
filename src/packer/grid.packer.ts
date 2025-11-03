@@ -4,10 +4,11 @@ import { maxBy } from "#utils/max-by";
 import type {
   tPackedBin,
   tPackedSprite,
-  tPacker,
+  tPackerOptions,
   tPackerReturnValue,
   tPackerSpriteExcerpt,
 } from "./types";
+import { AbstractPacker } from "./abstract.packer";
 
 const MAX_ITERATIONS = 1000;
 const MAX_ITERATIONS_ERR_MESSAGE = "Too many iterations in grid packer";
@@ -16,17 +17,25 @@ const defaultReturnValue: tPackerReturnValue = {
   oversizedSprites: [],
   bins: [],
 };
-export const gridPacker: tPacker = {
-  pack({ size, sprites, padding = 0, edgeSpacing = 0, forceSingleBin }) {
-    if (isEmpty(sprites)) return defaultReturnValue;
+class GridPacker extends AbstractPacker {
+  public pack(baseOpts: tPackerOptions): tPackerReturnValue {
+    if (isEmpty(baseOpts.sprites)) return defaultReturnValue;
+    this._setOptions(baseOpts);
+    const {
+      size: maxSize,
+      sprites,
+      padding,
+      edgeSpacing,
+      forceSingleBin,
+    } = this._options;
 
     const doubleEdgeSpacing = edgeSpacing * 2;
     const cellWidth = maxBy(sprites, (sprite) => sprite.width)?.width;
     const cellHeight = maxBy(sprites, (sprite) => sprite.height)?.height;
 
     if (!cellWidth || !cellHeight) return defaultReturnValue;
-    const isTooWide = cellWidth + doubleEdgeSpacing > size;
-    const isTooTall = cellHeight + doubleEdgeSpacing > size;
+    const isTooWide = cellWidth + doubleEdgeSpacing > maxSize;
+    const isTooTall = cellHeight + doubleEdgeSpacing > maxSize;
     if (isTooWide || isTooTall) {
       return {
         oversizedSprites: sprites.map((sprite) => sprite.id),
@@ -38,8 +47,11 @@ export const gridPacker: tPacker = {
       spritesInput: tPackerSpriteExcerpt[],
       binIndex: number,
     ): Maybe<tPackedBin> => {
-      const numberOfCols = Math.floor(
-        (size + padding - doubleEdgeSpacing) / (cellWidth + padding),
+      const numberOfCols = Math.min(
+        spritesInput.length,
+        Math.floor(
+          (maxSize + padding - doubleEdgeSpacing) / (cellWidth + padding),
+        ),
       );
       const binWidth =
         doubleEdgeSpacing +
@@ -55,7 +67,7 @@ export const gridPacker: tPacker = {
         const x = edgeSpacing + col * (cellWidth + padding);
         const y = edgeSpacing + row * (cellHeight + padding);
         const newBinHeight = y + cellHeight + edgeSpacing;
-        if (newBinHeight > size) {
+        if (newBinHeight > maxSize) {
           break;
         } else {
           binHeight = newBinHeight;
@@ -70,8 +82,8 @@ export const gridPacker: tPacker = {
       }
       if (isEmpty(packedSprites)) return null;
       return {
-        maxWidth: size,
-        maxHeight: size,
+        maxWidth: maxSize,
+        maxHeight: maxSize,
         width: binWidth,
         height: binHeight,
         sprites: packedSprites,
@@ -87,6 +99,7 @@ export const gridPacker: tPacker = {
       invariant(i < MAX_ITERATIONS, MAX_ITERATIONS_ERR_MESSAGE);
       const bin = packBin(spritesToPack, i);
       if (bin) {
+        this._normalizeBinDimensions(bin);
         bins.push(bin);
       } else {
         break;
@@ -101,5 +114,9 @@ export const gridPacker: tPacker = {
       oversizedSprites: oversizedSprites,
       bins,
     };
-  },
-};
+  }
+}
+
+const gridPacker = new GridPacker();
+
+export { gridPacker };

@@ -1,10 +1,11 @@
 import { invariant } from "#utils/invariant";
 import { isEmpty } from "#utils/is-empty";
 import { sortBy } from "#utils/sort-by";
+import { AbstractPacker } from "./abstract.packer";
 import type {
   tPackedBin,
   tPackedSprite,
-  tPacker,
+  tPackerOptions,
   tPackerReturnValue,
   tPackerSpriteExcerpt,
 } from "./types";
@@ -16,15 +17,18 @@ const defaultReturnValue: tPackerReturnValue = {
   oversizedSprites: [],
   bins: [],
 };
-export const basicPacker: tPacker = {
-  pack({
-    size,
-    sprites: baseSprites,
-    padding = 0,
-    edgeSpacing = 0,
-    forceSingleBin,
-  }) {
-    if (isEmpty(baseSprites)) return defaultReturnValue;
+
+class BasicPacker extends AbstractPacker {
+  public pack(baseOpts: tPackerOptions): tPackerReturnValue {
+    if (isEmpty(baseOpts.sprites)) return defaultReturnValue;
+    this._setOptions(baseOpts);
+    const {
+      size: maxSize,
+      sprites: baseSprites,
+      padding,
+      edgeSpacing,
+      forceSingleBin,
+    } = this._options;
     const sortedSprites = sortBy(
       baseSprites,
       (sprite) => sprite.height,
@@ -35,8 +39,8 @@ export const basicPacker: tPacker = {
     const { oversized: oversizedSprites, ok: sprites } = sortedSprites.reduce(
       (acc, sprite) => {
         if (
-          sprite.width + edgeSpacing * 2 > size ||
-          sprite.height + edgeSpacing * 2 > size
+          sprite.width + edgeSpacing * 2 > maxSize ||
+          sprite.height + edgeSpacing * 2 > maxSize
         ) {
           acc.oversized.push(sprite.id);
         } else {
@@ -75,7 +79,7 @@ export const basicPacker: tPacker = {
         let x = edgeSpacing + col * padding + shelfWidth;
         let maybeNewBinWidth = x + sprite.width + edgeSpacing;
         // too wide. starting a new row
-        if (maybeNewBinWidth > size) {
+        if (maybeNewBinWidth > maxSize) {
           shelfWidth = 0;
           shelfY += shelfHeight;
           x = edgeSpacing;
@@ -87,7 +91,7 @@ export const basicPacker: tPacker = {
         const y = edgeSpacing + row * padding + shelfY;
         const maybeNewBinHeight = y + sprite.height + edgeSpacing;
         // too tall. the bin is full
-        if (maybeNewBinHeight > size) {
+        if (maybeNewBinHeight > maxSize) {
           break;
         }
         shelfWidth += sprite.width;
@@ -105,8 +109,8 @@ export const basicPacker: tPacker = {
       if (isEmpty(packedSprites)) return null;
       return {
         id: String(binIndex + 1),
-        maxWidth: size,
-        maxHeight: size,
+        maxWidth: maxSize,
+        maxHeight: maxSize,
         width: binWidth,
         height: binHeight,
         sprites: packedSprites,
@@ -120,6 +124,7 @@ export const basicPacker: tPacker = {
       invariant(i < MAX_ITERATIONS, MAX_ITERATIONS_ERR_MESSAGE);
       const bin = packBin(spritesToPack, i);
       if (bin) {
+        this._normalizeBinDimensions(bin);
         bins.push(bin);
       } else {
         break;
@@ -135,5 +140,8 @@ export const basicPacker: tPacker = {
       oversizedSprites: oversizedSprites,
       bins,
     };
-  },
-};
+  }
+}
+
+const basicPacker = new BasicPacker();
+export { basicPacker };

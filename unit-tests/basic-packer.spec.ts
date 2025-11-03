@@ -1,3 +1,4 @@
+import { isBoolean } from "#utils/is-boolean";
 import { basicPacker } from "@/packer/basic.packer";
 import type { tPackerReturnValue, tPackerSpriteExcerpt } from "@/packer/types";
 import { describe, expect, test } from "vitest";
@@ -352,6 +353,62 @@ describe("basic packer", () => {
       expect(bins[0].sprites).toHaveLength(2);
     },
   });
+  testPacker({
+    size: 10,
+    sprites: generateSprites(1, 10, 10),
+    oversizedCount: 1,
+    pot: true,
+  });
+  testPacker({
+    size: 66,
+    sprites: generateSprites(2, 33, 33),
+    binCount: 2,
+    oversizedCount: 0,
+    pot: true,
+    firstBinWidth: 64,
+    firstBinHeight: 64,
+  });
+  testPacker({
+    size: 128,
+    sprites: generateSprites(1, 100, 100),
+    binCount: 1,
+    pot: true,
+    firstBinWidth: 128,
+    firstBinHeight: 128,
+  });
+  testPacker({
+    size: 128,
+    sprites: generateSprites(1, 126, 126),
+    edgeSpacing: 1,
+    binCount: 1,
+    pot: true,
+    firstBinWidth: 128,
+    firstBinHeight: 128,
+  });
+  testPacker({
+    size: 32,
+    sprites: generateSprites(1, 32, 32),
+    binCount: 1,
+    pot: true,
+    firstBinWidth: 32,
+    firstBinHeight: 32,
+  });
+  testPacker({
+    size: 64,
+    sprites: [...generateSprites(1, 30, 30), ...generateSprites(1, 34, 34)],
+    binCount: 1,
+    pot: true,
+    firstBinWidth: 64,
+    firstBinHeight: 64,
+  });
+  testPacker({
+    size: 128,
+    sprites: generateSprites(1, 7, 7),
+    binCount: 1,
+    pot: true,
+    firstBinWidth: 8,
+    firstBinHeight: 8,
+  });
   test("should pack into 1 bin, and drop other sprites if forceSingleBin is true", () => {
     const { bins, oversizedSprites } = basicPacker.pack({
       size: 10,
@@ -371,6 +428,7 @@ function testPacker({
   edgeSpacing = 0,
   padding = 0,
   extraTests,
+  pot,
   firstBinWidth,
   firstBinHeight,
 }: {
@@ -380,6 +438,7 @@ function testPacker({
   oversizedCount?: number;
   padding?: number;
   edgeSpacing?: number;
+  pot?: boolean;
   extraTests?: (value: tPackerReturnValue) => any;
   firstBinWidth?: number;
   firstBinHeight?: number;
@@ -395,10 +454,21 @@ function testPacker({
     sprites,
     padding,
     edgeSpacing,
+    pot,
   });
   parts.push(`${size}x${size}`);
-  if (padding || edgeSpacing) {
-    parts.push(`{ padding: ${padding}, edgeSpacing: ${edgeSpacing} } :`);
+  if (padding || edgeSpacing || isBoolean(pot)) {
+    const optsParts: string[] = [];
+    if (padding) {
+      optsParts.push(`padding: ${padding}`);
+    }
+    if (edgeSpacing) {
+      optsParts.push(`edgeSpacing: ${edgeSpacing}`);
+    }
+    if (isBoolean(pot)) {
+      optsParts.push(`pot: ${pot}`);
+    }
+    parts.push("{" + optsParts.join(", ") + "}");
   }
   if (binCount) {
     parts.push(`should pack into ${binCount} bins`);
