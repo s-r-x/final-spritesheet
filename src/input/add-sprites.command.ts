@@ -1,7 +1,7 @@
-import { Command } from "@/common/commands/command";
+import { Command, type tExecArgs } from "@/common/commands/command";
 import type { tSprite } from "./types";
 import { addSpritesAtom, removeSpritesAtom } from "./sprites.atom";
-import { spriteToPersisted } from "./sprites.mapper";
+import { historyEntryToSprite, spriteToPersisted } from "./sprites.mapper";
 
 type tAddSpriteCommandPayload = {
   sprites: tSprite[];
@@ -9,8 +9,15 @@ type tAddSpriteCommandPayload = {
 export class AddSpritesCommand extends Command<tAddSpriteCommandPayload> {
   public label = "add-sprites";
   public isUndoable = true;
-  protected async _exec() {
-    this._atomsStore.set(addSpritesAtom, this._state.sprites);
+  protected async _exec({ isRedo }: tExecArgs) {
+    if (isRedo) {
+      const sprites = await Promise.all(
+        this._state.sprites.map(historyEntryToSprite),
+      );
+      this._atomsStore.set(addSpritesAtom, sprites);
+    } else {
+      this._atomsStore.set(addSpritesAtom, this._state.sprites);
+    }
   }
   protected async _undo() {
     this._atomsStore.set(
