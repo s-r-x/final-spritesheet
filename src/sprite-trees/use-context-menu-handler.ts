@@ -35,6 +35,7 @@ import { useOpenSpriteEditor } from "@/input/use-sprite-editor";
 import { useFocusBinOnCanvas } from "./use-focus-bin-on-canvas";
 import { useOpenCustomBinEditor } from "#custom-bins/use-custom-bin-editor";
 import { isDefaultBin } from "#custom-bins/is-default-bin";
+import { useOpenAnimationPreview } from "@/animation-preview/use-animation-preview";
 
 export const useContextMenuHandler = (treeApi: tTreeApi | undefined) => {
   const { t } = useTranslation();
@@ -43,6 +44,7 @@ export const useContextMenuHandler = (treeApi: tTreeApi | undefined) => {
   const openFolderEditor = useOpenFolderEditor();
   const openSpriteEditor = useOpenSpriteEditor();
   const openCustomBinEditor = useOpenCustomBinEditor();
+  const openAnimationPreview = useOpenAnimationPreview();
   const removeItemNodes = useRemoveItemNodes();
   const removeFolderNodes = useRemoveFolderNodes();
   const removeCustomBinNodes = useRemoveCustomBinNodes();
@@ -164,6 +166,8 @@ export const useContextMenuHandler = (treeApi: tTreeApi | undefined) => {
 
       const canUnmarkAsAnimation = !isOnlyRootSelected && isMarkedAsAnimation;
       const canMarkAsAnimation = !isOnlyRootSelected && !isMarkedAsAnimation;
+      const canOpenAnimationPreview =
+        isOnlyOneSelected && firstFolder?.isAnimation;
       const canUpdate = isOnlyOneSelected && !isOnlyRootSelected;
       const canApplySort =
         !isRootSelected &&
@@ -189,6 +193,11 @@ export const useContextMenuHandler = (treeApi: tTreeApi | undefined) => {
             id: "update_folder",
             title: t("update"),
             onClick: () => openFolderEditor(firstFolder.id),
+          },
+          canOpenAnimationPreview && {
+            id: "animation_preview",
+            title: t("folders.open_animation_preview"),
+            onClick: () => openAnimationPreview(firstFolder.id),
           },
           canMarkAsAnimation && {
             id: "animation",

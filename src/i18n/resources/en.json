@@ -118,7 +118,11 @@
       "mark_as_animation": "Mark as animation",
       "unmark_as_animation": "Unmark as animation",
       "apply_sort": "Apply sort",
-      "sort_opt_name": "Name"
+      "sort_opt_name": "Name",
+      "open_animation_preview": "Preview animation"
+    },
+    "animation_preview": {
+      "title": "Animation preview"
     }
   }
 }

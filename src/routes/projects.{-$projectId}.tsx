@@ -15,6 +15,7 @@ import SpriteEditor from "@/input/sprite-editor.component";
 import ProjectEditor from "@/projects/project-editor.component";
 import FolderEditor from "@/folders/folder-editor.component";
 import CustomBinEditor from "#custom-bins/custom-bin-editor.component";
+import AnimationPreview from "@/animation-preview/animation-preview.component";
 import {
   List,
   Center,
@@ -257,6 +258,7 @@ function Project() {
         <ProjectEditor />
         <FolderEditor />
         <CustomBinEditor />
+        <AnimationPreview />
       </CanvasRefsProvider>
     </SharedErrorBoundary>
   );

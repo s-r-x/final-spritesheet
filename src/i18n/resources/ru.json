@@ -118,7 +118,11 @@
       "mark_as_animation": "Пометить как анимацию",
       "unmark_as_animation": "Убрать анимацию",
       "apply_sort": "Сортировать",
-      "sort_opt_name": "Имя"
+      "sort_opt_name": "Имя",
+      "open_animation_preview": "Превью анимации"
+    },
+    "animation_preview": {
+      "title": "Превью анимации"
     }
   }
 }

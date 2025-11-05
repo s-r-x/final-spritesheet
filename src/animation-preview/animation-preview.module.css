@@ -1,0 +1,47 @@
+.root {
+  --header-height: calc(3.75rem * var(--mantine-scale));
+  --frame-default-width: 500px;
+  --frame-default-height: 500px;
+  --frame-max-height: calc(
+    100dvh -
+    var(--header-height) -
+    var(--toolbar-height) -
+    var(--mantine-spacing-md) -
+    var(--modal-y-offset) *
+    2 -
+    5px
+  );
+  --content-max-width: calc(
+    100vw -
+    var(--modal-x-offset) *
+    2 -
+    var(--mantine-spacing-md) *
+    2 -
+    5px
+  );
+}
+.framesContainer {
+  width: min(
+    var(--frame-default-width),
+    var(--frame-width),
+    var(--content-max-width)
+  );
+  height: min(
+    var(--frame-height),
+    var(--frame-default-height),
+    var(--frame-max-height)
+  );
+}
+.frame {
+  max-width: 100%;
+  display: block;
+  max-height: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.toolbar {
+  padding-inline: var(--app-space-lg);
+  padding-block-start: var(--app-space-md);
+  padding-block-end: var(--app-space-lg);
+}
