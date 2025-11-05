@@ -12,6 +12,9 @@ body {
 
 :root {
   --app-space-xs: var(--mantine-spacing-xs);
+  --app-space-sm: var(--mantine-spacing-sm);
+  --app-space-md: var(--mantine-spacing-md);
+  --app-space-lg: var(--mantine-spacing-lg);
   --app-color-body: var(--mantine-color-body);
   --app-color-primary: var(--mantine-primary-color-filled);
   --app-color-danger: var(--mantine-color-error);
