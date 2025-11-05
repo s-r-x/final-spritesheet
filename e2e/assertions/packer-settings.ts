@@ -61,6 +61,5 @@ export const assertAllowRotEnabledState = async (
     await expect(packerAllowRotLocator(page)).toBeEnabled();
   } else {
     await expect(packerAllowRotLocator(page)).toBeDisabled();
-
   }
 };

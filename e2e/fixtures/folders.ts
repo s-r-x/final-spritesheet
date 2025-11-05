@@ -7,7 +7,6 @@ import {
 } from "../locators/folders";
 import { openFoldersListCtxMenu } from "./open-ctx-menu";
 import { t } from "../utils/t";
-import { foldersInFoldersListLocator } from "../locators/folders-list";
 import { generateImage } from "../utils/generate-image";
 
 export const openFolderCreator = async (page: Page) => {

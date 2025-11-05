@@ -35,6 +35,9 @@ export const assertOutputImageQualityValue = async (
   await expect(outputImageQualityLocator(page)).toHaveValue(value);
 };
 
-export const assertOutputFrameworkValue = async (page: Page, value: tOutputFramework) => {
+export const assertOutputFrameworkValue = async (
+  page: Page,
+  value: tOutputFramework,
+) => {
   await expect(outputFrameworkLocator(page)).toHaveValue(value);
 };

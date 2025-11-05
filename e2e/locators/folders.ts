@@ -12,5 +12,7 @@ export const folderEditorNameLocator = (page: Page) => {
   return folderEditorFormLocator(page).getByLabel(t(formI18Ns + "name"));
 };
 export const folderEditorIsAnimationLocator = (page: Page) => {
-  return folderEditorFormLocator(page).getByLabel(t(formI18Ns + "is_animation"));
+  return folderEditorFormLocator(page).getByLabel(
+    t(formI18Ns + "is_animation"),
+  );
 };

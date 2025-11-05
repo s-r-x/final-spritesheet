@@ -6,7 +6,9 @@ export const packerSettingsFormLocator = (page: Page) => {
 };
 
 export const packerAlgorithmLocator = (page: Page) => {
-  return packerSettingsFormLocator(page).getByLabel(t("packer_opts.packer_algorithm"));
+  return packerSettingsFormLocator(page).getByLabel(
+    t("packer_opts.packer_algorithm"),
+  );
 };
 export const packerSheetSizeLocator = (page: Page) => {
   return packerSettingsFormLocator(page).getByLabel(t("packer_opts.max_size"));
