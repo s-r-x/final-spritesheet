@@ -15,6 +15,7 @@ const RightPanelModal = (props: tProps) => {
   return (
     <Drawer
       position="bottom"
+      zIndex={100}
       opened={isOpen}
       onClose={onClose}
       title={props.title}

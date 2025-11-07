@@ -15,6 +15,7 @@ const LeftPanelModal = (props: tProps) => {
   const onClose = useCloseLeftPanelModal();
   return (
     <Drawer
+      zIndex={100}
       position="left"
       opened={isOpen}
       onClose={onClose}
