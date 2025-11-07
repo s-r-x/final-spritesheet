@@ -1,4 +1,3 @@
-import { SUPPORTED_SPRITE_MIME_TYPES } from "#config";
 import { useEffect } from "react";
 import { useAddSpritesFromFilesMutation } from "./use-add-sprites-from-files";
 
@@ -10,9 +9,7 @@ export const useHandleSpritesPasteEvent = () => {
       if (!clipboardData?.files?.length) {
         return;
       }
-      const filesToAdd = Array.from(clipboardData.files).filter((f) =>
-        SUPPORTED_SPRITE_MIME_TYPES.includes(f.type),
-      );
+      const filesToAdd = Array.from(clipboardData.files);
       addSpritesMut.mutate({ files: filesToAdd });
     };
 

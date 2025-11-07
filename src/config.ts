@@ -5,6 +5,7 @@ export const SUPPORTED_SPRITE_MIME_TYPES: string[] = [
   MIME_TYPES.png,
   MIME_TYPES.jpeg,
   MIME_TYPES.webp,
+  "image/bmp",
 ];
 
 export const SUPPORTED_LANGUAGES: { value: string; label: string }[] = [
