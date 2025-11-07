@@ -10,9 +10,13 @@ import {
   spritesInRootFolderLocator,
   spritesInSpecificFolderLocator,
 } from "./locators/folders-list";
-import { removeFolder, uploadSpritesToFolder } from "./fixtures/folders";
+import {
+  openFolderAnimationPreview,
+  removeFolder,
+  uploadSpritesToFolder,
+} from "./fixtures/folders";
 import { updateFolderWorkflow } from "./workflows/update-folder";
-import { openFoldersListCtxMenu } from "./fixtures/open-ctx-menu";
+import { closeCtxMenu, openFoldersListCtxMenu } from "./fixtures/open-ctx-menu";
 import { t } from "./utils/t";
 import { getFolderId } from "./queries/get-folder-id";
 import { invariant } from "../src/common/utils/invariant";
@@ -23,6 +27,7 @@ import { last } from "radash";
 import { dragAndDrop } from "./fixtures/drag-and-drop";
 import { undo } from "./fixtures/undo";
 import { redo } from "./fixtures/redo";
+import { folderAnimationPreviewLocator } from "./locators/folders";
 
 test.beforeEach(async ({ page }) => {
   await navigateTo(page);
@@ -364,4 +369,27 @@ test("should move sprites inside the same folder", async ({ page }) => {
   await redo(page);
   await refreshActualSprites();
   expect(actualSprites).toEqual(expectedSprites3);
+});
+test("should open animation preview", async ({ page }) => {
+  const folderName = "new";
+  await createFolderWorkflow(page, {
+    data: { name: folderName, isAnimation: true },
+  });
+  const openPreviewText = t("folders.open_animation_preview");
+  const ctxMenu = await openFoldersListCtxMenu(page, {
+    nodeName: folderName,
+  });
+  await ctxMenu.waitFor({ state: "visible" });
+  await expect(
+    ctxMenu.getByText(openPreviewText),
+    "animation preview shouldn't be visible if there are no sprites in a folder",
+  ).not.toBeVisible();
+  await closeCtxMenu(page);
+  const sprites = ["256x256.webp"];
+  await uploadSpritesToFolder(page, {
+    folderName,
+    sprites,
+  });
+  await openFolderAnimationPreview(page, { folderName });
+  await expect(folderAnimationPreviewLocator(page)).toBeVisible();
 });

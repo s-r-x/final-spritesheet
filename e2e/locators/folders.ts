@@ -16,3 +16,7 @@ export const folderEditorIsAnimationLocator = (page: Page) => {
     t(formI18Ns + "is_animation"),
   );
 };
+
+export const folderAnimationPreviewLocator = (page: Page) => {
+  return page.getByRole("dialog").getByTestId("folder-animation-preview");
+};

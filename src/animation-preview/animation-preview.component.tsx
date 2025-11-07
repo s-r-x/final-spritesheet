@@ -95,6 +95,7 @@ const AnimationPreview = ({ frames }: { frames: tSprite[] }) => {
         } as CSSProperties
       }
       className={styles.root}
+      data-testid="folder-animation-preview"
     >
       <div className={styles.framesContainer}>
         {activeFrame && (

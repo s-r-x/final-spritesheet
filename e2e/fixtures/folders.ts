@@ -58,3 +58,11 @@ export const uploadSpritesToFolder = async (
   ]);
   await fileChooser.setFiles(filePaths);
 };
+
+export const openFolderAnimationPreview = async (
+  page: Page,
+  { folderName: name }: { folderName: string },
+) => {
+  const ctxMenu = await openFoldersListCtxMenu(page, { nodeName: name });
+  await ctxMenu.getByText(t("folders.open_animation_preview")).click();
+};

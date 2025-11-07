@@ -167,7 +167,9 @@ export const useContextMenuHandler = (treeApi: tTreeApi | undefined) => {
       const canUnmarkAsAnimation = !isOnlyRootSelected && isMarkedAsAnimation;
       const canMarkAsAnimation = !isOnlyRootSelected && !isMarkedAsAnimation;
       const canOpenAnimationPreview =
-        isOnlyOneSelected && firstFolder?.isAnimation;
+        isOnlyOneSelected &&
+        firstFolder?.isAnimation &&
+        !isEmpty(firstFolder?.itemIds);
       const canUpdate = isOnlyOneSelected && !isOnlyRootSelected;
       const canApplySort =
         !isRootSelected &&
