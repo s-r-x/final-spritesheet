@@ -6,17 +6,9 @@ import { isEmpty } from "#utils/is-empty";
 import { Modal, Slider } from "@mantine/core";
 import ErrorBoundary from "#components/error-boundary";
 import { useTranslation } from "@/i18n/use-translation";
-import { extend } from "@pixi/react";
-import { Container, Graphics, Sprite, AnimatedSprite } from "pixi.js";
 import type { tSprite } from "@/input/types";
 import { type CSSProperties, useEffect, useMemo, useState } from "react";
 import { maxBy } from "#utils/max-by";
-extend({
-  Container,
-  Graphics,
-  Sprite,
-  AnimatedSprite,
-});
 import styles from "./animation-preview.module.css";
 import { useMeasure } from "#hooks/use-measure";
 import { usePersistedState } from "#hooks/use-persisted-state";
@@ -100,13 +92,6 @@ const AnimationPreview = ({ frames }: { frames: tSprite[] }) => {
       <div className={styles.framesContainer}>
         {activeFrame && (
           <img
-            style={{
-              maxWidth: "100%",
-              display: "block",
-              maxHeight: "100%",
-              height: "auto",
-              objectFit: "contain",
-            }}
             className={styles.frame}
             src={activeFrame.url}
             alt={activeFrame.name}
