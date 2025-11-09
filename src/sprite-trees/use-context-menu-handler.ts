@@ -272,16 +272,14 @@ export const useContextMenuHandler = (treeApi: tTreeApi | undefined) => {
       >[];
 
       const firstBin = selectedNodes[0];
-      const isOversizedSelected = firstBin.id === "oversized";
       openContextMenu({
         event: e,
         items: [
-          isOnlyOneSelected &&
-            !isOversizedSelected && {
-              id: "focus_bin",
-              title: t("focus"),
-              onClick: () => focusBin(firstBin.id),
-            },
+          isOnlyOneSelected && {
+            id: "focus_bin",
+            title: t("focus"),
+            onClick: () => focusBin(firstBin.id),
+          },
           {
             id: "clear_bin",
             title: t("clear_packed_bin"),

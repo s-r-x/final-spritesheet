@@ -13,6 +13,8 @@ import { isEmpty } from "#utils/is-empty";
 import { useSpritesMap } from "@/input/use-sprites-map";
 import { useTranslation } from "@/i18n/use-translation";
 import { isDefaultBin } from "#custom-bins/is-default-bin";
+import { maxBy } from "#utils/max-by";
+import { sumBy } from "#utils/sum-by";
 
 extend({
   Container,
@@ -78,30 +80,46 @@ const useHandleCanvasContainerResize = (isRendered: boolean) => {
   }, [isRendered, canvasRefs]);
 };
 
-const BIN_GAP = 10;
 const Bins = () => {
-  const { bins: packedBins } = usePackedSprites();
+  const BIN_GAP = 10;
+  const OVERSIZED_BIN_OFFSET_Y_OFFSET = 150;
+  const { bins: packedBins, oversizedSprites } = usePackedSprites();
   const projectId = useActiveProjectId();
   const focusProject = useFocusProject();
   const hasBins = !isEmpty(packedBins);
+  const hasOversizedSprites = !isEmpty(oversizedSprites);
   useEffect(() => {
-    if (hasBins) {
+    if (hasBins || hasOversizedSprites) {
       focusProject();
     }
-  }, [projectId, hasBins]);
+  }, [projectId, hasBins, hasOversizedSprites]);
   let offsetX = 0;
-  if (!hasBins) return null;
+  const binsRowHeight =
+    maxBy(packedBins, (bin) => bin.maxHeight)?.maxHeight || 0;
   return (
     <pixiContainer label="bins-root">
-      {packedBins.map((bin) => {
-        const jsx = (
-          <pixiContainer key={bin.id} x={offsetX}>
-            <Bin bin={bin} />
-          </pixiContainer>
-        );
-        offsetX += bin.maxWidth + BIN_GAP;
-        return jsx;
-      })}
+      {hasBins &&
+        packedBins.map((bin) => {
+          const jsx = (
+            <pixiContainer key={bin.id} x={offsetX}>
+              <Bin bin={bin} />
+            </pixiContainer>
+          );
+          offsetX += bin.maxWidth + BIN_GAP;
+          return jsx;
+        })}
+      {hasOversizedSprites && (
+        <pixiContainer
+          label={"bin-oversized"}
+          y={
+            binsRowHeight > 0
+              ? binsRowHeight + OVERSIZED_BIN_OFFSET_Y_OFFSET
+              : 0
+          }
+        >
+          <OversizedBin oversizedSpritesIds={oversizedSprites} />
+        </pixiContainer>
+      )}
     </pixiContainer>
   );
 };
@@ -176,6 +194,7 @@ const BinName = ({ name }: { name: string }) => {
   const theme = useMantineTheme();
   const color = colorScheme === "dark" ? theme.white : theme.black;
   const [y, setY] = useState(0);
+  const yOffset = 5;
   return (
     <pixiText
       y={y}
@@ -188,10 +207,62 @@ const BinName = ({ name }: { name: string }) => {
       }}
       ref={(text) => {
         if (text) {
-          setY(-text.height);
+          setY(-(text.height + yOffset));
         }
       }}
     />
+  );
+};
+
+const OversizedBin = ({
+  oversizedSpritesIds,
+}: {
+  oversizedSpritesIds: string[];
+}) => {
+  const GAP = 20;
+  const { t } = useTranslation();
+  const spritesMap = useSpritesMap();
+  const sprites = oversizedSpritesIds.map((id) => spritesMap[id]);
+  const containerWidth =
+    sumBy(sprites, (sprite) => sprite.width) +
+    GAP * (sprites.length - 1) +
+    GAP * 2;
+  const containerHeight =
+    (maxBy(sprites, (sprite) => sprite.height)?.height || 0) + GAP * 2;
+
+  const bgColor = useMantineTheme().colors.red[5];
+  const drawBg = useCallback(
+    (graphics: Graphics) => {
+      graphics
+        .clear()
+        .setFillStyle({ color: bgColor })
+        .rect(0, 0, containerWidth, containerHeight)
+        .fill();
+    },
+    [containerWidth, containerHeight, bgColor],
+  );
+  let offsetX = GAP;
+  return (
+    <pixiContainer>
+      <pixiGraphics draw={drawBg} />
+      <BinName name={t("oversized_sprites")} />
+      {sprites.map((sprite) => {
+        if (!sprite) return null;
+        const jsx = (
+          <pixiSprite
+            scale={sprite.scale}
+            label={"sprite-" + sprite.id}
+            key={sprite.id}
+            texture={sprite.texture}
+            x={offsetX}
+            y={GAP}
+          />
+        );
+
+        offsetX += sprite.width + GAP;
+        return jsx;
+      })}
+    </pixiContainer>
   );
 };
 
