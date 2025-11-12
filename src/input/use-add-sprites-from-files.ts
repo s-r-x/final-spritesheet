@@ -11,14 +11,25 @@ import { useStore } from "jotai";
 import type { tFolder } from "@/folders/types";
 import { isEmpty } from "#utils/is-empty";
 import { SUPPORTED_SPRITE_MIME_TYPES } from "#config";
+import type { tCustomBin } from "#custom-bins/types";
+import { useCreateUpdateCustomBinsCommand } from "#custom-bins/use-update-custom-bins";
 
 export const useAddSpritesFromFiles = () => {
   const atomsStore = useStore();
   const projectId = useActiveProjectId();
   const historyManager = useHistoryManager();
   const createUpdateFoldersCommand = useCreateUpdateFoldersCommand();
+  const createUpdateCustomBinsCommand = useCreateUpdateCustomBinsCommand();
   return useCallback(
-    async ({ files, folder }: { files: File[]; folder?: tFolder }) => {
+    async ({
+      files,
+      folder,
+      customBin,
+    }: {
+      files: File[];
+      folder?: tFolder;
+      customBin?: tCustomBin;
+    }) => {
       files = files.filter((file) =>
         SUPPORTED_SPRITE_MIME_TYPES.includes(file.type),
       );
@@ -42,10 +53,28 @@ export const useAddSpritesFromFiles = () => {
           },
         });
         cmds.push(updateFoldersCmd);
+      } else if (customBin) {
+        const updateCustomBinsCmd = createUpdateCustomBinsCommand({
+          [customBin.id]: {
+            bin: customBin,
+            data: {
+              itemIds: customBin.itemIds.concat(
+                sprites.map((sprite) => sprite.id),
+              ),
+            },
+          },
+        });
+        cmds.push(updateCustomBinsCmd);
       }
       await historyManager.execCommand(cmds);
     },
-    [projectId, historyManager, createUpdateFoldersCommand, atomsStore],
+    [
+      projectId,
+      historyManager,
+      createUpdateFoldersCommand,
+      createUpdateCustomBinsCommand,
+      atomsStore,
+    ],
   );
 };
 

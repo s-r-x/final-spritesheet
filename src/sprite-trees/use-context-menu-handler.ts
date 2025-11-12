@@ -36,11 +36,13 @@ import { useFocusBinOnCanvas } from "./use-focus-bin-on-canvas";
 import { useOpenCustomBinEditor } from "#custom-bins/use-custom-bin-editor";
 import { isDefaultBin } from "#custom-bins/is-default-bin";
 import { useOpenAnimationPreview } from "@/animation-preview/use-animation-preview";
+import { useGetCustomBinsMap } from "#custom-bins/use-custom-bins";
 
 export const useContextMenuHandler = (treeApi: tTreeApi | undefined) => {
   const { t } = useTranslation();
   const addSpritesFromFiles = useAddSpritesFromFiles();
   const getFoldersMap = useGetFoldersMap();
+  const getCustomBinsMap = useGetCustomBinsMap();
   const openFolderEditor = useOpenFolderEditor();
   const openSpriteEditor = useOpenSpriteEditor();
   const openCustomBinEditor = useOpenCustomBinEditor();
@@ -51,9 +53,14 @@ export const useContextMenuHandler = (treeApi: tTreeApi | undefined) => {
   const clearBinNodes = useClearBinNodes();
   const focusSprite = useFocusSpriteOnCanvas();
   const focusBin = useFocusBinOnCanvas();
+  const clearUploadFilesTargets = () => {
+    uploadFilesTargetFolderRef.current = null;
+    uploadFilesTargetCustomBinRef.current = null;
+  };
   const addSpritesMut = useMutation(
     (files: File[]) => {
       const targetFolderId = uploadFilesTargetFolderRef.current;
+      const targetCustomBinId = uploadFilesTargetCustomBinRef.current;
       if (targetFolderId) {
         const folder = getFoldersMap()[targetFolderId];
         invariant(folder, "folder not found");
@@ -61,16 +68,20 @@ export const useContextMenuHandler = (treeApi: tTreeApi | undefined) => {
           files,
           folder,
         });
+      } else if (targetCustomBinId) {
+        const customBin = getCustomBinsMap()[targetCustomBinId];
+        invariant(customBin, "custom bin not found");
+        return addSpritesFromFiles({ files, customBin });
       } else {
         return addSpritesFromFiles({ files });
       }
     },
     {
       onSuccess() {
-        uploadFilesTargetFolderRef.current = null;
+        clearUploadFilesTargets();
       },
       onError() {
-        uploadFilesTargetFolderRef.current = null;
+        clearUploadFilesTargets();
       },
     },
   );
@@ -86,6 +97,7 @@ export const useContextMenuHandler = (treeApi: tTreeApi | undefined) => {
   const { openContextMenu } = useContextMenu();
   const updateFolders = useUpdateFolders();
   const uploadFilesTargetFolderRef = useRef<Maybe<string>>(null);
+  const uploadFilesTargetCustomBinRef = useRef<Maybe<string>>(null);
   const handler: TreeProps<tTreeNodeData>["onContextMenu"] = (e) => {
     if (!(e?.target instanceof HTMLElement)) return;
     const $node = e.target.closest("[data-node-id]");
@@ -301,25 +313,36 @@ export const useContextMenuHandler = (treeApi: tTreeApi | undefined) => {
       const isRootSelected = selectedNodes.some((node) =>
         isDefaultBin(node.data.nodeProps.bin.bin),
       );
+      const canFocusBin = isOnlyOneSelected;
+      const canUploadSpritesToBin = isOnlyOneSelected;
+      const canUpdateBin = isOnlyOneSelected && !isRootSelected;
+      const canRemoveBin = !isRootSelected;
+      const firstBin = selectedNodes[0]!.data.nodeProps.bin.bin;
       openContextMenu({
         event: e,
         items: [
-          isOnlyOneSelected && {
+          canUploadSpritesToBin && {
+            id: "upload_sprites",
+            title: t("add_sprites"),
+            onClick: () => {
+              uploadFilesTargetCustomBinRef.current = isRootSelected
+                ? null
+                : firstBin.id;
+              fileDialog.open();
+            },
+          },
+          canFocusBin && {
             id: "focus_bin",
             title: t("focus"),
-            onClick: () =>
-              focusBin(selectedNodes[0]!.data.nodeProps.bin.bin.id),
+            onClick: () => focusBin(firstBin.id),
           },
-          isOnlyOneSelected &&
-            !isRootSelected && {
-              id: "update",
-              title: t("update"),
-              onClick: () =>
-                openCustomBinEditor(
-                  selectedNodes[0]!.data.nodeProps.bin.bin.id,
-                ),
-            },
-          !isRootSelected && {
+          canUpdateBin && {
+            id: "update",
+            title: t("update"),
+            onClick: () =>
+              openCustomBinEditor(selectedNodes[0]!.data.nodeProps.bin.bin.id),
+          },
+          canRemoveBin && {
             id: "remove",
             title: t("remove"),
             onClick: () => removeCustomBinNodes(selectedNodes),

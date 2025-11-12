@@ -1,1 +1,1 @@
-export { sum as sumBy } from 'radash';
+export { sum as sumBy } from "radash";
