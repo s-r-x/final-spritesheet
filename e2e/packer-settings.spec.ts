@@ -9,6 +9,7 @@ import {
   PACKER_DEFAULT_POT,
   PACKER_DEFAULT_SHEET_SIZE,
   PACKER_DEFAULT_SPRITE_PADDING,
+  PACKER_DEFAULT_SQUARE,
   PACKER_ROTATION_SUPPORTED_FRAMEWORKS,
   PACKER_SUPPORTED_ALGORITHMS,
   PACKER_SUPPORTED_MULTIPACK_MODES,
@@ -24,6 +25,7 @@ import {
   changePackerPot,
   changePackerSheetSize,
   changePackerSpritePadding,
+  changePackerSquare,
 } from "./fixtures/change-packer-settings";
 import {
   assertAllowRotEnabledState,
@@ -34,6 +36,7 @@ import {
   assertPackerPotValue,
   assertPackerSheetSizeValue,
   assertPackerSpritePaddingValue,
+  assertPackerSquareValue,
 } from "./assertions/packer-settings";
 import { assertCannotRedo, assertCannotUndo } from "./assertions/history";
 import { changeOutputFramework } from "./fixtures/change-output-settings";
@@ -45,6 +48,7 @@ test("should update packer settings", async ({ page }) => {
   const paddingInitial = String(PACKER_DEFAULT_SPRITE_PADDING);
   const edgeSpacingInitial = String(PACKER_DEFAULT_EDGE_SPACING);
   const potInitial = PACKER_DEFAULT_POT;
+  const squareInitial = PACKER_DEFAULT_SQUARE;
   const algorithmInitial = PACKER_DEFAULT_ALGORITHM;
   const multipackInitial = PACKER_DEFAULT_MULTIPACK_MODE;
   const allowRotInitial = PACKER_DEFAULT_ALLOW_ROTATION;
@@ -61,6 +65,7 @@ test("should update packer settings", async ({ page }) => {
   const paddingUpdated = "10";
   const edgeSpacingUpdated = "5";
   const potUpdated = !potInitial;
+  const squareUpdated = !squareInitial;
   const allowRotUpdated = !PACKER_DEFAULT_ALLOW_ROTATION;
 
   await changePackerSheetSize(page, sheetUpdated);
@@ -80,6 +85,12 @@ test("should update packer settings", async ({ page }) => {
 
   await changePackerPot(page, potUpdated);
   await assertPackerPotValue(page, potUpdated);
+
+  await changePackerSquare(page, squareUpdated);
+  await assertPackerSquareValue(page, squareUpdated);
+
+  await undo(page);
+  await assertPackerSquareValue(page, squareInitial);
 
   await undo(page);
   await assertPackerPotValue(page, potInitial);
@@ -118,6 +129,9 @@ test("should update packer settings", async ({ page }) => {
 
   await redo(page);
   await assertPackerPotValue(page, potUpdated);
+
+  await redo(page);
+  await assertPackerSquareValue(page, squareUpdated);
 
   await assertCannotRedo(page);
 

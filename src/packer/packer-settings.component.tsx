@@ -51,6 +51,7 @@ const schema = z.object({
   spritePadding: spritePaddingSchema,
   edgeSpacing: edgeSpacingSchema,
   pot: z.boolean(),
+  square: z.boolean(),
   allowRotation: z.boolean(),
   packerAlgorithm: packerAlgorithmSchema,
   multipack: z.enum(PACKER_SUPPORTED_MULTIPACK_MODES),
@@ -173,6 +174,13 @@ const PackerSettings = ({ getCurrentSettings }: tProps) => {
           key={form.key("pot")}
           {...normalizeInputProps({
             props: form.getInputProps("pot", { type: "checkbox" }),
+          })}
+        />
+        <Checkbox
+          label={t("packer_opts.square")}
+          key={form.key("square")}
+          {...normalizeInputProps({
+            props: form.getInputProps("square", { type: "checkbox" }),
           })}
         />
         <Checkbox

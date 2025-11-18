@@ -7,6 +7,7 @@ import {
   packerSpritePaddingLocator,
   packerAlgorithmLocator,
   packerMultipackModeLocator,
+  packerSquareLocator,
 } from "../locators/packer-settings";
 import { assertCheckboxValue } from "./helpers";
 import type { tPackerAlgorithm, tPackerMultipackMode } from "../../src/config";
@@ -17,6 +18,9 @@ export const assertPackerAllowRotValue = async (page: Page, value: boolean) => {
 
 export const assertPackerPotValue = async (page: Page, value: boolean) => {
   await assertCheckboxValue(packerPotLocator(page), value);
+};
+export const assertPackerSquareValue = async (page: Page, value: boolean) => {
+  await assertCheckboxValue(packerSquareLocator(page), value);
 };
 
 export const assertPackerSheetSizeValue = async (

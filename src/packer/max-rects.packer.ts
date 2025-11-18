@@ -26,6 +26,7 @@ export const maxRectsPacker: tPacker = {
     pot,
     allowRotation,
     forceSingleBin,
+    square = false,
   }) {
     if (isEmpty(sprites)) return defaultReturnValue;
     const { oversized: oversizedSprites, ok: okSprites } = sprites.reduce(
@@ -51,6 +52,7 @@ export const maxRectsPacker: tPacker = {
       allowRotation,
       tag: false,
       exclusiveTag: false,
+      square,
     });
     packer.addArray(
       okSprites.map((s) => {

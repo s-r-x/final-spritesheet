@@ -15,6 +15,7 @@ export type tCustomBin = {
   packerSpritePadding: number;
   packerEdgeSpacing: number;
   packerPot: boolean;
+  packerSquare: boolean;
   packerAllowRotation: boolean;
 };
 export type tNormalizedCustomBin = {
@@ -29,7 +30,7 @@ export type tNormalizedCustomBin = {
 export type tCustomBinsMap = Record<string, tCustomBin>;
 
 export type tUpdateCustomBinData = Partial<
-  Pick<tCustomBin, "name" | "itemIds" | "folderIds">
+  Omit<tCustomBin, "id" | "projectId" | " createdAt">
 >;
 export type tUpdateCustomBinsArg = Record<
   string,

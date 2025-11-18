@@ -409,6 +409,45 @@ describe("basic packer", () => {
     firstBinWidth: 8,
     firstBinHeight: 8,
   });
+  testPacker({
+    size: 32,
+    sprites: generateSprites(1, 9, 10),
+    binCount: 1,
+    square: true,
+    firstBinWidth: 10,
+    firstBinHeight: 10,
+  });
+  testPacker({
+    size: 16,
+    sprites: generateSprites(2, 9, 4),
+    binCount: 1,
+    square: true,
+    edgeSpacing: 1,
+    padding: 2,
+    firstBinWidth: 12,
+    firstBinHeight: 12,
+  });
+  testPacker({
+    size: 16,
+    sprites: generateSprites(1, 9, 10),
+    binCount: 1,
+    square: true,
+    pot: true,
+    firstBinWidth: 16,
+    firstBinHeight: 16,
+  });
+  testPacker({
+    size: 8,
+    sprites: [...generateSprites(1, 6, 8), ...generateSprites(1, 3, 4)],
+    binCount: 2,
+    square: true,
+    firstBinWidth: 8,
+    firstBinHeight: 8,
+    extraTests({ bins }) {
+      expect(bins[1].width).toEqual(4);
+      expect(bins[1].height).toEqual(4);
+    },
+  });
   test("should pack into 1 bin, and drop other sprites if forceSingleBin is true", () => {
     const { bins, oversizedSprites } = basicPacker.pack({
       size: 10,
@@ -428,9 +467,10 @@ function testPacker({
   edgeSpacing = 0,
   padding = 0,
   extraTests,
-  pot,
   firstBinWidth,
   firstBinHeight,
+  pot,
+  square,
 }: {
   sprites: tPackerSpriteExcerpt[];
   binCount?: number;
@@ -438,10 +478,11 @@ function testPacker({
   oversizedCount?: number;
   padding?: number;
   edgeSpacing?: number;
-  pot?: boolean;
   extraTests?: (value: tPackerReturnValue) => any;
   firstBinWidth?: number;
   firstBinHeight?: number;
+  pot?: boolean;
+  square?: boolean;
 }): tPackerReturnValue {
   const parts: string[] = [];
   parts.push(
@@ -455,9 +496,10 @@ function testPacker({
     padding,
     edgeSpacing,
     pot,
+    square,
   });
   parts.push(`${size}x${size}`);
-  if (padding || edgeSpacing || isBoolean(pot)) {
+  if (padding || edgeSpacing || isBoolean(pot) || isBoolean(square)) {
     const optsParts: string[] = [];
     if (padding) {
       optsParts.push(`padding: ${padding}`);
@@ -467,6 +509,9 @@ function testPacker({
     }
     if (isBoolean(pot)) {
       optsParts.push(`pot: ${pot}`);
+    }
+    if (isBoolean(square)) {
+      optsParts.push(`square: ${square}`);
     }
     parts.push("{" + optsParts.join(", ") + "}");
   }

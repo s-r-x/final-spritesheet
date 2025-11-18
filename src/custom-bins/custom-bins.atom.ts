@@ -16,6 +16,7 @@ import {
   PACKER_DEFAULT_POT,
   PACKER_DEFAULT_SHEET_SIZE,
   PACKER_DEFAULT_SPRITE_PADDING,
+  PACKER_DEFAULT_SQUARE,
 } from "#config";
 import { activeProjectIdAtom } from "@/projects/projects.atom";
 import type { tFolder } from "@/folders/types";
@@ -95,6 +96,7 @@ export const normalizedCustomBinsAtom = atom((get): tNormalizedCustomBin[] => {
       packerSheetMaxSize: PACKER_DEFAULT_SHEET_SIZE,
       packerEdgeSpacing: PACKER_DEFAULT_EDGE_SPACING,
       packerPot: PACKER_DEFAULT_POT,
+      packerSquare: PACKER_DEFAULT_SQUARE,
       packerSpritePadding: PACKER_DEFAULT_SPRITE_PADDING,
     },
     folders: normalizedFoldersWithoutBin,

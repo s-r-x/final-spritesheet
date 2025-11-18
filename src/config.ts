@@ -31,6 +31,7 @@ export const PACKER_DEFAULT_SPRITE_PADDING = 0;
 export const PACKER_DEFAULT_EDGE_SPACING = 0;
 export const PACKER_DEFAULT_ALLOW_ROTATION = false;
 export const PACKER_DEFAULT_POT = true;
+export const PACKER_DEFAULT_SQUARE = false;
 export const PACKER_SUPPORTED_ALGORITHMS = [
   "maxRects",
   "grid",

@@ -5,6 +5,7 @@ import {
   packerEdgeSpacingLocator,
   packerMultipackModeLocator,
   packerPotLocator,
+  packerSquareLocator,
   packerSheetSizeLocator,
   packerSpritePaddingLocator,
 } from "../locators/packer-settings";
@@ -44,6 +45,15 @@ export const changePackerPot = async (page: Page, pot: boolean) => {
 export const togglePackerPot = async (page: Page) => {
   const el = packerPotLocator(page);
   await el.click();
+};
+
+export const changePackerSquare = async (page: Page, square: boolean) => {
+  const el = packerSquareLocator(page);
+  if (square) {
+    await el.check();
+  } else {
+    await el.uncheck();
+  }
 };
 
 export const changePackerSheetSize = async (

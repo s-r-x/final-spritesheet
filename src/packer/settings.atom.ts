@@ -12,6 +12,7 @@ import {
   PACKER_DEFAULT_POT,
   PACKER_DEFAULT_SHEET_SIZE,
   PACKER_DEFAULT_SPRITE_PADDING,
+  PACKER_DEFAULT_SQUARE,
 } from "#config";
 import { activeProjectAtom, updateProjectAtom } from "@/projects/projects.atom";
 import { outputSettingsAtom } from "@/output/output-settings.atom";
@@ -23,6 +24,7 @@ const defaultSettings: tPackerSettings = {
   spritePadding: PACKER_DEFAULT_SPRITE_PADDING,
   edgeSpacing: PACKER_DEFAULT_EDGE_SPACING,
   pot: PACKER_DEFAULT_POT,
+  square: PACKER_DEFAULT_SQUARE,
   allowRotation: PACKER_DEFAULT_ALLOW_ROTATION,
   multipack: PACKER_DEFAULT_MULTIPACK_MODE,
 };
@@ -78,6 +80,12 @@ export const potSettingAtom = atom(
   (get) => get(packerSettingsAtom).pot,
   (_get, set, pot: boolean) => {
     set(packerSettingsAtom, { pot });
+  },
+);
+export const squareSettingAtom = atom(
+  (get) => get(packerSettingsAtom).square,
+  (_get, set, square: boolean) => {
+    set(packerSettingsAtom, { square });
   },
 );
 export const allowRotationSettingAtom = atom(

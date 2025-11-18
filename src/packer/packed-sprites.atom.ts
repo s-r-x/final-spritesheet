@@ -7,6 +7,7 @@ import {
   spritePaddingSettingAtom,
   edgeSpacingSettingAtom,
   multipackSettingAtom,
+  squareSettingAtom,
 } from "./settings.atom";
 import { spritesAtom } from "@/input/sprites.atom";
 import { isEmpty } from "#utils/is-empty";
@@ -50,6 +51,7 @@ export const packedSpritesAtom = atom((get): tPackerReturnValue => {
   const algorithm = get(packerAlgorithmSettingAtom);
   const size = get(sheetMaxSizeSettingAtom);
   const pot = get(potSettingAtom);
+  const square = get(squareSettingAtom);
   const allowRotation = get(allowRotationSettingAtom);
   const padding = get(spritePaddingSettingAtom);
   const edgeSpacing = get(edgeSpacingSettingAtom);
@@ -59,6 +61,7 @@ export const packedSpritesAtom = atom((get): tPackerReturnValue => {
     padding,
     edgeSpacing,
     pot,
+    square,
     allowRotation,
     forceSingleBin: multipack !== "auto",
   };
@@ -79,6 +82,7 @@ export const packedSpritesAtom = atom((get): tPackerReturnValue => {
               padding: customBin.packerSpritePadding,
               edgeSpacing: customBin.packerEdgeSpacing,
               pot: customBin.packerPot,
+              square: customBin.packerSquare,
               allowRotation: checkPackerRotationSupport({
                 framework: get(outputSettingsAtom).framework,
                 algorithm: customBin.packerAlgorithm,

@@ -29,6 +29,7 @@ import {
   PACKER_DEFAULT_EDGE_SPACING,
   PACKER_DEFAULT_SHEET_SIZE,
   PACKER_DEFAULT_SPRITE_PADDING,
+  PACKER_DEFAULT_SQUARE,
 } from "#config";
 import {
   edgeSpacingSchema,
@@ -76,6 +77,7 @@ const schema = z.object({
   packerSpritePadding: spritePaddingSchema.optional(),
   packerEdgeSpacing: edgeSpacingSchema.optional(),
   packerPot: z.boolean().optional(),
+  packerSquare: z.boolean().optional(),
   packerAllowRotation: z.boolean().optional(),
   packerAlgorithm: packerAlgorithmSchema.optional(),
 });
@@ -127,6 +129,7 @@ const CustomBinEditor = ({
       packerSpritePadding:
         bin?.packerSpritePadding || PACKER_DEFAULT_SPRITE_PADDING,
       packerPot: bin ? bin.packerPot : PACKER_DEFAULT_ALLOW_ROTATION,
+      packerSquare: bin ? bin.packerSquare : PACKER_DEFAULT_SQUARE,
       packerAlgorithm: bin?.packerAlgorithm || PACKER_DEFAULT_ALGORITHM,
       packerAllowRotation: bin
         ? bin.packerAllowRotation
@@ -192,6 +195,11 @@ const CustomBinEditor = ({
                   label={t("packer_opts.pot")}
                   key={form.key("packerPot")}
                   {...form.getInputProps("packerPot", { type: "checkbox" })}
+                />
+                <Checkbox
+                  label={t("packer_opts.square")}
+                  key={form.key("packerSquare")}
+                  {...form.getInputProps("packerSquare", { type: "checkbox" })}
                 />
                 <Checkbox
                   disabled={!isRotationSupported}

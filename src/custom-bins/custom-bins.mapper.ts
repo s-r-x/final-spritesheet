@@ -7,6 +7,7 @@ import {
   PACKER_DEFAULT_POT,
   PACKER_DEFAULT_SHEET_SIZE,
   PACKER_DEFAULT_SPRITE_PADDING,
+  PACKER_DEFAULT_SQUARE,
 } from "#config";
 import { isNumber } from "#utils/is-number";
 import { isBoolean } from "#utils/is-boolean";
@@ -18,6 +19,7 @@ export const persistedToCustomBin = ({
   packerPot,
   packerSheetMaxSize,
   packerSpritePadding,
+  packerSquare,
   ...bin
 }: tPersistedCustomBin): tCustomBin => {
   return {
@@ -39,5 +41,8 @@ export const persistedToCustomBin = ({
       ? packerAllowRotation
       : PACKER_DEFAULT_ALLOW_ROTATION,
     packerPot: isBoolean(packerPot) ? packerPot : PACKER_DEFAULT_POT,
+    packerSquare: isBoolean(packerSquare)
+      ? packerSquare
+      : PACKER_DEFAULT_SQUARE,
   };
 };

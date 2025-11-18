@@ -20,12 +20,14 @@ export abstract class AbstractPacker implements tPacker {
       padding = 0,
       edgeSpacing = 0,
       pot = false,
+      square = false,
       forceSingleBin = false,
       allowRotation = false,
       ...rest
     } = options;
     this._options = {
       ...rest,
+      square,
       padding,
       edgeSpacing,
       allowRotation,
@@ -54,6 +56,11 @@ export abstract class AbstractPacker implements tPacker {
         bin.width = newWidth;
         bin.height = newHeight;
       }
+    }
+    if (this._options.square) {
+      const sideLength = Math.max(bin.width, bin.height);
+      bin.width = sideLength;
+      bin.height = sideLength;
     }
   }
   public abstract pack(options: tPackerOptions): tPackerReturnValue;

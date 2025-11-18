@@ -19,6 +19,7 @@ export type tPersistedProject = {
   spritePadding?: number;
   edgeSpacing?: number;
   pot?: boolean;
+  square?: boolean;
   allowRotation?: boolean;
   framework?: tOutputFramework;
   multipack?: tPackerMultipackMode;
@@ -66,6 +67,7 @@ export type tPersistedCustomBin = {
   packerSpritePadding?: number;
   packerEdgeSpacing?: number;
   packerPot?: boolean;
+  packerSquare?: boolean;
   packerAllowRotation?: boolean;
   createdAt: string;
 };
@@ -96,6 +98,7 @@ export type tUpdateProjectData = Partial<
     | "pngCompression"
     | "imageQuality"
     | "multipack"
+    | "square"
   > & {
     thumb: {
       data: Blob;

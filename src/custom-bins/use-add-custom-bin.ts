@@ -11,6 +11,7 @@ import {
   PACKER_DEFAULT_POT,
   PACKER_DEFAULT_SHEET_SIZE,
   PACKER_DEFAULT_SPRITE_PADDING,
+  PACKER_DEFAULT_SQUARE,
 } from "#config";
 
 export const useAddCustomBin = () => {
@@ -29,6 +30,7 @@ export const useAddCustomBin = () => {
       packerSpritePadding = PACKER_DEFAULT_SPRITE_PADDING,
       packerSheetMaxSize = PACKER_DEFAULT_SHEET_SIZE,
       packerEdgeSpacing = PACKER_DEFAULT_EDGE_SPACING,
+      packerSquare = PACKER_DEFAULT_SQUARE,
       ...rest
     }: Partial<Omit<tCustomBin, "projectId">> &
       Pick<tCustomBin, "projectId">) => {
@@ -44,6 +46,7 @@ export const useAddCustomBin = () => {
           createdAt,
           useGlobalPackerOptions,
           packerPot,
+          packerSquare,
           packerAllowRotation,
           packerAlgorithm,
           packerSpritePadding,

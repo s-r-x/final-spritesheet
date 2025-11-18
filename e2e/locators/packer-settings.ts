@@ -28,6 +28,11 @@ export const packerPotLocator = (page: Page) => {
     name: t("packer_opts.pot"),
   });
 };
+export const packerSquareLocator = (page: Page) => {
+  return packerSettingsFormLocator(page).getByRole("checkbox", {
+    name: t("packer_opts.square"),
+  });
+};
 export const packerAllowRotLocator = (page: Page) => {
   return packerSettingsFormLocator(page).getByRole("checkbox", {
     name: t("packer_opts.allow_rot"),

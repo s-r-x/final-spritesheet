@@ -34,6 +34,7 @@ export type tPackerSettings = {
   spritePadding: number;
   edgeSpacing: number;
   pot: boolean;
+  square: boolean;
   allowRotation: boolean;
 };
 
@@ -43,6 +44,7 @@ export type tPackerOptions = {
   padding?: number;
   edgeSpacing?: number;
   pot?: boolean;
+  square?: boolean;
   allowRotation?: boolean;
   forceSingleBin?: boolean;
 };

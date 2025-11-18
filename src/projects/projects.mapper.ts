@@ -14,6 +14,7 @@ import {
   PACKER_DEFAULT_POT,
   PACKER_DEFAULT_SHEET_SIZE,
   PACKER_DEFAULT_SPRITE_PADDING,
+  PACKER_DEFAULT_SQUARE,
 } from "#config";
 import { isNumber } from "#utils/is-number";
 import { isBoolean } from "#utils/is-boolean";
@@ -54,6 +55,7 @@ const persistedToPackerSettings = (
     : PACKER_DEFAULT_ALLOW_ROTATION,
   pot: isBoolean(project.pot) ? project.pot : PACKER_DEFAULT_POT,
   multipack: project.multipack || PACKER_DEFAULT_MULTIPACK_MODE,
+  square: isBoolean(project.square) ? project.square : PACKER_DEFAULT_SQUARE,
 });
 
 const persistedToOutputSettings = (
