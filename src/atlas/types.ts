@@ -10,6 +10,7 @@ export type tGenerateAtlasFileArgs = {
   textureWidth: number;
   textureHeight: number;
   textureAtlasFilename: string;
+  pixelFormat?: string;
 };
 
 export type tGenerateAtlasFileResultEntry = {

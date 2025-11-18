@@ -24,6 +24,7 @@ type tOptions = {
 
 export const exportSpritesheet = async (opts: tOptions) => {
   const imageMime = mapImageFormatToMime(opts.textureFormat);
+  const pixelFormat = mapImageFormatToPixelFormat(opts.textureFormat);
 
   const bins = opts.packedSprites;
   const isMultipleBins = bins.length > 1;
@@ -49,6 +50,7 @@ export const exportSpritesheet = async (opts: tOptions) => {
         textureAtlasFilename: imageFilename,
         framework: opts.framework,
         animations: opts.animations?.[packedBin.id],
+        pixelFormat,
       });
       for (const entry of atlasFileEntries) {
         archive.file(entry.fileName, entry.content);
@@ -78,5 +80,17 @@ const mapImageFormatToMime = (format: string) => {
       return "image/webp";
     default:
       return "image/png";
+  }
+};
+const mapImageFormatToPixelFormat = (format: string) => {
+  switch (format) {
+    case "jpeg":
+    case "jpg":
+      return "RGB888";
+    case "png":
+    case "webp":
+      return "RGBA8888";
+    default:
+      return "RGBA8888";
   }
 };
