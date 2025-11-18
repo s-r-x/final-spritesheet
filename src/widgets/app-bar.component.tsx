@@ -56,6 +56,7 @@ const PackerAppBar = () => {
                     params={{
                       projectId: project.id,
                     }}
+                    style={{ textDecoration: "none", color: "inherit" }}
                   >
                     {project.name}
                   </Link>
