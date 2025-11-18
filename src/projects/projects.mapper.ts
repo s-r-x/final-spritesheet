@@ -32,6 +32,7 @@ export const persistedToProject = (
     name: project.name,
     thumbUrl,
     createdAt: project.createdAt,
+    lastOpenedAt: project.lastOpenedAt,
     packerSettings: persistedToPackerSettings(project),
     outputSettings: persistedToOutputSettings(project),
   };

@@ -28,6 +28,7 @@ export type tPersistedProject = {
   textureFileName?: string;
   pngCompression?: number;
   imageQuality?: number;
+  lastOpenedAt?: string;
   createdAt?: string;
 };
 export type tPersistedProjectWithThumb = tPersistedProject & {
@@ -99,6 +100,7 @@ export type tUpdateProjectData = Partial<
     | "imageQuality"
     | "multipack"
     | "square"
+    | "lastOpenedAt"
   > & {
     thumb: {
       data: Blob;
@@ -106,11 +108,10 @@ export type tUpdateProjectData = Partial<
     };
   }
 >;
-export type tCreateNewProjectData = {
-  id?: string;
-  name?: string;
-  createdAt?: string;
-};
+export type tCreateNewProjectData = Partial<
+  Pick<tPersistedProject, "id" | "name" | "createdAt" | "lastOpenedAt">
+>;
+
 export type tAddFolderData = Partial<Omit<tPersistedFolder, "projectId">> &
   Pick<tPersistedFolder, "projectId">;
 export type tUpdateFolderData = Partial<

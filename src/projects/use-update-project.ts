@@ -8,7 +8,10 @@ export const useUpdateProject = () => {
   const updateProject = useSetAtom(updateProjectAtom);
   const dbMutations = useDbMutations();
   return useCallback(
-    async (id: string, updates: Partial<Pick<tProject, "name">>) => {
+    async (
+      id: string,
+      updates: Partial<Pick<tProject, "name" | "lastOpenedAt">>,
+    ) => {
       const wasUpdated = updateProject(id, updates);
       if (wasUpdated) {
         await dbMutations.updateProject(id, updates);

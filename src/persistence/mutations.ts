@@ -29,6 +29,7 @@ export class DbMutations implements tDbMutations {
     id = generateId(),
     name = generateUniqueName(),
     createdAt = new Date().toISOString(),
+    lastOpenedAt = new Date().toISOString(),
   }: tCreateNewProjectData = {}): Promise<{
     project: tPersistedProject;
   }> {
@@ -36,6 +37,7 @@ export class DbMutations implements tDbMutations {
       id,
       name,
       createdAt,
+      lastOpenedAt,
     };
     await this._db.projects.put(project);
     this._logger?.debug({

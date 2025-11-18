@@ -65,7 +65,12 @@ import FoldersList from "@/folders/folders-list.component";
 import PackedSpritesList from "@/packer/packed-sprites-list.component";
 import PackerSettings from "@/packer/packer-settings.component";
 import OutputSettings from "@/output/output-settings.component";
-import type { CSSProperties, PropsWithChildren } from "react";
+import {
+  useEffect,
+  useEffectEvent,
+  type CSSProperties,
+  type PropsWithChildren,
+} from "react";
 import { useOpenProjectEditor } from "@/projects/use-project-editor";
 import BaseErrorBoundary from "#components/error-boundary";
 import { useCanUndo, useUndo } from "@/history/use-undo";
@@ -73,6 +78,9 @@ import { useCanRedo, useRedo } from "@/history/use-redo";
 import { customBinsAtom } from "#custom-bins/custom-bins.atom";
 import { persistedToCustomBin } from "#custom-bins/custom-bins.mapper";
 import { usePackerStatus } from "@/packer/use-packed-sprites";
+import { sortBy } from "#utils/sort-by";
+import { useActiveProjectId } from "@/projects/use-active-project-id";
+import { useUpdateProject } from "@/projects/use-update-project";
 
 export const Route = createFileRoute("/projects/{-$projectId}")({
   component: Project,
@@ -130,7 +138,13 @@ export const Route = createFileRoute("/projects/{-$projectId}")({
         const { project: newProject } = await ctx.context.createNewProject();
         projectIdToRedirect = newProject.id;
       } else {
-        projectIdToRedirect = loadedProjects[0].id;
+        projectIdToRedirect = sortBy(
+          loadedProjects,
+          (project) => project.lastOpenedAt || "",
+          "desc",
+        )[0].id;
+
+        loadedProjects[0].id;
       }
       logger?.debug({
         layer: "router",
@@ -409,6 +423,20 @@ const RouteSideEffects = () => {
   const projectName = useActiveProjectName();
   useDocumentTitle(projectName || "Final spritesheet");
   useListenShortcuts();
+  const projectId = useActiveProjectId();
+  const updateProject = useUpdateProject();
+  const onProjectChanged = useEffectEvent(() => {
+    if (projectId) {
+      updateProject(projectId, { lastOpenedAt: new Date().toISOString() });
+    }
+  });
+  useEffect(() => {
+    const updateDelay = 250;
+    const timeout = setTimeout(() => {
+      onProjectChanged();
+    }, updateDelay);
+    return () => clearTimeout(timeout);
+  }, [projectId]);
   const hasUnsavedChanges = useHasUnsavedChanges();
   const isPersisting = useIsPersisting();
   const shouldBlockRouteChange = hasUnsavedChanges || isPersisting;

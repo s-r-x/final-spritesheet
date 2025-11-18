@@ -6,6 +6,7 @@ export type tProject = {
   name: string;
   thumbUrl?: string;
   createdAt?: string;
+  lastOpenedAt?: string;
   packerSettings?: tPackerSettings;
   outputSettings?: tOutputSettings;
 };
