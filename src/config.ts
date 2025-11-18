@@ -52,7 +52,12 @@ export const PACKER_ROTATION_SUPPORTED_ALGORITHMS = new Set<tPackerAlgorithm>([
   "maxRects",
 ]);
 
-export const SUPPORTED_OUTPUT_FRAMEWORKS = ["pixi", "phaser", "godot"] as const;
+export const SUPPORTED_OUTPUT_FRAMEWORKS = [
+  "pixi",
+  "phaser",
+  "godot",
+  "css",
+] as const;
 export type tOutputFramework = (typeof SUPPORTED_OUTPUT_FRAMEWORKS)[number];
 export const SUPPORTED_OUTPUT_IMAGE_FORMATS = ["png", "jpeg", "webp"];
 export const OUTPUT_DEFAULT_PNG_COMPRESSION = 0;

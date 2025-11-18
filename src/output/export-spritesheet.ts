@@ -5,12 +5,13 @@ import { generateAtlasFile } from "@/atlas/generate-atlas-file";
 import { convertBinToBlob } from "@/canvas/convert-bin-to-blob";
 import type { tPackedBin } from "@/packer/types";
 import type { tSpritesMap } from "@/input/types";
+import type { tOutputFramework } from "#config";
 
 // { binId: { myAnimation: ["1.png", "2.png"] } }
 export type tAnimationsMap = Record<string, Record<string, string[]>>;
 
 type tOptions = {
-  framework: string;
+  framework: tOutputFramework;
   imageQuality: number;
   textureFormat: string;
   pngCompression: number;

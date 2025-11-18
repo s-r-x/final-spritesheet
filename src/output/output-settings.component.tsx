@@ -28,6 +28,7 @@ const frameworkOptions: { value: tOutputFramework; label: string }[] = [
   { value: "pixi", label: "PixiJS" },
   { value: "phaser", label: "Phaser" },
   { value: "godot", label: "Godot" },
+  { value: "css", label: "CSS" },
 ];
 const schema = z.object({
   framework: z.enum(SUPPORTED_OUTPUT_FRAMEWORKS),
