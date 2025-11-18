@@ -15,6 +15,12 @@ export const activeProjectAtom = atom((get) => {
 export const activeProjectNameAtom = atom(
   (get) => get(activeProjectAtom)?.name ?? null,
 );
+export const activeProjectPackerSettingsAtom = atom(
+  (get) => get(activeProjectAtom)?.packerSettings,
+);
+export const activeProjectOutputSettingsAtom = atom(
+  (get) => get(activeProjectAtom)?.outputSettings,
+);
 
 export const addProjectAtom = atom(null, (get, set, project: tProject) => {
   const projects = get(projectsListAtom);

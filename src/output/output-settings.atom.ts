@@ -8,7 +8,11 @@ import {
   OUTPUT_DEFAULT_TEXTURE_FILE_NAME,
   OUTPUT_DEFAULT_TEXTURE_FORMAT,
 } from "#config";
-import { activeProjectAtom, updateProjectAtom } from "@/projects/projects.atom";
+import {
+  activeProjectIdAtom,
+  activeProjectOutputSettingsAtom,
+  updateProjectAtom,
+} from "@/projects/projects.atom";
 
 const defaultSettings: tOutputSettings = {
   framework: OUTPUT_DEFAULT_FRAMEWORK,
@@ -23,11 +27,11 @@ export const outputSettingsAtom = atom<
   [Partial<tOutputSettings>],
   undefined
 >(
-  (get) => get(activeProjectAtom)?.outputSettings || defaultSettings,
+  (get) => get(activeProjectOutputSettingsAtom) || defaultSettings,
   (get, set, value) => {
-    const project = get(activeProjectAtom);
-    if (!project) return;
-    set(updateProjectAtom, project.id, {
+    const projectId = get(activeProjectIdAtom);
+    if (!projectId) return;
+    set(updateProjectAtom, projectId, {
       outputSettings: {
         ...get(outputSettingsAtom),
         ...value,

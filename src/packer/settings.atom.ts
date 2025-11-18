@@ -14,7 +14,11 @@ import {
   PACKER_DEFAULT_SPRITE_PADDING,
   PACKER_DEFAULT_SQUARE,
 } from "#config";
-import { activeProjectAtom, updateProjectAtom } from "@/projects/projects.atom";
+import {
+  activeProjectIdAtom,
+  activeProjectPackerSettingsAtom,
+  updateProjectAtom,
+} from "@/projects/projects.atom";
 import { outputSettingsAtom } from "@/output/output-settings.atom";
 import { checkPackerRotationSupport } from "./check-rotation-support";
 
@@ -33,11 +37,11 @@ export const packerSettingsAtom = atom<
   [Partial<tPackerSettings>],
   undefined
 >(
-  (get) => get(activeProjectAtom)?.packerSettings || defaultSettings,
+  (get) => get(activeProjectPackerSettingsAtom) || defaultSettings,
   (get, set, value) => {
-    const project = get(activeProjectAtom);
-    if (!project) return;
-    set(updateProjectAtom, project.id, {
+    const projectId = get(activeProjectIdAtom);
+    if (!projectId) return;
+    set(updateProjectAtom, projectId, {
       packerSettings: {
         ...get(packerSettingsAtom),
         ...value,

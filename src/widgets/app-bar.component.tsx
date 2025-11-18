@@ -1,9 +1,7 @@
 import { useTranslation } from "@/i18n/use-translation";
-import { activeProjectAtom } from "@/projects/projects.atom";
 import { useOpenProjectEditor } from "@/projects/use-project-editor";
 import { Menu, ActionIcon, useMantineColorScheme } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
-import { useAtomValue } from "jotai";
 import { Menu as MenuIcon } from "lucide-react";
 import { useProjectsList } from "@/projects/use-projects-list";
 import { useRemoveProject } from "@/projects/use-remove-project";
@@ -13,6 +11,8 @@ import { useMutation } from "#hooks/use-mutation";
 import { useExportDb, useImportDb } from "@/persistence/use-db";
 import { memo } from "react";
 import styles from "./app-bar.module.css";
+import { useActiveProjectId } from "@/projects/use-active-project-id";
+import { useActiveProjectName } from "@/projects/use-active-project-name";
 
 const i18nNs = "app_menu.";
 const PackerAppBar = () => {
@@ -21,7 +21,8 @@ const PackerAppBar = () => {
   const exportDbMut = useMutation(exportDb, {
     showLoadingBar: true,
   });
-  const activeProject = useAtomValue(activeProjectAtom);
+  const activeProjectId = useActiveProjectId();
+  const activeProjectName = useActiveProjectName();
   const openProjectEditor = useOpenProjectEditor();
   const projectsList = useProjectsList();
   const removeProject = useRemoveProject();
@@ -34,8 +35,8 @@ const PackerAppBar = () => {
   const { t } = useTranslation();
   return (
     <div className={styles.root}>
-      {activeProject && (
-        <span className={styles.projectName}>{activeProject.name}</span>
+      {activeProjectName && (
+        <span className={styles.projectName}>{activeProjectName}</span>
       )}
       <Menu width={200} position="right-start">
         <Menu.Target>
@@ -67,15 +68,15 @@ const PackerAppBar = () => {
           <Menu.Item onClick={() => openProjectEditor("new")}>
             {t(i18nNs + "new_project")}
           </Menu.Item>
-          {activeProject && (
+          {activeProjectId && (
             <>
-              <Menu.Item onClick={() => openProjectEditor(activeProject.id)}>
+              <Menu.Item onClick={() => openProjectEditor(activeProjectId)}>
                 {t(i18nNs + "edit_project")}
               </Menu.Item>
               <Menu.Item
                 disabled={removeProjectMut.isLoading}
                 onClick={() => {
-                  removeProjectMut.mutate(activeProject.id);
+                  removeProjectMut.mutate(activeProjectId);
                 }}
               >
                 {t(i18nNs + "remove_project")}
