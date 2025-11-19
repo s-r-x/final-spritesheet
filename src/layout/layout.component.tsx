@@ -1,4 +1,3 @@
-import { Stack } from "@mantine/core";
 import styles from "./layout.module.css";
 import { type JSX, memo } from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
@@ -28,27 +27,24 @@ const AppLayout = memo((props: tProps) => {
           direction="horizontal"
         >
           {isDesktop && (
-            <>
-              <Panel
-                defaultSize={25}
-                minSize={1}
-                maxSize={50}
-                style={{
-                  minWidth: "4rem",
-                }}
-              >
-                <Stack p="xs" className={styles.leftPanel}>
-                  {props.appBarSlot}
-                  <div
-                    id="leftPanelScrollable"
-                    className={styles.leftPanelContent}
-                  >
-                    {props.leftPanelSlot}
-                  </div>
-                </Stack>
-              </Panel>
-              <PanelResizeHandle className={styles.separator} />
-            </>
+            <Panel
+              defaultSize={25}
+              minSize={1}
+              maxSize={50}
+              className={styles.panelWrap}
+              style={{ paddingInlineEnd: 0 }}
+            >
+              <div className={styles.leftPanel}>
+                {props.appBarSlot}
+                <div
+                  id="leftPanelScrollable"
+                  className={styles.leftPanelContent}
+                >
+                  {props.leftPanelSlot}
+                </div>
+                <PanelResizeHandle className={styles.separator} />
+              </div>
+            </Panel>
           )}
           <Panel style={{ display: "flex" }}>
             <main id="canvas-root" className={styles.main}>
@@ -61,7 +57,9 @@ const AppLayout = memo((props: tProps) => {
             </main>
           </Panel>
           {props.rightPanelSlot && isDesktop && (
-            <div className={styles.rightPanel}>{props.rightPanelSlot}</div>
+            <div className={styles.panelWrap} style={{ paddingInlineStart: 0 }}>
+              <div className={styles.rightPanel}>{props.rightPanelSlot}</div>
+            </div>
           )}
         </PanelGroup>
       </div>

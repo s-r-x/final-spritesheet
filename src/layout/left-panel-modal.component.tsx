@@ -20,7 +20,7 @@ const LeftPanelModal = (props: tProps) => {
       opened={isOpen}
       onClose={onClose}
       title={props.title}
-      className={styles.leftPanel}
+      className={styles.leftPanelModal}
     >
       {props.children}
     </Drawer>

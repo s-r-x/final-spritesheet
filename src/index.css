@@ -26,3 +26,12 @@ body {
   --app-text-color: var(--mantine-color-text);
   --bprogress-color: var(--app-color-primary);
 }
+
+[data-mantine-color-scheme="dark"] {
+  --surface-bg: var(--mantine-color-dark-9);
+  --surface-shadow: none;
+}
+[data-mantine-color-scheme="light"] {
+  --surface-bg: var(--app-color-body);
+  --surface-shadow: var(--mantine-shadow-sm);
+}

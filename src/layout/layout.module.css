@@ -1,12 +1,14 @@
 .root {
   display: flex;
   flex-direction: column;
-  --separator-color: var(--app-border-color);
-  --separator-size: 1px;
+  --separator-color: transparent;
+  --separator-size: 3px;
   --content-height: 100dvh;
   --header-height: 50px;
+  --layout-gap: var(--app-space-md);
   @media (max-width: 62em) {
     --content-height: calc(100dvh - var(--header-height));
+    --layout-gap: var(--app-space-xs);
   }
   height: 100dvh;
 }
@@ -36,8 +38,29 @@
   display: flex;
   height: var(--content-height);
 }
-.leftPanel {
+
+.panelWrap {
   height: var(--content-height);
+  min-width: 4rem;
+  display: flex;
+  flex-direction: column;
+  padding: var(--layout-gap);
+  overflow: visible !important;
+}
+.leftPanel,
+.rightPanel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: var(--app-space-xs);
+  border: 1px solid var(--separator-color);
+  border-radius: var(--app-border-radius);
+  box-shadow: var(--surface-shadow);
+  background-color: var(--surface-bg);
+}
+.leftPanel {
+  position: relative;
+  gap: var(--app-space-xs);
 }
 .leftPanelContent {
   display: flex;
@@ -45,30 +68,7 @@
   flex: 1;
   overflow-y: auto;
 }
-.rightPanel {
-  display: flex;
-  flex-direction: column;
-  width: 300px;
-  height: var(--content-height);
-  border-left: var(--separator-size) solid var(--separator-color);
-  padding: var(--app-space-xs);
-  overflow-y: auto;
-}
-.separator {
-  width: var(--separator-size);
-  background-color: var(--separator-color);
-}
-.toolbar {
-  position: absolute;
-  top: 0.5rem;
-  width: max-content;
-  left: 1rem;
-  right: 1rem;
-  margin: 0 auto;
-  z-index: 2;
-}
-
-.leftPanel {
+.leftPanelModal {
   :global(.mantine-Drawer-content) {
     display: flex;
     flex-direction: column;
@@ -78,4 +78,27 @@
     flex-direction: column;
     flex: 1;
   }
+}
+.rightPanel {
+  width: 300px;
+  overflow-y: auto;
+}
+.separator {
+  width: var(--separator-size);
+  background-color: transparent;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+.toolbar {
+  position: absolute;
+  top: var(--layout-gap);
+  width: fit-content;
+  left: var(--layout-gap);
+  right: var(--layout-gap);
+  margin: 0 auto;
+  z-index: 2;
+  box-shadow: var(--surface-shadow);
+  background-color: var(--surface-bg);
 }
