@@ -52,9 +52,9 @@ export const normalizedCustomBinsAtom = atom((get): tNormalizedCustomBin[] => {
         itemsMap.delete(sprite.id);
         acc.push(sprite);
       }
-      foldersMap.delete(folder.id);
       return acc;
     }, [] as tSprite[]);
+    foldersMap.delete(folder.id);
     return { folder, items };
   };
   const normalizedBins = bins.map((bin): tNormalizedCustomBin => {
