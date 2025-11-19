@@ -10,44 +10,44 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SplatRouteImport } from './routes/$'
-import { Route as ProjectsChar123ProjectIdChar125RouteImport } from './routes/projects.{-$projectId}'
+import { Route as appProjectsChar123ProjectIdChar125RouteImport } from './routes/(app)/projects.{-$projectId}'
 
 const SplatRoute = SplatRouteImport.update({
   id: '/$',
   path: '/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProjectsChar123ProjectIdChar125Route =
-  ProjectsChar123ProjectIdChar125RouteImport.update({
-    id: '/projects/{-$projectId}',
+const appProjectsChar123ProjectIdChar125Route =
+  appProjectsChar123ProjectIdChar125RouteImport.update({
+    id: '/(app)/projects/{-$projectId}',
     path: '/projects/{-$projectId}',
     getParentRoute: () => rootRouteImport,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/$': typeof SplatRoute
-  '/projects/{-$projectId}': typeof ProjectsChar123ProjectIdChar125Route
+  '/projects/{-$projectId}': typeof appProjectsChar123ProjectIdChar125Route
 }
 export interface FileRoutesByTo {
   '/$': typeof SplatRoute
-  '/projects/{-$projectId}': typeof ProjectsChar123ProjectIdChar125Route
+  '/projects/{-$projectId}': typeof appProjectsChar123ProjectIdChar125Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/$': typeof SplatRoute
-  '/projects/{-$projectId}': typeof ProjectsChar123ProjectIdChar125Route
+  '/(app)/projects/{-$projectId}': typeof appProjectsChar123ProjectIdChar125Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths: '/$' | '/projects/{-$projectId}'
   fileRoutesByTo: FileRoutesByTo
   to: '/$' | '/projects/{-$projectId}'
-  id: '__root__' | '/$' | '/projects/{-$projectId}'
+  id: '__root__' | '/$' | '/(app)/projects/{-$projectId}'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   SplatRoute: typeof SplatRoute
-  ProjectsChar123ProjectIdChar125Route: typeof ProjectsChar123ProjectIdChar125Route
+  appProjectsChar123ProjectIdChar125Route: typeof appProjectsChar123ProjectIdChar125Route
 }
 
 declare module '@tanstack/react-router' {
@@ -59,11 +59,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/projects/{-$projectId}': {
-      id: '/projects/{-$projectId}'
+    '/(app)/projects/{-$projectId}': {
+      id: '/(app)/projects/{-$projectId}'
       path: '/projects/{-$projectId}'
       fullPath: '/projects/{-$projectId}'
-      preLoaderRoute: typeof ProjectsChar123ProjectIdChar125RouteImport
+      preLoaderRoute: typeof appProjectsChar123ProjectIdChar125RouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -71,7 +71,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   SplatRoute: SplatRoute,
-  ProjectsChar123ProjectIdChar125Route: ProjectsChar123ProjectIdChar125Route,
+  appProjectsChar123ProjectIdChar125Route:
+    appProjectsChar123ProjectIdChar125Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

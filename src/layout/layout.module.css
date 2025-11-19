@@ -41,7 +41,7 @@
 
 .panelWrap {
   height: var(--content-height);
-  min-width: 4rem;
+  min-width: 4.1rem;
   display: flex;
   flex-direction: column;
   padding: var(--layout-gap);
@@ -61,6 +61,7 @@
 .leftPanel {
   position: relative;
   gap: var(--app-space-xs);
+  container-type: inline-size;
 }
 .leftPanelContent {
   display: flex;

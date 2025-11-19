@@ -7,4 +7,14 @@
   text-overflow: ellipsis;
   overflow: hidden;
   text-wrap: nowrap;
+  padding-inline-end: var(--app-space-xs);
+}
+
+@container (width < 4.5rem) {
+  .projectName {
+    display: none;
+  }
+  .root {
+    justify-content: center;
+  }
 }

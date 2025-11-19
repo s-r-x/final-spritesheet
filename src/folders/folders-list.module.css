@@ -3,7 +3,6 @@
   flex-direction: column;
   flex: 1;
   margin-top: 1rem;
-  container-type: inline-size;
 }
 .stickyHead {
   padding-bottom: var(--app-space-xs);

@@ -4,7 +4,6 @@ import {
   notFound,
   redirect,
   useBlocker,
-  useRouter,
 } from "@tanstack/react-router";
 import Layout from "@/layout/layout.component";
 import Canvas from "@/canvas/canvas.component";
@@ -16,17 +15,7 @@ import ProjectEditor from "@/projects/project-editor.component";
 import FolderEditor from "@/folders/folder-editor.component";
 import CustomBinEditor from "#custom-bins/custom-bin-editor.component";
 import AnimationPreview from "@/animation-preview/animation-preview.component";
-import {
-  List,
-  Center,
-  Title,
-  Button,
-  Stack,
-  Mark,
-  Tabs,
-  Accordion,
-  type MantineColor,
-} from "@mantine/core";
+import { List, Center, Title, Button, Stack, Mark } from "@mantine/core";
 import { useHandleSpritesPasteEvent } from "@/input/use-handle-sprites-paste-event";
 import { atomsStore } from "@/common/atoms/atoms-store";
 import { setSpritesAtom } from "@/input/sprites.atom";
@@ -53,36 +42,19 @@ import {
   useIsPersisting,
 } from "@/persistence/use-persistence";
 import { foldersAtom } from "@/folders/folders.atom";
-import {
-  Plus as PlusIcon,
-  Package as PackedSpritesIcon,
-  PackageX as PackedSpritesFailIcon,
-  PackageCheck as PackedSpritesOkIcon,
-  Folder as FoldersIcon,
-} from "lucide-react";
-import { usePersistedState } from "#hooks/use-persisted-state";
-import FoldersList from "@/folders/folders-list.component";
-import PackedSpritesList from "@/packer/packed-sprites-list.component";
-import PackerSettings from "@/packer/packer-settings.component";
-import OutputSettings from "@/output/output-settings.component";
-import {
-  useEffect,
-  useEffectEvent,
-  type CSSProperties,
-  type PropsWithChildren,
-} from "react";
+import { Plus as PlusIcon } from "lucide-react";
+import { useEffect, useEffectEvent } from "react";
 import { useOpenProjectEditor } from "@/projects/use-project-editor";
-import BaseErrorBoundary from "#components/error-boundary";
-import { useCanUndo, useUndo } from "@/history/use-undo";
-import { useCanRedo, useRedo } from "@/history/use-redo";
 import { customBinsAtom } from "#custom-bins/custom-bins.atom";
 import { persistedToCustomBin } from "#custom-bins/custom-bins.mapper";
-import { usePackerStatus } from "@/packer/use-packed-sprites";
 import { sortBy } from "#utils/sort-by";
 import { useActiveProjectId } from "@/projects/use-active-project-id";
 import { useUpdateProject } from "@/projects/use-update-project";
+import PackedSpritesAndFolders from "./-packed-sprites-and-folders.component";
+import SharedErrorBoundary from "./-shared-error-boundary";
+import PackerAndOutputSettings from "./-packer-and-output-settings.component";
 
-export const Route = createFileRoute("/projects/{-$projectId}")({
+export const Route = createFileRoute("/(app)/projects/{-$projectId}")({
   component: Project,
   pendingComponent: () => (
     <Loader
@@ -277,146 +249,6 @@ function Project() {
     </SharedErrorBoundary>
   );
 }
-const PackedSpritesAndFolders = () => {
-  const { t } = useTranslation();
-
-  const iconSize = 20;
-  const packedSpritesLabel = t("packed_sprites_list_sect_name");
-  const foldersLabel = t("folders_list_sect_name");
-  const [value, setValue] = usePersistedState({
-    key: "sprites_and_folders_tab",
-    defaultValue: "bins",
-  });
-  const panelStyles: CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    flex: 1,
-  };
-  const packerStatus = usePackerStatus();
-  const renderPackedIcon = () => {
-    let IconComponent: typeof PackedSpritesIcon;
-    switch (packerStatus) {
-      case "failed":
-      case "partially_packed":
-        IconComponent = PackedSpritesFailIcon;
-        break;
-      case "packed":
-        IconComponent = PackedSpritesOkIcon;
-        break;
-      case "idle":
-        IconComponent = PackedSpritesIcon;
-        break;
-      default:
-        IconComponent = PackedSpritesIcon;
-    }
-    return <IconComponent size={iconSize} />;
-  };
-  let packedColor: MantineColor | undefined;
-  switch (packerStatus) {
-    case "failed":
-    case "partially_packed":
-      packedColor = "red";
-      break;
-    default:
-      packedColor = undefined;
-  }
-  return (
-    <Tabs
-      keepMounted={false}
-      value={value}
-      variant="pills"
-      onChange={(value) => {
-        if (value) setValue(value);
-      }}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        flex: 1,
-      }}
-    >
-      <Tabs.List>
-        <Tabs.Tab
-          aria-label={packedSpritesLabel}
-          leftSection={renderPackedIcon()}
-          color={packedColor}
-          value="bins"
-        >
-          {packedSpritesLabel}
-        </Tabs.Tab>
-        <Tabs.Tab
-          aria-label={foldersLabel}
-          leftSection={<FoldersIcon size={iconSize} />}
-          value="folders"
-        >
-          {foldersLabel}
-        </Tabs.Tab>
-      </Tabs.List>
-      <Tabs.Panel value="folders" style={panelStyles}>
-        <SharedErrorBoundary>
-          <FoldersList />
-        </SharedErrorBoundary>
-      </Tabs.Panel>
-      <Tabs.Panel value="bins" style={panelStyles}>
-        <SharedErrorBoundary>
-          <PackedSpritesList />
-        </SharedErrorBoundary>
-      </Tabs.Panel>
-    </Tabs>
-  );
-};
-
-const PackerAndOutputSettings = () => {
-  const { t } = useTranslation();
-  const [value, setValue] = usePersistedState<string[]>({
-    key: "packer_and_output_settings_accordion",
-    defaultValue: ["output", "packer"],
-  });
-  return (
-    <Accordion multiple value={value} onChange={setValue}>
-      <Accordion.Item value="packer">
-        <Accordion.Control>{t("packer_opts.form_name")}</Accordion.Control>
-        <Accordion.Panel>
-          <SharedErrorBoundary>
-            <PackerSettings />
-          </SharedErrorBoundary>
-        </Accordion.Panel>
-      </Accordion.Item>
-      <Accordion.Item value="output">
-        <Accordion.Control>{t("output_opts.form_name")}</Accordion.Control>
-        <Accordion.Panel>
-          <SharedErrorBoundary>
-            <OutputSettings />
-          </SharedErrorBoundary>
-        </Accordion.Panel>
-      </Accordion.Item>
-    </Accordion>
-  );
-};
-const SharedErrorBoundary = (
-  props: PropsWithChildren<{ isCentered?: boolean }>,
-) => {
-  const undo = useUndo();
-  const redo = useRedo();
-  const canUndo = useCanUndo();
-  const canRedo = useCanRedo();
-  const router = useRouter();
-  return (
-    <BaseErrorBoundary
-      centerFallbackInViewport={props.isCentered}
-      onReset={async () => {
-        if (canUndo) {
-          await undo();
-        } else if (canRedo) {
-          await redo();
-        } else {
-          await router.invalidate();
-        }
-      }}
-    >
-      {props.children}
-    </BaseErrorBoundary>
-  );
-};
 
 const RouteSideEffects = () => {
   const { t } = useTranslation();

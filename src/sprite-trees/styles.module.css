@@ -24,24 +24,24 @@
   overflow: hidden;
   text-wrap: nowrap;
 }
-.folder {
+.folder,
+.bin,
+.item {
+  gap: var(--app-space-xs);
   user-select: none;
+  max-width: 100%;
   display: flex;
   align-items: center;
-  gap: var(--app-space-xs);
 }
 .folderIcon {
   flex-shrink: 0;
   display: block;
 }
 
-.bin {
-  user-select: none;
+.treeRow {
+  border-radius: var(--app-border-radius);
   display: flex;
   align-items: center;
-  gap: var(--app-space-xs);
-}
-.treeRow {
   &[aria-selected="true"] {
     background: var(--app-color-primary);
     color: white;
@@ -56,14 +56,6 @@
 }
 .itemsCount {
   flex-shrink: 0;
-}
-
-.item {
-  gap: var(--app-space-xs);
-  user-select: none;
-  max-width: 100%;
-  display: flex;
-  align-items: center;
 }
 
 @container (width < 4.5rem) {
@@ -81,5 +73,8 @@
   }
   .itemsCount {
     display: none;
+  }
+  .treeRow {
+    justify-content: center;
   }
 }
