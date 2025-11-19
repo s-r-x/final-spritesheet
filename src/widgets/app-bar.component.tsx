@@ -51,16 +51,17 @@ const PackerAppBar = () => {
             </Menu.Sub.Target>
             <Menu.Sub.Dropdown>
               {projectsList.map((project) => (
-                <Menu.Item key={project.id}>
-                  <Link
-                    to="/projects/{-$projectId}"
-                    params={{
+                <Menu.Item
+                  key={project.id}
+                  component={Link}
+                  to="/projects/{-$projectId}"
+                  params={
+                    {
                       projectId: project.id,
-                    }}
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    {project.name}
-                  </Link>
+                    } as any
+                  }
+                >
+                  {project.name}
                 </Menu.Item>
               ))}
             </Menu.Sub.Dropdown>
