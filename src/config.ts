@@ -83,3 +83,5 @@ export const LOG_LEVELS: Set<tLogLevel> = new Set(
 
 export const SPRITES_ROOT_FOLDER_ID = "__ROOT__";
 export const DEFAULT_CUSTOM_BIN_ID = "__DEFAULT_BIN__";
+
+export const ENABLE_ROUTER_DEVTOOLS = false;

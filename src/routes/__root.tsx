@@ -1,4 +1,4 @@
-import { DEV } from "#config";
+import { ENABLE_ROUTER_DEVTOOLS } from "#config";
 import type { tLogger } from "@/logger/types";
 import type { tDbQueries } from "@/persistence/types";
 import type { tProject } from "@/projects/types";
@@ -14,7 +14,7 @@ export const Route = createRootRouteWithContext<{
   component: () => (
     <>
       <Outlet />
-      {DEV && <TanStackRouterDevtools />}
+      {ENABLE_ROUTER_DEVTOOLS && <TanStackRouterDevtools />}
     </>
   ),
 });
