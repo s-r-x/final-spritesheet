@@ -9,7 +9,6 @@ import type { EntityTable } from "dexie";
 export type tPersistedBlob = {
   id: string;
   projectId: string;
-  isArrayBuffer?: boolean;
   mime: string;
 } & (
   | {
