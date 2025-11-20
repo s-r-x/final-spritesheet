@@ -24,7 +24,11 @@ export class DbMutations implements tDbMutations {
   constructor(
     private _db: tDb,
     private _logger: Maybe<tLogger>,
+    private _options: { canStoreBlobs: boolean },
   ) {}
+  private get _canStoreBlobs(): boolean {
+    return this._options.canStoreBlobs;
+  }
   async createNewProject({
     id = generateId(),
     name = generateUniqueName(),
@@ -55,11 +59,25 @@ export class DbMutations implements tDbMutations {
   }> {
     const { blob, ...sprite } = baseSprite;
     const blobId = generateId();
-    const blobDoc: tPersistedBlob = {
+    const baseBlobData: Omit<tPersistedBlob, "isArrayBuffer" | "data"> = {
       id: blobId,
-      data: blob,
       projectId: sprite.projectId,
+      mime: sprite.mime,
     };
+    let blobDoc: tPersistedBlob;
+    if (this._canStoreBlobs) {
+      blobDoc = {
+        ...baseBlobData,
+        isArrayBuffer: false,
+        data: blob,
+      };
+    } else {
+      blobDoc = {
+        ...baseBlobData,
+        isArrayBuffer: true,
+        data: await blob.arrayBuffer(),
+      };
+    }
     // TODO:: txn
     await this._db.blobs.add(blobDoc);
     const spriteDoc = {

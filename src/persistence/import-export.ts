@@ -15,7 +15,11 @@ export class DbImportExport implements tDbImportExport {
     private _db: tDb,
     private _dbMutations: tDbMutations,
     private _logger: Maybe<tLogger>,
+    private _options: { canStoreBlobs: boolean },
   ) {}
+  private get _canStoreBlobs(): boolean {
+    return this._options.canStoreBlobs ?? true;
+  }
   public async importDb(data: tDbBackupFormat): Promise<void> {
     this._logger?.debug({
       layer: "db",
@@ -32,17 +36,27 @@ export class DbImportExport implements tDbImportExport {
     // TODO:: maybe it's a good idea to create a backup for the current db and restore if there were any errors
     await this._db.import(data, {
       noTransaction: true,
-      async transform(
+      transform: async (
         table,
         value: Omit<tPersistedBlob, "data"> & { data: string },
-      ) {
+      ) => {
         if (table === "blobs" && typeof value.data === "string") {
+          const persistedDoc: tPersistedBlob = this._canStoreBlobs
+            ? {
+                ...value,
+                isArrayBuffer: false,
+                data: await base64ToBlob(value.data),
+              }
+            : {
+                ...value,
+                isArrayBuffer: true,
+                data: await base64ToBlob(value.data).then((b) =>
+                  b.arrayBuffer(),
+                ),
+              };
           return {
             table,
-            value: {
-              ...value,
-              data: await base64ToBlob(value.data),
-            },
+            value: persistedDoc,
           };
         }
         return { table, value };
@@ -61,12 +75,16 @@ export class DbImportExport implements tDbImportExport {
     const data = await this._db.export({
       noTransaction: true,
       async transform(table, value: tPersistedBlob) {
-        if (table === "blobs" && value.data instanceof Blob) {
+        if (table === "blobs") {
           return {
             table,
             value: {
               ...value,
-              data: await blobToBase64(value.data),
+              data: await blobToBase64(
+                value.isArrayBuffer
+                  ? new Blob([value.data], { type: value.mime })
+                  : value.data,
+              ),
             },
           };
         }

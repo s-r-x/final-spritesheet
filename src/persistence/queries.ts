@@ -40,7 +40,21 @@ export class DbQueries implements tDbQueries {
         async (acc, sprite) => {
           const attachment = await this._db.blobs.get(sprite.blobId);
           if (attachment?.data) {
-            acc.push({ ...sprite, blob: attachment.data });
+            let blob: Maybe<Blob> = null;
+            if (attachment.isArrayBuffer) {
+              blob = new Blob([attachment.data], { type: attachment.mime });
+            } else {
+              blob = attachment.data;
+            }
+            if (blob) {
+              acc.push({ ...sprite, blob });
+            } else {
+              this._logger?.warn({
+                layer: "db",
+                label: "unknownSpriteBlobFormat",
+                data: { sprite, blob: attachment },
+              });
+            }
           } else {
             this._logger?.warn({
               layer: "db",
