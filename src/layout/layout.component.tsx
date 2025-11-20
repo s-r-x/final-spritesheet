@@ -35,7 +35,7 @@ const AppLayout = memo((props: tProps) => {
               style={{ paddingInlineEnd: 0 }}
             >
               <div className={styles.leftPanel}>
-                {props.appBarSlot}
+                <header>{props.appBarSlot}</header>
                 <div
                   id="leftPanelScrollable"
                   className={styles.leftPanelContent}
