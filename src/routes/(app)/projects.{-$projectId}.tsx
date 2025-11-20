@@ -15,7 +15,7 @@ import ProjectEditor from "@/projects/project-editor.component";
 import FolderEditor from "@/folders/folder-editor.component";
 import CustomBinEditor from "#custom-bins/custom-bin-editor.component";
 import AnimationPreview from "@/animation-preview/animation-preview.component";
-import { List, Center, Title, Button, Stack, Mark } from "@mantine/core";
+import { List, Center, Title, Button, Stack } from "@mantine/core";
 import { useHandleSpritesPasteEvent } from "@/input/use-handle-sprites-paste-event";
 import { atomsStore } from "@/common/atoms/atoms-store";
 import { setSpritesAtom } from "@/input/sprites.atom";
@@ -33,7 +33,6 @@ import { useProjectsList } from "@/projects/use-projects-list";
 import { useTranslation } from "@/i18n/use-translation";
 import { useDocumentTitle } from "@mantine/hooks";
 import { useActiveProjectName } from "@/projects/use-active-project-name";
-import { Translation } from "@/i18n/translation.component";
 import { resetHistoryStackAtom } from "@/history/history.atom";
 import { useListenShortcuts } from "@/shortcuts/use-listen-shortcuts";
 import { clearPersistenceCommandsAtom } from "@/persistence/persistence.atom";
@@ -173,7 +172,6 @@ export const Route = createFileRoute("/(app)/projects/{-$projectId}")({
 function ProjectNotFound() {
   const i18nNs = "project_not_found_screen.";
   const { t } = useTranslation();
-  const { projectId } = Route.useParams();
   const projects = useProjectsList();
   const hasProjects = isEmpty(projects);
   const openProjectEditor = useOpenProjectEditor();
@@ -183,11 +181,7 @@ function ProjectNotFound() {
       <Center mih={"100dvh"} miw={"100dvw"}>
         <Stack gap="lg" align="flex-start">
           <Title order={1} size={"h2"}>
-            <Translation
-              i18nKey={i18nNs + "message"}
-              values={{ project: projectId }}
-              components={{ 1: <Mark color="red" /> }}
-            />
+            {t(i18nNs + "message")}
           </Title>
           {!hasProjects && (
             <Stack gap="xs">
