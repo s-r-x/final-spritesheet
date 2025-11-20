@@ -101,7 +101,7 @@
       "remove_project": "Удалить проект"
     },
     "project_not_found_screen": {
-      "message": "Проект <1>{{project}}</1> не найден",
+      "message": "Проект не найден",
       "projects_list": "Проекты",
       "new_project": "Новый проект"
     },
