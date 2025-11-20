@@ -1,5 +1,5 @@
 import type { Page, Locator } from "@playwright/test";
-import { getFolderIdByName } from "../queries/get-folder-id";
+import { getFolderId } from "../queries/get-folder-id";
 import { SPRITES_ROOT_FOLDER_ID } from "../../src/config";
 import { foldersListLocator } from "./folders-list";
 
@@ -26,8 +26,7 @@ export function spritesInFolderLocator(
   if (folderId) {
     return createLocator(folderId);
   } else {
-    return getFolderIdByName(page, folderName!).then((id) => {
-      if (!id) throw new Error("folder not found");
+    return getFolderId(page, folderName!).then((id) => {
       return createLocator(id);
     });
   }

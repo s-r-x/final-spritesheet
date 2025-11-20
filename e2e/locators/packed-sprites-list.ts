@@ -40,6 +40,16 @@ export const foldersInPackedListLocator = (page: Page) => {
   const list = packedSpritesListLocator(page);
   return list.locator('[data-kind="folder"]');
 };
+export const foldersInSpecificBinLocator = (
+  page: Page,
+  { binId }: { binId: string },
+) => {
+  const list = packedSpritesListLocator(page);
+  return list.locator(`[data-kind="folder"][data-parent-bin="${binId}"]`);
+};
+export const foldersInDefaultCustomBinLocator = (page: Page) => {
+  return foldersInSpecificBinLocator(page, { binId: DEFAULT_CUSTOM_BIN_ID });
+};
 export const oversizedFoldersInPackedListLocator = (page: Page) => {
   const list = packedSpritesListLocator(page);
   return list.locator('[data-kind="folder"][data-oversized="true"]');

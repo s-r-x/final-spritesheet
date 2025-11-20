@@ -16,7 +16,7 @@ export const createFolderWorkflow = async (
     data,
   }: {
     data: {
-      name?: string;
+      name: string;
       isAnimation?: boolean;
     };
   },

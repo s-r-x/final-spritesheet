@@ -34,9 +34,11 @@ const PackerAppBar = () => {
   const { setColorScheme } = useMantineColorScheme();
   const { t } = useTranslation();
   return (
-    <div className={styles.root}>
+    <div data-testid="app-bar" className={styles.root}>
       {activeProjectName && (
-        <span className={styles.projectName}>{activeProjectName}</span>
+        <span data-testid="active-project-name" className={styles.projectName}>
+          {activeProjectName}
+        </span>
       )}
       <Menu width={200} position="right-start">
         <Menu.Target>
@@ -49,7 +51,7 @@ const PackerAppBar = () => {
             <Menu.Sub.Target>
               <Menu.Sub.Item>{t(i18nNs + "show_projects_list")}</Menu.Sub.Item>
             </Menu.Sub.Target>
-            <Menu.Sub.Dropdown>
+            <Menu.Sub.Dropdown data-testid="projects-list">
               {projectsList.map((project) => (
                 <Menu.Item
                   key={project.id}
