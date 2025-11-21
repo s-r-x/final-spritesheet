@@ -1,5 +1,4 @@
 import { useAtomValue, useStore } from "jotai";
-import { useCallback } from "react";
 import {
   multipackSettingAtom,
   packerSettingsAtom,
@@ -17,9 +16,7 @@ export const usePackerSettings = () => {
 };
 export const useGetPackerSettings = () => {
   const atomsStore = useStore();
-  return useCallback((): tPackerSettings => {
-    return atomsStore.get(packerSettingsAtom);
-  }, []);
+  return (): tPackerSettings => atomsStore.get(packerSettingsAtom);
 };
 
 export const useIsRotationSupported = () => {

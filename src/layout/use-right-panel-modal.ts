@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import {
   useSearchParams,
   useSetSearchParams,
@@ -9,9 +8,9 @@ const QUERY_PARAMS_KEY = "right_panel";
 const OPENED_VALUE = "y";
 export const useRightPanelModal = () => {
   const setParams = useSetSearchParams();
-  return useCallback(() => {
+  return () => {
     setParams((old) => ({ ...old, [QUERY_PARAMS_KEY]: OPENED_VALUE }));
-  }, [setParams]);
+  };
 };
 export const useCloseRightPanelModal = () => {
   return useGoBack();

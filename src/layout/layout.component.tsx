@@ -1,5 +1,5 @@
 import styles from "./layout.module.css";
-import { type JSX, memo } from "react";
+import type { JSX } from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import RightPanelModal from "./right-panel-modal.component";
 import { useIsMobileLayout } from "./use-is-mobile-layout";
@@ -13,7 +13,7 @@ type tProps = {
   rightPanelSlot?: JSX.Element;
   rightPanelLabel?: string;
 };
-const AppLayout = memo((props: tProps) => {
+const AppLayout = (props: tProps) => {
   const isMobile = useIsMobileLayout();
   const isDesktop = !isMobile;
   return (
@@ -73,6 +73,6 @@ const AppLayout = memo((props: tProps) => {
       )}
     </div>
   );
-});
+};
 
 export default AppLayout;

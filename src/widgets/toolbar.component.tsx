@@ -27,7 +27,6 @@ import {
   usePersistChanges,
 } from "@/persistence/use-persistence";
 import { useMutation } from "#hooks/use-mutation";
-import { memo } from "react";
 
 const Toolbar = () => {
   const { t } = useTranslation();
@@ -142,4 +141,4 @@ const Toolbar = () => {
   );
 };
 
-export default memo(Toolbar);
+export default Toolbar;

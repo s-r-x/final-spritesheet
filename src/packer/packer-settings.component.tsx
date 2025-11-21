@@ -27,7 +27,7 @@ import {
   usePackerSettingsFormVersion,
 } from "./use-packer-settings";
 import { useMutation } from "#hooks/use-mutation";
-import { forwardRef, memo } from "react";
+import { forwardRef } from "react";
 import type {
   tPackerAlgorithm,
   tPackerMultipackMode,
@@ -309,4 +309,4 @@ export const PackerEdgeSpacingInput = forwardRef<
   );
 });
 
-export default memo(PackerSettingsRoot);
+export default PackerSettingsRoot;

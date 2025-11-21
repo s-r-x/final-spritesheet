@@ -6,25 +6,20 @@ import {
   itemIdToFolderIdMapAtom,
   normalizedFoldersAtom,
 } from "./folders.atom";
-import { useCallback } from "react";
 
 export const useFoldersList = () => {
   return useAtomValue(foldersAtom);
 };
 export const useGetFoldersList = () => {
   const store = useStore();
-  return useCallback(() => {
-    return store.get(foldersAtom);
-  }, [store]);
+  return () => store.get(foldersAtom);
 };
 export const useNormalizedFolders = () => {
   return useAtomValue(normalizedFoldersAtom);
 };
 export const useGetNormalizedFolders = () => {
   const store = useStore();
-  return useCallback(() => {
-    return store.get(normalizedFoldersAtom);
-  }, [store]);
+  return () => store.get(normalizedFoldersAtom);
 };
 
 export const useFolderIdToNameMap = () => {
@@ -36,9 +31,7 @@ export const useFoldersMap = () => {
 };
 export const useGetFoldersMap = () => {
   const store = useStore();
-  return useCallback(() => {
-    return store.get(foldersMapAtom);
-  }, [store]);
+  return () => store.get(foldersMapAtom);
 };
 
 export const useItemIdToFolderIdMapAtom = () => {
@@ -46,7 +39,5 @@ export const useItemIdToFolderIdMapAtom = () => {
 };
 export const useGetItemIdToFolderIdMap = () => {
   const store = useStore();
-  return useCallback(() => {
-    return store.get(itemIdToFolderIdMapAtom);
-  }, [store]);
+  return () => store.get(itemIdToFolderIdMapAtom);
 };

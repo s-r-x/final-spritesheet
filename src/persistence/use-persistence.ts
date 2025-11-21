@@ -5,7 +5,6 @@ import {
   isPersistingAtom,
   persistenceCommandsAtom,
 } from "./persistence.atom";
-import { useCallback } from "react";
 import { useLogger } from "@/logger/use-logger";
 import { activeProjectIdAtom } from "@/projects/projects.atom";
 import { dbMutationsAtom } from "./db.atom";
@@ -21,7 +20,7 @@ export const useHasUnsavedChanges = () => {
 export const usePersistChanges = () => {
   const atomsStore = useStore();
   const logger = useLogger();
-  return useCallback(async () => {
+  return async () => {
     if (atomsStore.get(isPersistingAtom)) return;
     atomsStore.set(isPersistingAtom, true);
     const commands = atomsStore.get(persistenceCommandsAtom);
@@ -65,5 +64,5 @@ export const usePersistChanges = () => {
       layer: "app",
       label: "allChangesPersisted",
     });
-  }, [atomsStore, logger]);
+  };
 };

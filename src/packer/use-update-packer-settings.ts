@@ -1,5 +1,4 @@
 import { useActiveProjectId } from "@/projects/use-active-project-id";
-import { useCallback } from "react";
 import type { tPackerSettings } from "./types";
 import { useGetPackerSettings } from "./use-packer-settings";
 import { useHistoryManager } from "@/history/use-history-manager";
@@ -9,16 +8,13 @@ export const useUpdatePackerSettings = () => {
   const projectId = useActiveProjectId()!;
   const getPackerSettings = useGetPackerSettings();
   const historyManager = useHistoryManager();
-  return useCallback(
-    async (settings: Partial<tPackerSettings>) => {
-      const originalSettings = getPackerSettings();
-      const command = new UpdatePackerSettingsCommand({
-        originalSettings,
-        settings,
-        projectId,
-      });
-      await historyManager.execCommand(command);
-    },
-    [projectId, historyManager],
-  );
+  return async (settings: Partial<tPackerSettings>) => {
+    const originalSettings = getPackerSettings();
+    const command = new UpdatePackerSettingsCommand({
+      originalSettings,
+      settings,
+      projectId,
+    });
+    await historyManager.execCommand(command);
+  };
 };

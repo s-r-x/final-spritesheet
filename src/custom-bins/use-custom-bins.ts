@@ -6,7 +6,6 @@ import {
   itemIdToCustomBinIdMapAtom,
   normalizedCustomBinsAtom,
 } from "./custom-bins.atom";
-import { useCallback } from "react";
 
 export const useCustomBinsList = () => {
   return useAtomValue(customBinsAtom);
@@ -19,19 +18,13 @@ export const useCustomBinsMap = () => {
 };
 export const useGetCustomBinsMap = () => {
   const store = useStore();
-  return useCallback(() => {
-    return store.get(customBinsMapAtom);
-  }, []);
+  return () => store.get(customBinsMapAtom);
 };
 export const useGetItemIdToCustomBinIdMap = () => {
   const store = useStore();
-  return useCallback(() => {
-    return store.get(itemIdToCustomBinIdMapAtom);
-  }, [store]);
+  return () => store.get(itemIdToCustomBinIdMapAtom);
 };
 export const useGetFolderIdToCustomBinIdMap = () => {
   const store = useStore();
-  return useCallback(() => {
-    return store.get(folderIdToCustomBinIdMapAtom);
-  }, []);
+  return () => store.get(folderIdToCustomBinIdMapAtom);
 };

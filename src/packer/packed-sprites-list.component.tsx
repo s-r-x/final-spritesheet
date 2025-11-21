@@ -1,5 +1,4 @@
 import styles from "./packed-sprites-list.module.css";
-import { memo } from "react";
 import { ActionIcon } from "@mantine/core";
 import { FileButton, Button } from "@mantine/core";
 import { SUPPORTED_SPRITE_MIME_TYPES } from "#config";
@@ -87,4 +86,4 @@ const PackedSpritesList = () => {
   );
 };
 
-export default memo(PackedSpritesList);
+export default PackedSpritesList;

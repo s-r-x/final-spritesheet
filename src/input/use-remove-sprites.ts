@@ -1,6 +1,5 @@
 import { useStore } from "jotai";
 import { spritesAtom } from "./sprites.atom";
-import { useCallback } from "react";
 import type { tSprite } from "./types";
 import { RemoveSpritesCommand } from "./remove-sprites.command";
 import { useHistoryManager } from "@/history/use-history-manager";
@@ -21,7 +20,7 @@ import { useCreateUpdateCustomBinsCommand } from "#custom-bins/use-update-custom
 
 export const useCreateRemoveSpritesCommand = () => {
   const atomsStore = useStore();
-  return useCallback((id: string | string[]) => {
+  return (id: string | string[]) => {
     const spritesToRemove = atomsStore
       .get(spritesAtom)
       .reduce((acc, sprite) => {
@@ -36,7 +35,7 @@ export const useCreateRemoveSpritesCommand = () => {
       }, [] as tSprite[]);
     const command = new RemoveSpritesCommand({ sprites: spritesToRemove });
     return command;
-  }, []);
+  };
 };
 export const useRemoveSprites = () => {
   const historyManager = useHistoryManager();
@@ -47,84 +46,72 @@ export const useRemoveSprites = () => {
   const getItemIdToFolderIdMap = useGetItemIdToFolderIdMap();
   const getItemIdToBinIdMap = useGetItemIdToCustomBinIdMap();
   const getBinsMap = useGetCustomBinsMap();
-  return useCallback(
-    async (
-      id: string | string[],
+  return async (
+    id: string | string[],
+    {
+      removeFromFolders = true,
+      removeFromCustomBins = true,
+    }: { removeFromFolders?: boolean; removeFromCustomBins?: boolean } = {},
+  ) => {
+    const idArr = Array.isArray(id) ? id : [id];
+    if (isEmpty(idArr)) return;
+    const foldersMap = getFoldersMap();
+    const itemIdToFolderIdMap = getItemIdToFolderIdMap();
+    const itemIdToBinIdMap = getItemIdToBinIdMap();
+    const binsMap = getBinsMap();
+    const { foldersUpdates, binsUpdates } = idArr.reduce(
+      (acc, spriteIdToRemove) => {
+        const maybeAddFoldersUpdate = () => {
+          if (!removeFromFolders) return;
+          const folderId = itemIdToFolderIdMap[spriteIdToRemove];
+          if (!folderId) return;
+          const folder = foldersMap[folderId];
+          if (!folder) return;
+          const newItemIds = folder.itemIds.filter(
+            (id) => id !== spriteIdToRemove,
+          );
+          if (newItemIds.length === folder.itemIds.length) return;
+          acc.foldersUpdates[folder.id] = {
+            folder,
+            data: { itemIds: newItemIds },
+          };
+        };
+        maybeAddFoldersUpdate();
+
+        const maybeAddBinsUpdate = () => {
+          if (!removeFromCustomBins) return;
+          const parentBinId = itemIdToBinIdMap[spriteIdToRemove];
+          if (!parentBinId) return;
+          const bin = binsMap[parentBinId];
+          if (!bin) return;
+          const newItemIds = bin.itemIds.filter(
+            (id) => id !== spriteIdToRemove,
+          );
+          if (newItemIds.length === bin.itemIds.length) return;
+          acc.binsUpdates[bin.id] = {
+            bin,
+            data: { itemIds: newItemIds },
+          };
+        };
+        maybeAddBinsUpdate();
+
+        return acc;
+      },
       {
-        removeFromFolders = true,
-        removeFromCustomBins = true,
-      }: { removeFromFolders?: boolean; removeFromCustomBins?: boolean } = {},
-    ) => {
-      const idArr = Array.isArray(id) ? id : [id];
-      if (isEmpty(idArr)) return;
-      const foldersMap = getFoldersMap();
-      const itemIdToFolderIdMap = getItemIdToFolderIdMap();
-      const itemIdToBinIdMap = getItemIdToBinIdMap();
-      const binsMap = getBinsMap();
-      const { foldersUpdates, binsUpdates } = idArr.reduce(
-        (acc, spriteIdToRemove) => {
-          const maybeAddFoldersUpdate = () => {
-            if (!removeFromFolders) return;
-            const folderId = itemIdToFolderIdMap[spriteIdToRemove];
-            if (!folderId) return;
-            const folder = foldersMap[folderId];
-            if (!folder) return;
-            const newItemIds = folder.itemIds.filter(
-              (id) => id !== spriteIdToRemove,
-            );
-            if (newItemIds.length === folder.itemIds.length) return;
-            acc.foldersUpdates[folder.id] = {
-              folder,
-              data: { itemIds: newItemIds },
-            };
-          };
-          maybeAddFoldersUpdate();
-
-          const maybeAddBinsUpdate = () => {
-            if (!removeFromCustomBins) return;
-            const parentBinId = itemIdToBinIdMap[spriteIdToRemove];
-            if (!parentBinId) return;
-            const bin = binsMap[parentBinId];
-            if (!bin) return;
-            const newItemIds = bin.itemIds.filter(
-              (id) => id !== spriteIdToRemove,
-            );
-            if (newItemIds.length === bin.itemIds.length) return;
-            acc.binsUpdates[bin.id] = {
-              bin,
-              data: { itemIds: newItemIds },
-            };
-          };
-          maybeAddBinsUpdate();
-
-          return acc;
-        },
-        {
-          foldersUpdates: {},
-          binsUpdates: {},
-        } as {
-          foldersUpdates: tUpdateFoldersArg;
-          binsUpdates: tUpdateCustomBinsArg;
-        },
-      );
-      const cmds: Command[] = [createRemoveSpritesCmd(id)];
-      if (removeFromFolders && !isEmpty(foldersUpdates)) {
-        cmds.push(createUpdateFoldersCmd(foldersUpdates));
-      }
-      if (removeFromCustomBins && !isEmpty(binsUpdates)) {
-        cmds.push(createUpdateBinsCmd(binsUpdates));
-      }
-      await historyManager.execCommand(cmds);
-    },
-    [
-      historyManager,
-      createRemoveSpritesCmd,
-      createUpdateFoldersCmd,
-      createUpdateBinsCmd,
-      getFoldersMap,
-      getItemIdToFolderIdMap,
-      getItemIdToBinIdMap,
-      getBinsMap,
-    ],
-  );
+        foldersUpdates: {},
+        binsUpdates: {},
+      } as {
+        foldersUpdates: tUpdateFoldersArg;
+        binsUpdates: tUpdateCustomBinsArg;
+      },
+    );
+    const cmds: Command[] = [createRemoveSpritesCmd(id)];
+    if (removeFromFolders && !isEmpty(foldersUpdates)) {
+      cmds.push(createUpdateFoldersCmd(foldersUpdates));
+    }
+    if (removeFromCustomBins && !isEmpty(binsUpdates)) {
+      cmds.push(createUpdateBinsCmd(binsUpdates));
+    }
+    await historyManager.execCommand(cmds);
+  };
 };

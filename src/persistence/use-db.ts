@@ -1,6 +1,5 @@
 import { useAtomValue, useStore } from "jotai";
 import { dbImportExportAtom, dbMutationsAtom } from "./db.atom";
-import { useCallback } from "react";
 import { downloadFile } from "#utils/download-file";
 import type { tDbBackupFormat } from "./types";
 import { useFileDialog } from "@mantine/hooks";
@@ -60,10 +59,10 @@ export const useImportDb = () => {
 };
 export const useExportDb = () => {
   const service = useAtomValue(dbImportExportAtom);
-  return useCallback(async () => {
+  return async () => {
     const data = await service.exportDb();
     downloadFile(data, "final-spritesheet.backup");
-  }, [service]);
+  };
 };
 export const useDbMutations = () => {
   return useAtomValue(dbMutationsAtom);

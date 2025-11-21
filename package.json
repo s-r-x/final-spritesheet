@@ -65,6 +65,7 @@
     "@types/react-resizable": "^3.0.8",
     "@types/upng-js": "^2.1.5",
     "@vitejs/plugin-react": "^5.1.0",
+    "babel-plugin-react-compiler": "^1.0.0",
     "globals": "^16.0.0",
     "sharp": "^0.34.4",
     "typescript": "~5.7.2",

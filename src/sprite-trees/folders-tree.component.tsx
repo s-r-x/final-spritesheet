@@ -1,7 +1,7 @@
 import { useNormalizedFolders } from "@/folders/use-folders";
 import type { tSprite as tItem } from "@/input/types";
 import styles from "./styles.module.css";
-import { memo, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import { type NodeRendererProps, Tree } from "react-arborist";
 import { useTranslation } from "@/i18n/use-translation";
 import { isRootFolder } from "@/folders/is-root-folder";
@@ -127,4 +127,4 @@ function Node({ node, style, dragHandle }: NodeRendererProps<tTreeNodeData>) {
   }
 }
 
-export default memo(withTreeViewport(FoldersList));
+export default withTreeViewport(FoldersList);

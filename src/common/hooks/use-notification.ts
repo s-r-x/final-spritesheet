@@ -1,24 +1,20 @@
 import { notifications } from "@mantine/notifications";
-import { useCallback } from "react";
 
 export const useNotification = () => {
-  const showNotification = useCallback(
-    ({
+  const showNotification = ({
+    title,
+    message,
+    isError,
+  }: {
+    title?: string;
+    message: string;
+    isError?: boolean;
+  }) => {
+    notifications.show({
       title,
       message,
-      isError,
-    }: {
-      title?: string;
-      message: string;
-      isError?: boolean;
-    }) => {
-      notifications.show({
-        title,
-        message,
-        color: isError ? "red" : undefined,
-      });
-    },
-    [],
-  );
+      color: isError ? "red" : undefined,
+    });
+  };
   return { showNotification };
 };

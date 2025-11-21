@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./canvas-dropzone.module.css";
 import { Dropzone } from "@mantine/dropzone";
 import { Group, Text } from "@mantine/core";
@@ -108,4 +108,4 @@ const useIsDragging = () => {
   return isDragging;
 };
 
-export default memo(CanvasDropzone);
+export default CanvasDropzone;

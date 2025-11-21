@@ -32,7 +32,11 @@ export default defineConfig({
     port: PREVIEW_SERVER_PORT,
   },
   plugins: [
-    react(),
+    react({
+      babel: {
+        plugins: ["babel-plugin-react-compiler"],
+      },
+    }),
     tanstackRouter({
       target: "react",
       autoCodeSplitting: false,

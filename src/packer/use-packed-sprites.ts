@@ -4,7 +4,6 @@ import {
   packedSpritesAtom,
   packerStatusAtom,
 } from "./packed-sprites.atom";
-import { useCallback } from "react";
 
 export const usePackedSprites = () => {
   return useAtomValue(packedSpritesAtom);
@@ -12,9 +11,7 @@ export const usePackedSprites = () => {
 
 export const useGetPackedSprites = () => {
   const atomsStore = useStore();
-  return useCallback(() => {
-    return atomsStore.get(packedSpritesAtom);
-  }, []);
+  return () => atomsStore.get(packedSpritesAtom);
 };
 
 export const useHasAnyPackedSprites = () => {

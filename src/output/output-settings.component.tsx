@@ -18,7 +18,6 @@ import {
 } from "./use-output-settings";
 import CloseableMessage from "#components/closeable-message.component";
 import { useMutation } from "#hooks/use-mutation";
-import { memo } from "react";
 import type { tOutputFramework, tOutputSettings } from "./types";
 import { isEqual } from "#utils/is-equal";
 
@@ -236,4 +235,4 @@ const OutputSettingsRoot = () => {
   );
 };
 
-export default memo(OutputSettingsRoot);
+export default OutputSettingsRoot;

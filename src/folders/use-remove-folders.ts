@@ -1,5 +1,4 @@
 import { useHistoryManager } from "@/history/use-history-manager";
-import { useCallback } from "react";
 import type { tFolder } from "./types";
 import { RemoveFoldersCommand } from "./remove-folders.command";
 import { useCreateRemoveSpritesCommand } from "@/input/use-remove-sprites";
@@ -21,67 +20,57 @@ export const useRemoveFolders = () => {
   const getCustomBinsMap = useGetCustomBinsMap();
   const getFolderIdToCustomBinIdMap = useGetFolderIdToCustomBinIdMap();
   const getFoldersMap = useGetFoldersMap();
-  return useCallback(
-    async (id: string | string[]) => {
-      const foldersMap = getFoldersMap();
-      const binsMap = getCustomBinsMap();
-      const folderIdToBinIdMap = getFolderIdToCustomBinIdMap();
-      const {
-        folders: foldersToRemove,
-        sprites: spriteIdsToRemove,
-        binsUpdates,
-      } = (Array.isArray(id) ? id : [id]).reduce(
-        (acc, folderIdToRemove) => {
-          // shouldn't be here
-          if (isRootFolder(folderIdToRemove)) return acc;
-          const folder = foldersMap[folderIdToRemove];
-          if (!folder) return acc;
-          acc.folders.push(folder);
-          if (!isEmpty(folder.itemIds)) {
-            acc.sprites.push(...folder.itemIds);
-          }
-          const parentBinId = folderIdToBinIdMap[folder.id];
-          if (!parentBinId) return acc;
-          const bin = binsMap[parentBinId];
-          if (!bin) return acc;
-          const newFolderIds = bin.folderIds.filter(
-            (folderId) => folderId !== folderIdToRemove,
-          );
-          if (newFolderIds.length !== bin.folderIds.length) {
-            acc.binsUpdates[bin.id] = {
-              bin,
-              data: { folderIds: newFolderIds },
-            };
-          }
-          return acc;
-        },
-        { folders: [], sprites: [], binsUpdates: {} } as {
-          folders: tFolder[];
-          sprites: string[];
-          binsUpdates: tUpdateCustomBinsArg;
-        },
-      );
-      const cmds: Command[] = [];
-      if (!isEmpty(foldersToRemove)) {
-        cmds.push(new RemoveFoldersCommand({ folders: foldersToRemove }));
-      }
-      if (!isEmpty(spriteIdsToRemove)) {
-        cmds.push(createRemoveSpritesCommand(spriteIdsToRemove));
-      }
-      if (!isEmpty(binsUpdates)) {
-        cmds.push(createUpdateCustomBinsCmd(binsUpdates));
-      }
-      if (!isEmpty(cmds)) {
-        await historyManager.execCommand(cmds);
-      }
-    },
-    [
-      historyManager,
-      createRemoveSpritesCommand,
-      createUpdateCustomBinsCmd,
-      getCustomBinsMap,
-      getFolderIdToCustomBinIdMap,
-      getFoldersMap,
-    ],
-  );
+  return async (id: string | string[]) => {
+    const foldersMap = getFoldersMap();
+    const binsMap = getCustomBinsMap();
+    const folderIdToBinIdMap = getFolderIdToCustomBinIdMap();
+    const {
+      folders: foldersToRemove,
+      sprites: spriteIdsToRemove,
+      binsUpdates,
+    } = (Array.isArray(id) ? id : [id]).reduce(
+      (acc, folderIdToRemove) => {
+        // shouldn't be here
+        if (isRootFolder(folderIdToRemove)) return acc;
+        const folder = foldersMap[folderIdToRemove];
+        if (!folder) return acc;
+        acc.folders.push(folder);
+        if (!isEmpty(folder.itemIds)) {
+          acc.sprites.push(...folder.itemIds);
+        }
+        const parentBinId = folderIdToBinIdMap[folder.id];
+        if (!parentBinId) return acc;
+        const bin = binsMap[parentBinId];
+        if (!bin) return acc;
+        const newFolderIds = bin.folderIds.filter(
+          (folderId) => folderId !== folderIdToRemove,
+        );
+        if (newFolderIds.length !== bin.folderIds.length) {
+          acc.binsUpdates[bin.id] = {
+            bin,
+            data: { folderIds: newFolderIds },
+          };
+        }
+        return acc;
+      },
+      { folders: [], sprites: [], binsUpdates: {} } as {
+        folders: tFolder[];
+        sprites: string[];
+        binsUpdates: tUpdateCustomBinsArg;
+      },
+    );
+    const cmds: Command[] = [];
+    if (!isEmpty(foldersToRemove)) {
+      cmds.push(new RemoveFoldersCommand({ folders: foldersToRemove }));
+    }
+    if (!isEmpty(spriteIdsToRemove)) {
+      cmds.push(createRemoveSpritesCommand(spriteIdsToRemove));
+    }
+    if (!isEmpty(binsUpdates)) {
+      cmds.push(createUpdateCustomBinsCmd(binsUpdates));
+    }
+    if (!isEmpty(cmds)) {
+      await historyManager.execCommand(cmds);
+    }
+  };
 };

@@ -7,7 +7,7 @@ import { Modal, Slider } from "@mantine/core";
 import ErrorBoundary from "#components/error-boundary";
 import { useTranslation } from "@/i18n/use-translation";
 import type { tSprite } from "@/input/types";
-import { type CSSProperties, useEffect, useMemo, useState } from "react";
+import { type CSSProperties, useEffect, useState } from "react";
 import { maxBy } from "#utils/max-by";
 import styles from "./animation-preview.module.css";
 import { useMeasure } from "#hooks/use-measure";
@@ -44,17 +44,7 @@ const AnimationPreview = ({ frames }: { frames: tSprite[] }) => {
     key: "animation-preview-fps",
   });
   const activeFrame = frames[activeIndex];
-  const maxDimension = useMemo(() => {
-    const width = maxBy(
-      frames,
-      (sprite) => sprite.originalWidth,
-    )!.originalWidth;
-    const height = maxBy(
-      frames,
-      (sprite) => sprite.originalHeight,
-    )!.originalHeight;
-    return { width, height };
-  }, [frames]);
+  const maxDimension = getMaxFrameDimensions(frames);
   useEffect(() => {
     const fpsInterval = 1000 / fps;
     let then = performance.now();
@@ -113,5 +103,11 @@ const AnimationPreview = ({ frames }: { frames: tSprite[] }) => {
     </div>
   );
 };
+
+function getMaxFrameDimensions(frames: tSprite[]) {
+  const width = maxBy(frames, (s) => s.originalWidth)!.originalWidth;
+  const height = maxBy(frames, (s) => s.originalHeight)!.originalHeight;
+  return { width, height };
+}
 
 export default AnimationPreviewModal;

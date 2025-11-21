@@ -1,5 +1,5 @@
 import styles from "./styles.module.css";
-import { memo, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import type { tSprite } from "@/input/types";
 import { useTranslation } from "@/i18n/use-translation";
 import { usePackedSprites } from "@/packer/use-packed-sprites";
@@ -259,4 +259,4 @@ function Node({ node, style, dragHandle }: NodeRendererProps<tTreeNodeData>) {
   }
 }
 
-export default memo(withTreeViewport(ManuallyPackedTree));
+export default withTreeViewport(ManuallyPackedTree);
