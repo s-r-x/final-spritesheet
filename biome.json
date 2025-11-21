@@ -30,7 +30,8 @@
       },
       "correctness": {
         "useExhaustiveDependencies": "off",
-        "useUniqueElementIds": "off"
+        "useUniqueElementIds": "off",
+        "noUndeclaredVariables": "error"
       },
       "suspicious": {
         "noExplicitAny": "off",
