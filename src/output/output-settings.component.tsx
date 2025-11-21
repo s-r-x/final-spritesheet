@@ -29,6 +29,7 @@ const frameworkOptions: { value: tOutputFramework; label: string }[] = [
   { value: "phaser", label: "Phaser" },
   { value: "godot", label: "Godot" },
   { value: "css", label: "CSS" },
+  { value: "cocos-creator", label: "Cocos Creator" },
 ];
 const schema = z.object({
   framework: z.enum(SUPPORTED_OUTPUT_FRAMEWORKS),

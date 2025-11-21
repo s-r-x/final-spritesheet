@@ -19,10 +19,6 @@ export const SUPPORTED_LANGUAGES: { value: string; label: string }[] = [
   },
 ];
 
-export const PACKER_ROTATION_SUPPORTED_FRAMEWORKS = new Set<tOutputFramework>([
-  "pixi",
-  "phaser",
-]);
 export const PACKER_SUPPORTED_SHEET_SIZES = [256, 128, 512, 1024, 2048, 4096];
 export const PACKER_MAX_SPRITE_PADDING = 100;
 export const PACKER_MAX_EDGE_SPACING = 100;
@@ -51,12 +47,16 @@ export const PACKER_DEFAULT_MULTIPACK_MODE: tPackerMultipackMode = "auto";
 export const PACKER_ROTATION_SUPPORTED_ALGORITHMS = new Set<tPackerAlgorithm>([
   "maxRects",
 ]);
-
+export const PACKER_ROTATION_SUPPORTED_FRAMEWORKS = new Set<tOutputFramework>([
+  "pixi",
+  "phaser",
+]);
 export const SUPPORTED_OUTPUT_FRAMEWORKS = [
   "pixi",
   "phaser",
   "godot",
   "css",
+  "cocos-creator",
 ] as const;
 export type tOutputFramework = (typeof SUPPORTED_OUTPUT_FRAMEWORKS)[number];
 export const SUPPORTED_OUTPUT_IMAGE_FORMATS = ["png", "jpeg", "webp"];

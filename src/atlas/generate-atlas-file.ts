@@ -2,6 +2,7 @@ import { generatePixiAtlasFile } from "./pixi";
 import { generatePhaserAtlasFile } from "./phaser";
 import { generateGodotAtlasFile } from "./godot";
 import { generateCssAtlasFile } from "./css";
+import { generateCocosAtlasFile } from "./cocos";
 import type { tGenerateAtlasFileArgs, tGenerateAtlasFileOutput } from "./types";
 import type { tOutputFramework } from "#config";
 
@@ -17,6 +18,8 @@ export const generateAtlasFile = (
       return generateGodotAtlasFile(data);
     case "css":
       return generateCssAtlasFile(data);
+    case "cocos-creator":
+      return generateCocosAtlasFile(data);
     default:
       return generatePixiAtlasFile(data);
   }
