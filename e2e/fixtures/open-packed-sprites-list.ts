@@ -5,7 +5,7 @@ import { changeActiveListTab } from "./change-active-list-tab";
 
 export const openPackedSpritesList = async (page: Page) => {
   const activeTab = await getActiveListTab(page);
-  if (activeTab !== "folders") {
+  if (activeTab !== "packed") {
     await changeActiveListTab(page, "packed");
   }
   const list = packedSpritesListLocator(page);

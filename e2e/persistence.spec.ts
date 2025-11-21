@@ -23,12 +23,7 @@ import {
 import {
   changePackerAlgorithm,
   changePackerAllowRot,
-  changePackerEdgeSpacing,
   changePackerMultipackMode,
-  changePackerPot,
-  changePackerSheetSize,
-  changePackerSpritePadding,
-  changePackerSquare,
 } from "./fixtures/change-packer-settings";
 import { persistChanges } from "./fixtures/persistence";
 import {
@@ -71,6 +66,8 @@ import {
 } from "./fixtures/custom-bins";
 import { getCustomBinId } from "./queries/get-custom-bin-id";
 import { openPackedSpritesList } from "./fixtures/open-packed-sprites-list";
+import { updatePackerSettingsWorkflow } from "./workflows/update-packer-settings";
+import { updateOutputSettingsWorkflow } from "./workflows/update-output-settings";
 
 test.beforeEach(async ({ page }) => {
   await navigateTo(page);
@@ -94,13 +91,15 @@ test("should persist packer settings", async ({ page }) => {
     (mode) => mode !== PACKER_DEFAULT_MULTIPACK_MODE,
   )!;
 
-  await changePackerAlgorithm(page, algorithmValue);
-  await changePackerSheetSize(page, sheetSizeValue);
-  await changePackerSpritePadding(page, paddingValue);
-  await changePackerEdgeSpacing(page, edgeValue);
-  await changePackerPot(page, potValue);
-  await changePackerMultipackMode(page, multipackValue);
-  await changePackerSquare(page, squareValue);
+  await updatePackerSettingsWorkflow(page, {
+    algorithm: algorithmValue,
+    sheetSize: sheetSizeValue,
+    spritePadding: paddingValue,
+    edgeSpacing: edgeValue,
+    pot: potValue,
+    multipack: multipackValue,
+    square: squareValue,
+  });
 
   await assertCanPersistChanges(page);
   await persistChanges(page);
@@ -129,10 +128,10 @@ test("should persist packer settings", async ({ page }) => {
 });
 
 test("should persist output settings", async ({ page }) => {
-  const frameworkValue = SUPPORTED_OUTPUT_FRAMEWORKS.find(
+  const framework = SUPPORTED_OUTPUT_FRAMEWORKS.find(
     (value) => value !== OUTPUT_DEFAULT_FRAMEWORK,
   )!;
-  const textureFormatValue = SUPPORTED_OUTPUT_IMAGE_FORMATS.find(
+  const textureFormat = SUPPORTED_OUTPUT_IMAGE_FORMATS.find(
     (format) =>
       format !== OUTPUT_DEFAULT_TEXTURE_FORMAT &&
       // assert this to make the image quality input visible
@@ -142,11 +141,18 @@ test("should persist output settings", async ({ page }) => {
   const textureFileName = "my texture file";
   const imageQuality = String(OUTPUT_DEFAULT_IMAGE_QUALITY - 1);
 
-  await changeOutputFramework(page, frameworkValue);
-  await changeOutputTextureFormat(page, textureFormatValue);
+  await changeOutputFramework(page, framework);
+  await changeOutputTextureFormat(page, textureFormat);
   await changeOutputDataFileName(page, dataFileName);
   await changeOutputTextureFileName(page, textureFileName);
   await changeOutputImageQuality(page, imageQuality);
+  await updateOutputSettingsWorkflow(page, {
+    framework: framework,
+    textureFormat: textureFormat,
+    dataFileName: dataFileName,
+    textureFileName,
+    imageQuality,
+  });
 
   await assertCanPersistChanges(page);
   await persistChanges(page);
@@ -154,8 +160,8 @@ test("should persist output settings", async ({ page }) => {
 
   await page.reload();
 
-  await assertOutputFrameworkValue(page, frameworkValue);
-  await assertOutputTextureFormatValue(page, textureFormatValue);
+  await assertOutputFrameworkValue(page, framework);
+  await assertOutputTextureFormatValue(page, textureFormat);
   await assertOutputDataFileNameValue(page, dataFileName);
   await assertOutputTextureFileNameValue(page, textureFileName);
   await assertOutputImageQualityValue(page, imageQuality);
