@@ -35,3 +35,6 @@ body {
   --surface-bg: var(--app-color-body);
   --surface-shadow: var(--mantine-shadow-sm);
 }
+.szh-menu {
+  z-index: 1000;
+}
