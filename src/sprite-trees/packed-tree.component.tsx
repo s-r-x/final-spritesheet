@@ -109,7 +109,7 @@ const PackedSpritesTree = ({ width, height }: tTreeViewportProps) => {
 function Node({ node, style, dragHandle }: NodeRendererProps<tTreeNodeData>) {
   const { nodeProps } = node.data;
   if (nodeProps.kind === "item") {
-    return <ItemNode style={style} ref={dragHandle} item={nodeProps.item} />;
+    return <ItemNode disableDrag style={style} ref={dragHandle} item={nodeProps.item} />;
   } else if (nodeProps.kind === "bin") {
     const { isOversized } = nodeProps;
     const itemsCount = nodeProps.itemIds.length;

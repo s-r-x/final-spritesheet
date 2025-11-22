@@ -233,7 +233,14 @@ const ManuallyPackedTree = ({ width, height }: tTreeViewportProps) => {
 function Node({ node, style, dragHandle }: NodeRendererProps<tTreeNodeData>) {
   const { nodeProps } = node.data;
   if (nodeProps.kind === "item") {
-    return <ItemNode style={style} ref={dragHandle} item={nodeProps.item} />;
+    return (
+      <ItemNode
+        disableDrag={Boolean(nodeProps.folderId)}
+        style={style}
+        ref={dragHandle}
+        item={nodeProps.item}
+      />
+    );
   } else if (nodeProps.kind === "customBin") {
     return (
       <BinNode

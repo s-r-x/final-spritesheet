@@ -2,8 +2,10 @@ import type { TreeProps } from "react-arborist/dist/module/types/tree-props";
 import type { tTreeNodeData } from "./types";
 import styles from "./styles.module.css";
 import clsx from "clsx";
+import { useIsTouchDevice } from "#hooks/use-is-touch-device";
 
 export const useRowRenderer = () => {
+  const isTouch = useIsTouchDevice();
   const renderer: TreeProps<tTreeNodeData>["renderRow"] = (args) => {
     const data = args.node.data.nodeProps;
     return (
@@ -25,7 +27,7 @@ export const useRowRenderer = () => {
             : undefined
         }
         data-parent-folder={data.kind === "item" ? data.folderId : undefined}
-        aria-label={args.node.data.name}
+        aria-label={isTouch ? undefined : args.node.data.name}
         ref={args.innerRef}
         onFocus={(e) => e.stopPropagation()}
         onClick={args.node.handleClick}

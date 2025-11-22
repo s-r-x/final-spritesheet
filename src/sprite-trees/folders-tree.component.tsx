@@ -116,6 +116,7 @@ function Node({ node, style, dragHandle }: NodeRendererProps<tTreeNodeData>) {
   } else if (nodeProps.kind === "folder") {
     return (
       <FolderNode
+        disableDrag
         style={style}
         ref={dragHandle}
         folder={nodeProps.folder}
