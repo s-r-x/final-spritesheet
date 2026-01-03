@@ -7,4 +7,5 @@ export type tOutputSettings = {
   textureFormat: string;
   dataFileName: string;
   textureFileName: string;
+  pixiGenTs?: boolean;
 };

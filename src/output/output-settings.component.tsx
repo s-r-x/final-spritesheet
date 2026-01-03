@@ -1,5 +1,11 @@
 import { useTranslation } from "@/i18n/use-translation";
-import { NumberInput, NativeSelect, Stack, TextInput } from "@mantine/core";
+import {
+  NumberInput,
+  NativeSelect,
+  Stack,
+  TextInput,
+  Checkbox,
+} from "@mantine/core";
 import {
   OUTPUT_ENABLE_PNG_COMPRESSION,
   OUTPUT_MAX_DATA_FILE_NAME_LENGTH,
@@ -41,6 +47,7 @@ const schema = z.object({
     .max(OUTPUT_MAX_TEXTURE_FILE_NAME_LENGTH),
   pngCompression: z.coerce.number<string>(),
   imageQuality: z.number().min(1).max(100),
+  pixiGenTs: z.boolean().optional(),
 });
 type tForm = z.input<typeof schema>;
 const OutputSettings = ({
@@ -176,6 +183,16 @@ const OutputSettings = ({
           })}
         />
         {renderFrameworkInfo()}
+        {framework === "pixi" && (
+          <Checkbox
+            label={t(i18nNs + "pixi_gen_ts")}
+            key={form.key("pixiGenTs")}
+            {...normalizeInputProps({
+              props: form.getInputProps("pixiGenTs", { type: "checkbox" }),
+            })}
+          />
+        )}
+
         <NativeSelect
           label={t(i18nNs + "texture_format")}
           data={SUPPORTED_OUTPUT_IMAGE_FORMATS}

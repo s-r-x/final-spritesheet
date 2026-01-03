@@ -11,6 +11,7 @@ export type tGenerateAtlasFileArgs = {
   textureHeight: number;
   textureAtlasFilename: string;
   pixelFormat?: string;
+  pixiGenTs?: boolean;
 };
 
 export type tGenerateAtlasFileResultEntry = {
@@ -19,4 +20,22 @@ export type tGenerateAtlasFileResultEntry = {
 };
 export type tGenerateAtlasFileOutput = {
   entries: tGenerateAtlasFileResultEntry[];
+};
+
+export type tPixiAtlasFrame = {
+  frame: { x: number; y: number; w: number; h: number };
+  sourceSize: { w: number; h: number };
+  spriteSourceSize: { x: number; y: number; w: number; h: number };
+  trimmed: boolean;
+  rotated?: boolean;
+};
+export type tPixiAtlas = {
+  animations?: Record<string, string[]>;
+  frames: Record<string, tPixiAtlasFrame>;
+  meta: {
+    format?: string;
+    scale: string;
+    image: string;
+    size: { w: number; h: number };
+  };
 };

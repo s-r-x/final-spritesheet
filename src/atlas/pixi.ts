@@ -1,4 +1,10 @@
-import type { tGenerateAtlasFileArgs, tGenerateAtlasFileOutput } from "./types";
+import { generatePixiTSCode } from "@/codegen/pixi";
+import type {
+  tGenerateAtlasFileArgs,
+  tGenerateAtlasFileOutput,
+  tGenerateAtlasFileResultEntry,
+  tPixiAtlas,
+} from "./types";
 
 export const generatePixiAtlasFile = ({
   baseFileName,
@@ -10,8 +16,9 @@ export const generatePixiAtlasFile = ({
   textureAtlasFilename,
   animations,
   pixelFormat,
+  pixiGenTs,
 }: tGenerateAtlasFileArgs): tGenerateAtlasFileOutput => {
-  const atlas = {
+  const atlas: tPixiAtlas = {
     frames: packedSprites.reduce(
       (acc, packedSprite) => {
         const sprite = spritesMap[packedSprite.id];
@@ -31,11 +38,11 @@ export const generatePixiAtlasFile = ({
         };
         return acc;
       },
-      {} as Record<string, any>,
+      {} as tPixiAtlas["frames"],
     ),
     animations,
     meta: {
-      ...(pixelFormat && { format: pixelFormat }),
+      format: pixelFormat,
       scale: "1",
       image: textureAtlasFilename,
       size: {
@@ -44,12 +51,27 @@ export const generatePixiAtlasFile = ({
       },
     },
   };
+
+  const finalBaseFileName = baseFileName + fileNamePostfix;
+  const fileName = finalBaseFileName + ".json";
+  const entries: tGenerateAtlasFileResultEntry[] = [
+    {
+      fileName,
+      content: JSON.stringify(atlas, null, 2),
+    },
+  ];
+  if (pixiGenTs) {
+    const { code: content } = generatePixiTSCode({
+      atlas,
+      atlasFileName: fileName,
+    });
+    entries.push({
+      fileName: finalBaseFileName + ".ts",
+      content,
+    });
+  }
+
   return {
-    entries: [
-      {
-        fileName: `${baseFileName}${fileNamePostfix}.json`,
-        content: JSON.stringify(atlas, null, 2),
-      },
-    ],
+    entries,
   };
 };

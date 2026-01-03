@@ -21,6 +21,7 @@ type tOptions = {
   spritesMap: tSpritesMap;
   animations?: tAnimationsMap;
   archiveName?: string;
+  pixiGenTs?: boolean;
 };
 
 export const exportSpritesheet = async (opts: tOptions) => {
@@ -52,6 +53,7 @@ export const exportSpritesheet = async (opts: tOptions) => {
         framework: opts.framework,
         animations: opts.animations?.[packedBin.id],
         pixelFormat,
+        pixiGenTs: opts.pixiGenTs,
       });
       for (const entry of atlasFileEntries) {
         archive.file(entry.fileName, entry.content);

@@ -4,6 +4,7 @@ import {
   OUTPUT_DEFAULT_DATA_FILE_NAME,
   OUTPUT_DEFAULT_FRAMEWORK,
   OUTPUT_DEFAULT_IMAGE_QUALITY,
+  OUTPUT_DEFAULT_PIXI_GEN_TS_CODE,
   OUTPUT_DEFAULT_PNG_COMPRESSION,
   OUTPUT_DEFAULT_TEXTURE_FILE_NAME,
   OUTPUT_DEFAULT_TEXTURE_FORMAT,
@@ -72,4 +73,7 @@ const persistedToOutputSettings = (
   imageQuality: isNumber(project.imageQuality)
     ? project.imageQuality
     : OUTPUT_DEFAULT_IMAGE_QUALITY,
+  pixiGenTs: isBoolean(project.pixiGenTs)
+    ? project.pixiGenTs
+    : OUTPUT_DEFAULT_PIXI_GEN_TS_CODE,
 });

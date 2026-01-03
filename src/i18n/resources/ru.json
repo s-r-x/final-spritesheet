@@ -55,7 +55,8 @@
       "png_compression": "Сжатие PNG",
       "data_file": "Файл с данными",
       "texture_file": "Файл с текстурой",
-      "godot_import_tip": "Совместимо с TexturePacker Importer плагином для Godot"
+      "godot_import_tip": "Совместимо с TexturePacker Importer плагином для Godot",
+      "pixi_gen_ts": "Сгенерировать Typescript код"
     },
     "sprite_editor": {
       "editor_title": "Редактирование спрайта",

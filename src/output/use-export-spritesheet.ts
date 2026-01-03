@@ -41,6 +41,7 @@ export const useExportSpritesheet = () => {
       archiveName: getProjectName() || "archive",
       spritesMap: getSpritesMap(),
       animations,
+      pixiGenTs: outputSettings.pixiGenTs,
     });
   };
 };

@@ -69,6 +69,7 @@ export const OUTPUT_DEFAULT_DATA_FILE_NAME = "data";
 export const OUTPUT_MAX_DATA_FILE_NAME_LENGTH = 256;
 export const OUTPUT_MAX_TEXTURE_FILE_NAME_LENGTH = 256;
 export const OUTPUT_ENABLE_PNG_COMPRESSION = false;
+export const OUTPUT_DEFAULT_PIXI_GEN_TS_CODE = false;
 
 export const DB_NAME = "final-spritesheet";
 

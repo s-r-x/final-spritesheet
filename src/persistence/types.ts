@@ -37,6 +37,7 @@ export type tPersistedProject = {
   textureFileName?: string;
   pngCompression?: number;
   imageQuality?: number;
+  pixiGenTs?: boolean;
   lastOpenedAt?: string;
   createdAt?: string;
 };
@@ -107,6 +108,7 @@ export type tUpdateProjectData = Partial<
     | "textureFileName"
     | "pngCompression"
     | "imageQuality"
+    | "pixiGenTs"
     | "multipack"
     | "square"
     | "lastOpenedAt"
