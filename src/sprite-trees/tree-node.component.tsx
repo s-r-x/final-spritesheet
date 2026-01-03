@@ -71,7 +71,8 @@ type tItemProps = {
   disableDrag?: boolean;
 };
 export const ItemNode = forwardRef<any, tItemProps>((props, ref) => {
-  const shouldRenderDragButton = !props.disableDrag;
+  const isTouchDevice = useIsTouchDevice();
+  const shouldRenderDragButton = !props.disableDrag && isTouchDevice;
   return (
     <div
       style={props.style}
@@ -100,7 +101,8 @@ type tFolderProps = {
 };
 export const FolderNode = forwardRef<any, tFolderProps>((props, ref) => {
   const iconSize = 20;
-  const shouldRenderDragButton = !props.disableDrag;
+  const isTouchDevice = useIsTouchDevice();
+  const shouldRenderDragButton = !props.disableDrag && isTouchDevice;
   return (
     <div
       style={props.style}
@@ -120,8 +122,6 @@ export const FolderNode = forwardRef<any, tFolderProps>((props, ref) => {
 });
 
 const DragButton = forwardRef<any>((_props, ref) => {
-  const isTouchDevice = useIsTouchDevice();
-  if (!isTouchDevice) return null;
   return (
     <ActionIcon
       aria-hidden
