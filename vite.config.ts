@@ -6,7 +6,7 @@ import { VitePWA } from "vite-plugin-pwa";
 
 export const DEV_SERVER_PORT = 5173;
 export const PREVIEW_SERVER_PORT = 4173;
-export const BASE_URL = "/final-spritesheet";
+export const BASE_URL = "/";
 const srcPath = path.join(import.meta.dirname, "src");
 export const alias = {
   "#config": path.join(srcPath, "config.ts"),
@@ -17,7 +17,7 @@ export const alias = {
   "@": srcPath,
 };
 export default defineConfig({
-  base: BASE_URL,
+  base: "/",
   resolve: {
     alias,
   },
