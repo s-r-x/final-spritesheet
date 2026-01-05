@@ -58,7 +58,6 @@
     "@playwright/test": "^1.56.0",
     "@tanstack/router-plugin": "^1.133.29",
     "@types/file-saver": "^2.0.7",
-    "@types/jszip": "^3.4.1",
     "@types/node": "^24.7.2",
     "@types/react": "^19.2.6",
     "@types/react-dom": "^19.2.3",
