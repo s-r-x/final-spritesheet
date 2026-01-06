@@ -5,7 +5,7 @@ export const generatePixiTSCode = ({
   atlas,
   atlasFileName,
 }: {
-  atlas: tPixiAtlas;
+  atlas: Pick<tPixiAtlas, "animations"> & { frames: Record<string, any> };
   atlasFileName: string;
 }) => {
   const spritesheetTypeName = "FinalSpritesheet";
