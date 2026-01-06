@@ -26,7 +26,7 @@ export const convertBinToBlob = async ({
     const cnum = normalizePngCompression(pngCompression);
     const UPNG = await import("upng-js");
     const norm = UPNG.encode(
-      [pixels.pixels.buffer],
+      [pixels.pixels.buffer as ArrayBuffer],
       pixels.width,
       pixels.height,
       cnum,
